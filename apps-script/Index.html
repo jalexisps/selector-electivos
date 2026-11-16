@@ -6,23 +6,25 @@
 <title>Selector de Electivos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#EEF0F1; --card:#FFFFFF; --ink:#1D2327; --muted:#596169; --soft:#8B9298; --line:#D9DDE0; --line2:#E9ECEE;
-  --gris:#6B7278; --gris-claro:#E3E6E8;
+  /* Mismos tonos que el sistema de las Olimpiadas: fondo verde grisáceo, tinta verde oscuro y gris */
+  --bg:#EEF2EF; --card:#FFFFFF; --ink:#18241E; --muted:#5D6964; --soft:#8A958F; --line:#D9E2DC; --line2:#E7EDE9;
+  --gris:#59646A; --gris-osc:#262D30; --gris-claro:#E3E9E5;
   --pri:#067D3E; --pri-ink:#fff; --sec:#EAEA17; --sec-ink:#1D2327;
   --pri-soft:color-mix(in srgb,var(--pri) 11%,#fff); --pri-hover:color-mix(in srgb,var(--pri) 82%,#000);
+  --pri-osc:color-mix(in srgb,var(--pri) 66%,#000); --pri-luz:color-mix(in srgb,var(--pri) 72%,#2BE38A);
   --ok:#17845A; --ok-soft:#E3F4EC; --warn:#B86E00; --warn-soft:#FBF0DD; --err:#C0353F; --err-soft:#FBE7E8;
   --r:14px; --r-sm:10px;
   --sh:0 1px 2px rgba(26,33,50,.06),0 6px 20px -8px rgba(26,33,50,.12);
-  --font:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
-h1,h2,h3{margin:0;line-height:1.15;letter-spacing:-.01em}
+h1,h2,h3{margin:0;line-height:1.15;letter-spacing:-.01em;font-weight:900}
 p{margin:0}
 .muted{color:var(--muted)}
 .mono{font-family:var(--mono)}
@@ -71,9 +73,10 @@ img.marca{object-fit:contain;width:auto;max-width:72px}
 /* ---------- Login ---------- */
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:28px 16px;
   background:
-    radial-gradient(1200px 500px at 110% -10%,color-mix(in srgb,var(--pri) 14%,transparent),transparent 60%),
-    radial-gradient(900px 500px at -20% 110%,color-mix(in srgb,var(--sec) 14%,transparent),transparent 60%),var(--bg)}
-.login-card{width:100%;max-width:410px;background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:30px 26px 24px;border:1px solid var(--line2);position:relative;overflow:hidden}
+    radial-gradient(circle at 15% 0%,var(--pri-luz) 0,transparent 45%),
+    radial-gradient(circle at 100% 100%,color-mix(in srgb,var(--sec) 14%,transparent) 0,transparent 40%),
+    linear-gradient(160deg,var(--pri),var(--pri-osc) 55%,var(--gris-osc))}
+.login-card{width:100%;max-width:410px;background:var(--card);border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:30px 26px 24px;border:1px solid var(--line2);position:relative;overflow:hidden}
 .login-card::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--pri) 0 60%,var(--sec) 60% 100%)}
 .login-card .marca{width:46px;height:46px;margin-bottom:14px}
 .login-card h1{font-size:1.65rem;font-weight:800}
@@ -84,19 +87,23 @@ img.marca{object-fit:contain;width:auto;max-width:72px}
 .login-card .hint{margin-top:16px;text-align:center}
 
 /* ---------- Barra superior ---------- */
-.top{position:sticky;top:0;z-index:20;background:rgba(238,240,241,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
-.top::before{content:"";display:block;height:4px;background:linear-gradient(90deg,var(--pri) 0 60%,var(--sec) 60% 100%)}
+.top{position:sticky;top:0;z-index:20;color:#fff;background:linear-gradient(120deg,var(--pri-osc),var(--pri));border-bottom:4px solid var(--sec);box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.top .brand small{color:rgba(255,255,255,.78)}
+.top .quien small{color:rgba(255,255,255,.72)!important}
+.top .btn-ghost{color:rgba(255,255,255,.88)}
+.top .btn-ghost:hover{background:rgba(255,255,255,.18);color:#fff}
 .top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:10px 18px;flex-wrap:wrap}
 .top-user{margin-left:auto;display:flex;align-items:center;gap:4px}
 .top-user .quien{font-weight:600;font-size:.92rem;margin-right:6px;text-align:right;line-height:1.2}
 .top-user .quien small{display:block;color:var(--muted);font-weight:500}
 .tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;order:3;width:100%;margin:0 -4px}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{border:0;background:none;padding:.65em .9em;font-weight:700;color:var(--muted);cursor:pointer;border-radius:9px;white-space:nowrap;position:relative}
-.tabs button:hover{color:var(--ink);background:rgba(26,33,50,.05)}
-.tabs button.on{color:var(--pri)}
-.tabs button::after{content:"";position:absolute;left:50%;right:50%;bottom:-11px;height:3px;border-radius:3px;background:var(--pri);transition:left .2s ease,right .2s ease,opacity .2s;opacity:0}
-.tabs button.on::after{left:12px;right:12px;opacity:1}
+.tabs{padding:2px 0}
+.tabs button{border:0;background:rgba(255,255,255,.12);padding:.45em .85em;font-size:.95rem;font-weight:800;color:rgba(255,255,255,.9);cursor:pointer;border-radius:999px;white-space:nowrap;position:relative;transition:background .15s,color .15s}
+.tabs button:hover{color:#fff;background:rgba(255,255,255,.24)}
+.tabs button.on{background:#fff;color:var(--pri-osc)}
+.tabs{gap:5px}
+@media(min-width:900px){.top-panel .top-in{flex-wrap:nowrap;gap:12px}.top-panel .tabs{flex:1;min-width:0;margin-left:10px}.top-panel .brand small{max-width:200px}}
 @media(min-width:900px){.tabs{order:0;width:auto;margin:0 0 0 18px}}
 @media(max-width:1380px){.top-panel .quien{display:none}}
 @media(max-width:560px){.brand>div{display:none}.top-in{flex-wrap:nowrap}.top-panel .top-in{flex-wrap:wrap}.top-user .quien{font-size:.86rem}}
@@ -254,7 +261,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
   .fam:not(.lleno):hover .elist li i{background:var(--c);color:#fff}
   .fam .btn-pick:not(:disabled):hover{box-shadow:0 8px 18px -6px color-mix(in srgb,var(--c) 70%,transparent)}
   .famcard:hover,.kpi:hover,.famedit:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(26,33,50,.06),0 16px 32px -14px rgba(26,33,50,.28)}
-  .tabs button:not(.on):hover::after{left:22px;right:22px;opacity:.35}
   .seg button:not(.on):hover{color:var(--ink);background:rgba(255,255,255,.55)}
   .tbl tbody tr:hover td{background:var(--pri-soft)}
   .tbl tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--pri)}
@@ -265,6 +271,17 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
   .swatch:hover{transform:scale(1.12)}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* ---------- Selección múltiple ---------- */
+.tbl .ck{width:44px;padding-right:0}
+.tbl input[type=checkbox]{width:18px;height:18px;accent-color:var(--pri);cursor:pointer;vertical-align:middle}
+.tbl tr.sel td{background:var(--pri-soft)}
+.tbl tbody tr{cursor:pointer}
+.selbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--pri-soft);position:sticky;top:0;z-index:2}
+.selbar b{margin-right:4px}
+.selbar .inp{width:auto;padding:.42em .7em;font-size:.9rem}
+.selbar .link{border:0;background:none;color:var(--pri);font-weight:700;cursor:pointer;text-decoration:underline;padding:0 4px}
+.selhint{padding:10px 14px;border-bottom:1px solid var(--line2);color:var(--muted);font-size:.88rem}
 
 /* ---------- Apariencia ---------- */
 .logos-edit{display:grid;gap:14px;grid-template-columns:1fr;margin:10px 0 22px}
@@ -332,7 +349,7 @@ const S = {
   colegio: '', loginRol: 'estudiante', tema: { logos: [] }, ap: null,
   est: null, panel: null, tab: 'resumen',
   filtro: { q: '', fam: '', curso: '' },
-  carga: { texto: '', filas: [] },
+  carga: { texto: '', filas: [] }, sel: new Set(),
   timer: null, modalAbierto: false
 };
 
@@ -370,6 +387,154 @@ function manejarError(e, silencioso) {
   if (e.code === 'CAMBIAR') { S.debeCambiar = true; cerrarModal(); vistaCambio(true); return; }
   if (!silencioso) toast(e.message, 'err');
 }
+
+/* XLSX-INICIO — Excel sin librerías externas: escribir (zip sin compresión) y leer (.xlsx de Excel o Google). */
+const XLSX = (() => {
+  const enc = new TextEncoder();
+  const TABLA_CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = (u8) => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = TABLA_CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const xml = (s) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+    .replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const col = (i) => { let s = ''; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+
+  function zip(archivos) {
+    const partes = [], central = []; let off = 0;
+    archivos.forEach(({ nombre, texto }) => {
+      const n = enc.encode(nombre), d = enc.encode(texto), crc = crc32(d);
+      const h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+      h.setUint32(14, crc, true); h.setUint32(18, d.length, true); h.setUint32(22, d.length, true); h.setUint16(26, n.length, true);
+      partes.push(new Uint8Array(h.buffer), n, d);
+      const c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true);
+      c.setUint32(16, crc, true); c.setUint32(20, d.length, true); c.setUint32(24, d.length, true); c.setUint16(28, n.length, true);
+      c.setUint32(42, off, true);
+      central.push(new Uint8Array(c.buffer), n);
+      off += 30 + n.length + d.length;
+    });
+    const tam = central.reduce((a, p) => a + p.length, 0);
+    const fin = new DataView(new ArrayBuffer(22));
+    fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, archivos.length, true); fin.setUint16(10, archivos.length, true);
+    fin.setUint32(12, tam, true); fin.setUint32(16, off, true);
+    return new Blob([...partes, ...central, new Uint8Array(fin.buffer)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  }
+
+  function hojaXml(filas, anchos) {
+    const nc = Math.max(1, ...filas.map((f) => f.length));
+    const datos = filas.map((f, i) => `<row r="${i + 1}">` + f.map((v, j) => {
+      const ref = col(j) + (i + 1), est = i === 0 ? ' s="1"' : '';
+      if (typeof v === 'number' && isFinite(v)) return `<c r="${ref}"${est}><v>${v}</v></c>`;
+      return `<c r="${ref}" t="inlineStr"${est}><is><t xml:space="preserve">${xml(v)}</t></is></c>`;
+    }).join('') + '</row>').join('');
+    const cols = Array.from({ length: nc }, (_, j) => {
+      const w = anchos && anchos[j] ? anchos[j] : Math.min(60, Math.max(8, ...filas.map((f) => String(f[j] == null ? '' : f[j]).length + 2)));
+      return `<col min="${j + 1}" max="${j + 1}" width="${w}" customWidth="1"/>`;
+    }).join('');
+    const ref = `A1:${col(nc - 1)}${Math.max(1, filas.length)}`;
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+      '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+      `<cols>${cols}</cols><sheetData>${datos}</sheetData>` + (filas.length > 1 ? `<autoFilter ref="${ref}"/>` : '') + '</worksheet>';
+  }
+
+  /** hojas: [{ nombre, filas: [[encabezados], [fila], ...], anchos? }] → Blob .xlsx */
+  function crear(hojas, colorEncabezado) {
+    const usados = {};
+    hojas = hojas.map((h) => {
+      let n = String(h.nombre || 'Hoja').replace(/[\[\]:*?\/\\]/g, ' ').trim().slice(0, 31) || 'Hoja', k = 2;
+      while (usados[n.toLowerCase()]) n = n.slice(0, 28) + ' ' + k++;
+      usados[n.toLowerCase()] = 1;
+      return Object.assign({}, h, { nombre: n });
+    });
+    const color = 'FF' + String(colorEncabezado || '#067D3E').replace('#', '').toUpperCase();
+    const ns = 'http://schemas.openxmlformats.org';
+    const archivos = [
+      { nombre: '[Content_Types].xml', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        `<Types xmlns="${ns}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>` +
+        '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+        '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
+        hojas.map((h, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + '</Types>' },
+      { nombre: '_rels/.rels', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        `<Relationships xmlns="${ns}/package/2006/relationships"><Relationship Id="rId1" Type="${ns}/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
+      { nombre: 'xl/workbook.xml', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        `<workbook xmlns="${ns}/spreadsheetml/2006/main" xmlns:r="${ns}/officeDocument/2006/relationships"><sheets>` +
+        hojas.map((h, i) => `<sheet name="${xml(h.nombre)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') + '</sheets>' +
+        (() => {
+          const dn = hojas.map((h, i) => h.filas.length > 1
+            ? `<definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${xml(h.nombre.replace(/'/g, "''"))}'!$A$1:$${col(Math.max(1, ...h.filas.map((f) => f.length)) - 1)}$${h.filas.length}</definedName>` : '').join('');
+          return dn ? `<definedNames>${dn}</definedNames>` : '';
+        })() + '</workbook>' },
+      { nombre: 'xl/_rels/workbook.xml.rels', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        `<Relationships xmlns="${ns}/package/2006/relationships">` +
+        hojas.map((h, i) => `<Relationship Id="rId${i + 1}" Type="${ns}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') +
+        `<Relationship Id="rId${hojas.length + 1}" Type="${ns}/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+      { nombre: 'xl/styles.xml', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        `<styleSheet xmlns="${ns}/spreadsheetml/2006/main">` +
+        '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts>' +
+        `<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="${color}"/><bgColor indexed="64"/></patternFill></fill></fills>` +
+        '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+        '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+        '<cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs>' +
+        '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>' }
+    ].concat(hojas.map((h, i) => ({ nombre: `xl/worksheets/sheet${i + 1}.xml`, texto: hojaXml(h.filas, h.anchos) })));
+    return zip(archivos);
+  }
+
+  /** Lee la primera hoja de un .xlsx → arreglo de filas (texto). */
+  async function leer(buf) {
+    const u8 = new Uint8Array(buf), dv = new DataView(buf), dec = new TextDecoder();
+    let e = u8.length - 22;
+    while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+    if (e < 0) throw new Error('El archivo no es un Excel (.xlsx) válido.');
+    const total = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true); const dir = {};
+    for (let i = 0; i < total; i++) {
+      const metodo = dv.getUint16(p + 10, true), tam = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true),
+        xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), off = dv.getUint32(p + 42, true);
+      dir[dec.decode(u8.subarray(p + 46, p + 46 + nl))] = { metodo, tam, off };
+      p += 46 + nl + xl + cl;
+    }
+    const sacar = async (nombre) => {
+      const f = dir[nombre]; if (!f) return null;
+      const ini = f.off + 30 + dv.getUint16(f.off + 26, true) + dv.getUint16(f.off + 28, true);
+      const datos = u8.subarray(ini, ini + f.tam);
+      if (f.metodo === 0) return dec.decode(datos);
+      if (typeof DecompressionStream === 'undefined') throw new Error('Tu navegador no puede abrir Excel. Copia y pega las columnas.');
+      return new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+    };
+    const parse = (t) => new DOMParser().parseFromString(t, 'application/xml');
+    const porNombre = (doc, tag) => Array.from(doc.getElementsByTagNameNS('*', tag));
+    const compartidos = [];
+    const sst = await sacar('xl/sharedStrings.xml');
+    if (sst) porNombre(parse(sst), 'si').forEach((si) => compartidos.push(porNombre(si, 't').map((t) => t.textContent).join('')));
+    let ruta = 'xl/worksheets/sheet1.xml';
+    const wb = await sacar('xl/workbook.xml'), rels = await sacar('xl/_rels/workbook.xml.rels');
+    if (wb && rels) {
+      const hoja = porNombre(parse(wb), 'sheet')[0];
+      const rid = hoja && (hoja.getAttribute('r:id') || hoja.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id'));
+      const rel = porNombre(parse(rels), 'Relationship').find((r) => r.getAttribute('Id') === rid);
+      if (rel) { const t = rel.getAttribute('Target'); ruta = t.startsWith('/') ? t.slice(1) : 'xl/' + t.replace(/^\.\//, ''); }
+    }
+    const hx = await sacar(ruta);
+    if (!hx) throw new Error('No encontré la primera hoja del Excel.');
+    const filas = [];
+    porNombre(parse(hx), 'row').forEach((row) => {
+      const fila = [];
+      porNombre(row, 'c').forEach((c, k) => {
+        const r = c.getAttribute('r'); let j = k;
+        if (r) { j = 0; for (const ch of r.replace(/\d+/g, '')) j = j * 26 + (ch.charCodeAt(0) - 64); j--; }
+        const tipo = c.getAttribute('t'), v = porNombre(c, 'v')[0];
+        let val = tipo === 'inlineStr' ? porNombre(c, 't').map((t) => t.textContent).join('') : v ? v.textContent : '';
+        if (tipo === 's') val = compartidos[Number(val)] || '';
+        fila[j] = val;
+      });
+      if (fila.some((x) => String(x || '').trim())) filas.push(Array.from(fila, (x) => (x == null ? '' : String(x))));
+    });
+    return filas;
+  }
+
+  return { crear, leer };
+})();
+/* XLSX-FIN */
 
 /* ---------- Utilidades ---------- */
 function normRut(r) {
@@ -469,12 +634,8 @@ function imprimir(html) {
   setTimeout(() => { try { window.print(); } catch (e) { toast('Tu navegador no permitió imprimir.', 'err'); } setTimeout(limpiar, 1500); }, 60);
 }
 
-function descargarCSV(nombre, filas) {
-  const csv = '﻿' + filas.map((f) => f.map((v) => {
-    const s = String(v == null ? '' : v);
-    return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-  }).join(';')).join('\r\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+function descargarExcel(nombre, hojas) {
+  const blob = XLSX.crear(hojas, getComputedStyle(document.documentElement).getPropertyValue('--pri').trim() || '#067D3E');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = nombre;
   document.body.appendChild(a); a.click(); a.remove();
@@ -710,14 +871,14 @@ function tabResumen() {
       <div class="bar" style="--c:${c}"><i style="width:${pct}%"></i></div>
       <p class="el">${f.electivos.map(esc).join(' · ')}</p>
       <div class="acts"><button class="btn btn-sm" data-act="verFam" data-id="${esc(f.id)}">Ver lista</button>
-        <button class="btn btn-sm" data-act="csvFam" data-id="${esc(f.id)}">Descargar CSV</button></div></div>`;
+        <button class="btn btn-sm" data-act="excelFam" data-id="${esc(f.id)}">Descargar Excel</button></div></div>`;
   }).join('')}</div>
   <div class="card pad"><h3 style="font-weight:800;margin-bottom:6px">Exportar</h3>
-    <p class="muted" style="margin-bottom:14px">Todas las familias en un solo archivo, ordenado por familia, curso y nombre.</p>
+    <p class="muted" style="margin-bottom:14px">Un archivo Excel con un resumen, la lista completa y una hoja por familia, ordenado por curso y nombre.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-pri" data-act="csvFam" data-id="">Descargar todo (CSV)</button>
-      <button class="btn" data-act="exportarHoja" data-id="">Abrir en planilla de Google</button>
-      <button class="btn" data-act="csvFam" data-id="SIN">Sin inscribir (CSV)</button></div></div>`;
+      <button class="btn btn-pri" data-act="excelFam" data-id="">Descargar Excel (todas las familias)</button>
+      <button class="btn" data-act="excelFam" data-id="SIN">Sin inscribir (Excel)</button>
+      <button class="btn" data-act="exportarHoja" data-id="">Abrir en planilla de Google</button></div></div>`;
 }
 
 /* ---------- Estudiantes ---------- */
@@ -738,7 +899,7 @@ function tabEstudiantes() {
   </div>
   <div class="toolbar">
     <button class="btn btn-sm" data-act="fichas">Imprimir fichas de acceso</button>
-    <button class="btn btn-sm" data-act="csvLista">Descargar esta lista (CSV)</button>
+    <button class="btn btn-sm" data-act="excelLista">Descargar esta lista (Excel)</button>
   </div>
   <div class="card"><div class="tbl-wrap" id="tabla"></div></div>`;
 }
@@ -761,20 +922,39 @@ function renderTabla() {
     el.innerHTML = `<div class="vacio">Todavía no hay estudiantes cargados.<br><br><button class="btn btn-pri" data-act="tab" data-tab="cargar">Cargar lista</button></div>`;
     return;
   }
-  const filas = lista.slice(0, 500).map((e) => `<tr>
+  const existe = new Set(P.estudiantes.map((e) => e.rut));
+  S.sel.forEach((r) => { if (!existe.has(r)) S.sel.delete(r); });
+  const visibles = lista.slice(0, 500);
+  const nSelVis = visibles.filter((e) => S.sel.has(e.rut)).length;
+  const filas = visibles.map((e) => `<tr data-rut="${esc(e.rut)}" class="${S.sel.has(e.rut) ? 'sel' : ''}">
+    <td class="ck"><input type="checkbox" data-sel="${esc(e.rut)}" ${S.sel.has(e.rut) ? 'checked' : ''} aria-label="Seleccionar ${esc(e.nombre)}"></td>
     <td class="mono" style="white-space:nowrap">${esc(fmtRut(e.rut))}</td>
     <td><b>${esc(e.nombre)}</b></td><td>${esc(e.curso)}</td>
     <td>${e.familia ? `<span class="chip" style="--c:${colorDe(e.familia, fams)}">${esc(nom[e.familia] || e.familia)}</span>` : '<span class="chip none">Sin inscribir</span>'}</td>
     <td>${e.claveInicial ? `<code title="Últimos 4 dígitos del RUT">${esc(e.claveInicial)}</code>` : '<span class="muted" title="El estudiante creó su propia clave">Personal</span>'}</td>
     <td class="acc">
       <button class="btn btn-sm" data-act="asignar" data-rut="${esc(e.rut)}">Familia</button>
-      <button class="btn btn-sm btn-ghost" data-act="resetClave" data-rut="${esc(e.rut)}" ${e.claveInicial ? 'disabled title="Ya usa los 4 dígitos de su RUT"' : ''}>Restablecer clave</button>
+      ${e.claveInicial ? '' : `<button class="btn btn-sm btn-ghost" data-act="resetClave" data-rut="${esc(e.rut)}" title="Volver a los 4 dígitos del RUT">Restablecer clave</button>`}
       <button class="btn btn-sm btn-ghost btn-danger" data-act="eliminarEst" data-rut="${esc(e.rut)}" title="Eliminar estudiante">Eliminar</button>
     </td></tr>`).join('');
-  el.innerHTML = lista.length ? `<table class="tbl"><thead><tr><th>RUT</th><th>Nombre</th><th>Curso</th><th>Familia</th><th>Clave</th><th></th></tr></thead>
+  const n = S.sel.size;
+  const barra = n ? `<div class="selbar"><b>${n} seleccionado${n === 1 ? '' : 's'}</b>
+      ${lista.some((e) => !S.sel.has(e.rut)) ? `<button class="link" data-act="selTodos">Seleccionar los ${lista.length} de la lista</button>` : ''}
+      <select class="inp" id="selFam"><option value="">Asignar a familia…</option>${fams.map((f) => `<option value="${esc(f.id)}">${esc(f.nombre)} (${f.libres} libres)</option>`).join('')}</select>
+      <button class="btn btn-sm" data-act="selMasivo" data-accion="quitar">Quitar inscripción</button>
+      <button class="btn btn-sm" data-act="selMasivo" data-accion="restablecer">Restablecer clave</button>
+      <button class="btn btn-sm" data-act="selFichas">Imprimir fichas</button>
+      <button class="btn btn-sm" data-act="selExcel">Excel</button>
+      <button class="btn btn-sm btn-danger" data-act="selMasivo" data-accion="eliminar">Eliminar</button>
+      <button class="btn btn-sm btn-ghost" data-act="selLimpiar">Quitar selección</button></div>`
+    : '<div class="selhint">Marca las casillas (o haz clic en una fila) para actuar sobre varios estudiantes a la vez. La casilla del encabezado marca toda la lista.</div>';
+  el.innerHTML = lista.length ? `${barra}<table class="tbl"><thead><tr>
+    <th class="ck"><input type="checkbox" id="selTodos" ${nSelVis && nSelVis === visibles.length ? 'checked' : ''} aria-label="Seleccionar todos"></th>
+    <th>RUT</th><th>Nombre</th><th>Curso</th><th>Familia</th><th>Clave</th><th></th></tr></thead>
     <tbody>${filas}</tbody></table>
     <div class="contador">Mostrando ${Math.min(lista.length, 500)} de ${lista.length} estudiantes${lista.length > 500 ? ' (usa el buscador para acotar)' : ''}</div>`
-    : '<div class="vacio">Ningún estudiante coincide con el filtro.</div>';
+    : barra + '<div class="vacio">Ningún estudiante coincide con el filtro.</div>';
+  const cab = $('#selTodos'); if (cab) cab.indeterminate = nSelVis > 0 && nSelVis < visibles.length;
 }
 
 /* ---------- Cargar lista ---------- */
@@ -784,13 +964,14 @@ function tabCargar() {
     <p>Cada estudiante entra con su RUT y, como clave, los últimos 4 dígitos de su RUT. Si un RUT ya existe se actualiza su nombre y curso, sin tocar su familia.</p></div></div>
   <div class="grid2">
     <div class="card pad">
-      <label class="f"><span>Pega aquí desde Excel o Google Sheets</span>
+      <label class="f"><span>Sube el Excel o pega aquí las columnas copiadas desde Excel</span>
         <textarea class="inp" id="txtCarga" rows="12" spellcheck="false" placeholder="RUT&#9;Nombre&#9;Curso&#10;12.345.678-5&#9;Pérez Soto, Ana&#9;3°A&#10;20.111.222-3&#9;Rojas Díaz, Benjamín&#9;3°B"></textarea></label>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <label class="btn btn-sm">Subir archivo CSV<input type="file" id="archivoCsv" accept=".csv,.txt,text/csv" hidden></label>
+        <label class="btn btn-sm btn-pri">Subir archivo Excel<input type="file" id="archivoCsv" accept=".xlsx,.csv,.txt" hidden></label>
+        <button class="btn btn-sm" data-act="plantillaExcel">Descargar plantilla Excel</button>
         <button class="btn btn-sm btn-ghost" data-act="limpiarCarga">Limpiar</button>
       </div>
-      <p class="hint" style="margin-top:14px">Columnas en este orden: <b>RUT</b>, <b>Nombre</b>, <b>Curso</b>. Si el nombre viene en varias columnas (apellidos y nombres), se juntan solas. La fila de títulos se ignora.</p>
+      <p class="hint" style="margin-top:14px">Columnas en este orden: <b>RUT</b>, <b>Nombre</b>, <b>Curso</b>. Si el RUT viene separado del dígito verificador (RUN y DV), o el nombre en varias columnas (apellidos y nombres), se juntan solos. La fila de títulos se ignora. Se lee la primera hoja del Excel.</p>
     </div>
     <div class="card pad" id="previa"></div>
   </div>`;
@@ -803,7 +984,8 @@ function parsearCarga(texto) {
     const sep = linea.includes('\t') ? '\t' : linea.includes(';') ? ';' : ',';
     const c = linea.split(sep).map((x) => x.trim().replace(/^"(.*)"$/, '$1').trim());
     while (c.length && c[c.length - 1] === '') c.pop();
-    if (!filas.length && /rut/i.test(c[0] || '') && !normRut(c[0])) return; // títulos
+    if (!filas.length && /ru[tn]/i.test(c[0] || '') && !normRut(c[0])) return; // títulos
+    if (/^[\d.]+$/.test(c[0] || '') && /^[\dkK]$/.test(c[1] || '') && c.length >= 3) c.splice(0, 2, c[0] + '-' + c[1]); // RUN y DV separados
     let rut = c[0] || '', nombre = '', curso = '';
     if (c.length === 2) nombre = c[1];
     else if (c.length >= 3) { nombre = c.slice(1, -1).join(' '); curso = c[c.length - 1]; }
@@ -980,20 +1162,31 @@ function coloresDeImagen(src) {
 function vistaPreviaTema() { aplicarTema(S.ap); }
 
 /* ---------- Exportar e imprimir ---------- */
-function filasCSV(lista) {
-  const fams = S.panel.familias, porId = Object.fromEntries(fams.map((f) => [f.id, f]));
-  const orden = Object.fromEntries(fams.map((f, i) => [f.id, i]));
-  const ord = lista.slice().sort((a, b) => (a.familia ? orden[a.familia] : 999) - (b.familia ? orden[b.familia] : 999)
+function ordenarParaExportar(lista) {
+  const orden = Object.fromEntries(S.panel.familias.map((f, i) => [f.id, i]));
+  return lista.slice().sort((a, b) => (a.familia ? orden[a.familia] : 999) - (b.familia ? orden[b.familia] : 999)
     || a.curso.localeCompare(b.curso, 'es', { numeric: true }) || a.nombre.localeCompare(b.nombre, 'es'));
-  return [['Familia', 'Electivos', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por', 'Clave inicial pendiente']].concat(
-    ord.map((e) => {
-      const f = porId[e.familia];
-      return [f ? f.nombre : 'Sin inscribir', f ? f.electivos.join(' / ') : '', fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por, e.claveInicial];
-    }));
+}
+/** Hoja con todos los datos (incluye familia y electivos). */
+function hojaGeneral(nombre, lista) {
+  const porId = Object.fromEntries(S.panel.familias.map((f) => [f.id, f]));
+  return { nombre, anchos: [14, 60, 14, 36, 16, 20, 18], filas: [['Familia', 'Electivos', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(
+    ordenarParaExportar(lista).map((e) => { const f = porId[e.familia]; return [f ? f.nombre : 'Sin inscribir', f ? f.electivos.join(' / ') : '', fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por]; })) };
+}
+/** Hoja de una familia (sin columnas repetidas). */
+function hojaFamilia(f, lista) {
+  return { nombre: f ? f.nombre : 'Sin inscribir', anchos: [5, 14, 36, 16, 20, 18], filas: [['N°', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(
+    ordenarParaExportar(lista).map((e, i) => [i + 1, fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por])) };
+}
+function hojaResumen() {
+  const P = S.panel;
+  return { nombre: 'Resumen', anchos: [16, 70, 11, 9, 9], filas: [['Familia', 'Electivos', 'Inscritos', 'Cupo', 'Libres']].concat(
+    P.familias.map((f) => [f.nombre, f.electivos.join(' / '), f.inscritos, f.cupo, f.libres]),
+    [['Sin inscribir', '', P.estudiantes.filter((e) => !e.familia).length, '', '']]) };
 }
 function nombreArchivo(base) {
   const d = new Date(), p = (n) => String(n).padStart(2, '0');
-  return `${base}_${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.csv`;
+  return `${base.replace(/\s+/g, '_')}_${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.xlsx`;
 }
 function fichasHTML(lista) {
   const P = S.panel;
@@ -1003,6 +1196,26 @@ function fichasHTML(lista) {
     <dl><dt>RUT</dt><dd>${esc(fmtRut(e.rut))}</dd><dt>Clave</dt><dd class="cl">${esc(e.claveInicial)}</dd></dl>
     <p>${P.enlace ? 'Entra en: <b>' + esc(P.enlace) + '</b><br>' : ''}Elige “Estudiante”, escribe tu RUT y esta clave (los últimos 4 dígitos de tu RUT).</p>
   </div>`).join('')}</div>`;
+}
+
+async function accionMasiva(accion, familia) {
+  const ruts = [...S.sel], n = ruts.length; if (!n) return;
+  const f = familia && S.panel.familias.find((x) => x.id === familia);
+  const txt = {
+    asignar: [`¿Asignar ${n} estudiante${n === 1 ? '' : 's'} a ${f && esc(f.nombre)}?`, `Quedan ${f && f.libres} cupos en esa familia. Si no alcanzan, se asignan en orden y el resto queda como está.`, 'Asignar'],
+    quitar: [`¿Quitar la inscripción a ${n} estudiante${n === 1 ? '' : 's'}?`, 'Se liberan sus cupos y podrán volver a elegir mientras el proceso esté abierto.', 'Quitar inscripción'],
+    restablecer: [`¿Restablecer la clave de ${n} estudiante${n === 1 ? '' : 's'}?`, 'Su clave vuelve a ser los últimos 4 dígitos de su RUT.', 'Restablecer'],
+    eliminar: [`¿Eliminar ${n} estudiante${n === 1 ? '' : 's'}?`, 'Se borran de la lista y se liberan sus cupos. <b>Esto no se puede deshacer.</b>', 'Eliminar']
+  }[accion];
+  if (!(await confirmar(txt[0], txt[1], { ok: txt[2], peligro: accion === 'eliminar' }))) { renderTabla(); return; }
+  try {
+    const r = await call('masivo', { accion, ruts, familia: familia || '' });
+    let m = `${r.hechos} estudiante${r.hechos === 1 ? '' : 's'} listo${r.hechos === 1 ? '' : 's'}.`;
+    if (r.sinCupo) m += ` ${r.sinCupo} no se asignaron: la familia se llenó.`;
+    if (r.omitidos) m += ` ${r.omitidos} ya estaban así.`;
+    toast(m, r.sinCupo ? 'err' : 'ok');
+    S.sel.clear(); await recargarPanel(true);
+  } catch (e) { manejarError(e); }
 }
 
 /* ============================================================
@@ -1049,13 +1262,23 @@ const ACT = {
   },
   async refrescar(b) { ocupado(b, true, 'Actualizando…'); await recargarPanel(); ocupado(b, false); },
   verFam(b) { S.filtro = { q: '', fam: b.dataset.id, curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
-  csvFam(b) {
-    const id = b.dataset.id, P = S.panel;
-    const lista = P.estudiantes.filter((e) => (id === 'SIN' ? !e.familia : id ? e.familia === id : true));
-    const f = P.familias.find((x) => x.id === id);
-    descargarCSV(nombreArchivo(f ? f.nombre.replace(/\s+/g, '_') : id === 'SIN' ? 'Sin_inscribir' : 'Inscripciones'), filasCSV(lista));
+  excelFam(b) {
+    const id = b.dataset.id, P = S.panel, E = P.estudiantes;
+    if (!id) {
+      descargarExcel(nombreArchivo('Inscripciones_electivos'), [hojaResumen(), hojaGeneral('Todas', E)]
+        .concat(P.familias.map((f) => hojaFamilia(f, E.filter((e) => e.familia === f.id))), [hojaFamilia(null, E.filter((e) => !e.familia))]));
+    } else if (id === 'SIN') {
+      descargarExcel(nombreArchivo('Sin_inscribir'), [hojaFamilia(null, E.filter((e) => !e.familia))]);
+    } else {
+      const f = P.familias.find((x) => x.id === id);
+      descargarExcel(nombreArchivo(f.nombre), [hojaFamilia(f, E.filter((e) => e.familia === id))]);
+    }
   },
-  csvLista() { descargarCSV(nombreArchivo('Estudiantes'), filasCSV(estudiantesFiltrados())); },
+  excelLista() { descargarExcel(nombreArchivo('Estudiantes'), [hojaGeneral('Estudiantes', estudiantesFiltrados())]); },
+  plantillaExcel() {
+    descargarExcel('plantilla-estudiantes.xlsx', [{ nombre: 'Estudiantes', anchos: [16, 36, 18],
+      filas: [['RUT', 'Nombre', 'Curso'], ['12.345.678-5', 'Pérez Soto, Ana María', '2° Medio Ayun'], ['11.111.111-1', 'Rojas Díaz, Benjamín', '2° Medio Ayun']] }]);
+  },
   async exportarHoja(b) {
     ocupado(b, true, 'Preparando…');
     try {
@@ -1134,6 +1357,15 @@ const ACT = {
       S.panel.tema = t; aplicarTema(t); toast('Apariencia guardada. Ya la ven todos.', 'ok'); vistaPanel();
     } catch (e) { manejarError(e); ocupado(b, false); }
   },
+  selTodos() { estudiantesFiltrados().forEach((e) => S.sel.add(e.rut)); renderTabla(); },
+  selLimpiar() { S.sel.clear(); renderTabla(); },
+  selExcel() { descargarExcel(nombreArchivo('Seleccionados'), [hojaGeneral('Seleccionados', S.panel.estudiantes.filter((e) => S.sel.has(e.rut)))]); },
+  selFichas() {
+    const lista = ordenarParaExportar(S.panel.estudiantes.filter((e) => S.sel.has(e.rut) && e.claveInicial));
+    if (!lista.length) { toast('Los seleccionados ya crearon una clave personal.'); return; }
+    imprimir(fichasHTML(lista));
+  },
+  async selMasivo(b) { await accionMasiva(b.dataset.accion); },
   irFichas() { cerrarModal(); S.filtro = { q: '', fam: '', curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
   async agregarFam(b) {
     ocupado(b, true, 'Agregando…');
@@ -1216,6 +1448,10 @@ const FORMS = {
  *  EVENTOS
  * ============================================================ */
 document.addEventListener('click', (e) => {
+  const fila = e.target.closest('#tabla tr[data-rut]');
+  if (fila && !e.target.closest('button,input,select,a,label')) {
+    const r = fila.dataset.rut; S.sel.has(r) ? S.sel.delete(r) : S.sel.add(r); renderTabla(); return;
+  }
   const b = e.target.closest('[data-act]');
   if (!b || b.disabled) return;
   const fn = ACT[b.dataset.act];
@@ -1244,6 +1480,9 @@ document.addEventListener('change', (e) => {
   const t = e.target;
   // Solo selects: en el buscador "change" llega al perder el foco y redibujar ahí anularía el clic en la tabla.
   if (t.dataset.filtro && t.tagName === 'SELECT') { S.filtro[t.dataset.filtro] = t.value; renderTabla(); }
+  if (t.dataset.sel) { t.checked ? S.sel.add(t.dataset.sel) : S.sel.delete(t.dataset.sel); renderTabla(); }
+  if (t.id === 'selTodos') { estudiantesFiltrados().slice(0, 500).forEach((e) => (t.checked ? S.sel.add(e.rut) : S.sel.delete(e.rut))); renderTabla(); }
+  if (t.id === 'selFam' && t.value) accionMasiva('asignar', t.value);
   if (t.dataset.logo && t.files[0]) {
     const i = t.dataset.logo;
     procesarLogo(t.files[0]).then(async (d) => {
@@ -1257,11 +1496,14 @@ document.addEventListener('change', (e) => {
   }
   if (t.id === 'archivoCsv' && t.files[0]) {
     const archivo = t.files[0];
-    const leer = (enc) => new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsText(archivo, enc); });
-    leer('utf-8').then((txt) => (txt.includes('�') ? leer('windows-1252') : txt)).then((txt) => {
-      S.carga.texto = txt.replace(/^﻿/, ''); $('#txtCarga').value = S.carga.texto;
-      S.carga.filas = parsearCarga(S.carga.texto); renderPrevia(); t.value = '';
-    });
+    const cargar = (txt) => { S.carga.texto = txt.replace(/^\ufeff/, ''); $('#txtCarga').value = S.carga.texto; S.carga.filas = parsearCarga(S.carga.texto); renderPrevia(); t.value = ''; };
+    if (/\.xlsx$/i.test(archivo.name)) {
+      archivo.arrayBuffer().then(XLSX.leer).then((filas) => cargar(filas.map((f) => f.map((v) => String(v).replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n')))
+        .catch((e) => toast(e.message || 'No se pudo leer el Excel.', 'err'));
+    } else {
+      const leer = (enc) => new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsText(archivo, enc); });
+      leer('utf-8').then((txt) => (txt.includes('\uFFFD') ? leer('windows-1252') : txt)).then(cargar);
+    }
   }
 });
 document.addEventListener('focusout', (e) => {

@@ -140,6 +140,26 @@ ok(r.ok && r.data.clave === ctx.claveRut_(rut(20000000)), 'restablece a los 4 d�
 r = api('login', { rol: 'estudiante', usuario: rut(20000000), clave: r.data.clave });
 ok(r.ok && !r.data.debeCambiar && api('miEstado', {}, r.data.token).ok, 'entra con clave restablecida');
 
+seccion('Acciones masivas');
+r = api('panel', {}, tUtp).data;
+const libresF3 = r.familias.find((f) => f.id === 'F3').libres;
+const sinFam = r.estudiantes.filter((e) => !e.familia).map((e) => e.rut);
+r = api('masivo', { accion: 'asignar', familia: 'F3', ruts: sinFam }, tUtp);
+ok(r.ok && r.data.hechos === Math.min(libresF3, sinFam.length) && r.data.sinCupo === Math.max(0, sinFam.length - libresF3), 'asigna hasta llenar el cupo: ' + JSON.stringify(r.data));
+ok(api('panel', {}, tUtp).data.familias.find((f) => f.id === 'F3').inscritos <= 25, 'F3 no supera 25');
+const algunos = sinFam.slice(0, 3);
+r = api('masivo', { accion: 'quitar', ruts: algunos }, tUtp);
+ok(r.ok && r.data.hechos === 3, 'quita inscripción a varios');
+r = api('masivo', { accion: 'restablecer', ruts: [rut(20000000), rut(20000137)] }, tUtp);
+ok(r.ok, 'restablece claves en lote');
+const total = api('panel', {}, tUtp).data.estudiantes.length;
+r = api('masivo', { accion: 'eliminar', ruts: algunos }, tUtp);
+const despues = api('panel', {}, tUtp).data;
+ok(r.ok && r.data.hechos === 3 && despues.estudiantes.length === total - 3 && !despues.estudiantes.some((e) => algunos.includes(e.rut)), 'elimina varios');
+ok(despues.estudiantes.every((e) => e.rut && e.nombre), 'sin filas vacías tras eliminar');
+ok(api('masivo', { accion: 'eliminar', ruts: [] }, tUtp).ok === false, 'sin selección rechazado');
+ok(api('masivo', { accion: 'asignar', familia: 'F1', ruts: [rut(20000000)] }, t25).code === 'SESION', 'estudiante no usa acciones masivas');
+
 seccion('Apariencia');
 r = api('publico', {}).data;
 ok(r.tema.logos.length === 1 && r.tema.logos[0].startsWith('data:image/webp;base64,'), 'logo del liceo por defecto');
@@ -154,7 +174,8 @@ ok(r.ok && r.data.primario === '#8A1C2B' && r.data.logos.length === 1, 'guarda a
 ok(api('publico', {}).data.tema.secundario === '#F2B705', 'apariencia pública');
 ok(api('guardarApariencia', { primario: '#067D3E', secundario: '#EAEA17', logo1: '', logo2: '' }, tUtp).ok && api('publico', {}).data.tema.logos.length === 0, 'quitar logo queda sin logo');
 r = api('exportarHoja', { familia: '' }, tUtp);
-ok(r.ok && r.data.filas === 91 && mock.hojas['Exportación'].getLastRow() === 92, 'exporta a planilla');
+const nEst = api('panel', {}, tUtp).data.estudiantes.length;
+ok(r.ok && r.data.filas === nEst && mock.hojas['Exportación'].getLastRow() === nEst + 1, 'exporta a planilla');
 ok(mock.hojas['Exportación'].data[1][0] === 'Familia 1', 'exportación ordenada por familia');
 const antes = mock.hojas.Estudiantes.getLastRow();
 ok(api('eliminarEstudiante', { rut: rut(20000000 + 89 * 137) }, tUtp).ok && mock.hojas.Estudiantes.getLastRow() === antes - 1, 'elimina estudiante');

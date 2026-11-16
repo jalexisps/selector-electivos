@@ -146,6 +146,7 @@ var ACCIONES = {
   agregarFamilia: accAgregarFamilia_,
   eliminarFamilia: accEliminarFamilia_,
   exportarHoja: accExportarHoja_,
+  masivo: accMasivo_,
   guardarApariencia: accGuardarApariencia_
 };
 
@@ -409,6 +410,59 @@ function accAsignar_(d, token) {
     registrar_(actor_(s), destino ? 'Asignar familia' : 'Quitar inscripción',
       normRut_(u.RUT) + ': ' + (antes || '—') + ' → ' + (destino || '—'));
     return true;
+  });
+}
+
+/** Acciones sobre varios estudiantes a la vez: asignar, quitar, restablecer o eliminar. */
+function accMasivo_(d, token) {
+  var s = sesion_(token, 'utp');
+  var ruts = (Array.isArray(d.ruts) ? d.ruts : []).map(normRut_).filter(String);
+  if (!ruts.length) throw falla_('No hay estudiantes seleccionados.');
+  if (ruts.length > 3000) throw falla_('Son demasiados estudiantes de una vez.');
+  var accion = String(d.accion || '');
+  return conLock_(function () {
+    var t = leer_('Estudiantes');
+    var marcados = {};
+    ruts.forEach(function (r) { marcados[r] = true; });
+    var objetivo = t.filas.filter(function (f) { return marcados[normRut_(f.RUT)]; });
+    var res = { hechos: 0, omitidos: 0, sinCupo: 0 };
+    if (accion === 'asignar') {
+      var f = familiasConConteo_(t).filter(function (x) { return x.id === String(d.familia); })[0];
+      if (!f) throw falla_('Esa familia no existe.');
+      var libres = f.cupo - f.inscritos;
+      objetivo.forEach(function (u) {
+        if (String(u.Familia) === f.id) { res.omitidos++; return; }
+        if (libres <= 0) { res.sinCupo++; return; }
+        u.Familia = f.id; u.FechaInscripcion = ahora_(); u.InscritoPor = 'UTP (' + s.id + ')';
+        libres--; res.hechos++;
+      });
+      if (res.hechos) escribirTodo_(t);
+    } else if (accion === 'quitar') {
+      objetivo.forEach(function (u) {
+        if (!u.Familia) { res.omitidos++; return; }
+        u.Familia = ''; u.FechaInscripcion = ''; u.InscritoPor = ''; res.hechos++;
+      });
+      if (res.hechos) escribirTodo_(t);
+    } else if (accion === 'restablecer') {
+      objetivo.forEach(function (u) {
+        if (!u.ClaveHash) { res.omitidos++; return; }
+        u.ClaveHash = ''; u.Sal = ''; u.ClaveInicial = claveRut_(u.RUT); res.hechos++;
+      });
+      if (res.hechos) escribirTodo_(t);
+    } else if (accion === 'eliminar') {
+      var quedan = t.filas.filter(function (f) { return !marcados[normRut_(f.RUT)]; });
+      var borrar = t.filas.length - quedan.length;
+      if (borrar) {
+        if (quedan.length) t.sh.getRange(2, 1, quedan.length, t.enc.length).setValues(quedan.map(function (o) { return filaComoArreglo_(t, o); }));
+        t.sh.getRange(2 + quedan.length, 1, borrar, t.enc.length).clearContent();
+      }
+      res.hechos = borrar;
+    } else {
+      throw falla_('Acción desconocida.');
+    }
+    registrar_(actor_(s), 'Acción masiva: ' + accion, res.hechos + ' estudiantes' + (d.familia ? ' → ' + d.familia : '') +
+      (res.sinCupo ? ', ' + res.sinCupo + ' sin cupo' : ''));
+    return res;
   });
 }
 

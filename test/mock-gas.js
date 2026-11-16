@@ -48,6 +48,10 @@
       }
       return this;
     };
+    Rango.prototype.clearContent = function () {
+      for (var i = 0; i < this.nr; i++) { var f = this.h.data[this.r - 1 + i]; if (f) for (var j = 0; j < this.nc; j++) f[this.c - 1 + j] = ''; }
+      return this;
+    };
     Rango.prototype.setNumberFormat = function () { return this; };
     Rango.prototype.setFontWeight = function () { return this; };
 
