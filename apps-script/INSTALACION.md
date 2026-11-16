@@ -1,4 +1,4 @@
-# Selector de Electivos · v1.2 — Instalación
+# Selector de Electivos · v1.3 — Instalación
 
 Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el programa). La página para los estudiantes se publica en GitHub Pages. No necesita servidor ni pagar nada.
 
@@ -34,9 +34,10 @@ Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el 
 
 1. Entra en el enlace → pestaña **UTP** → usuario `utp` y la clave inicial → crea tu clave personal.
 2. **Proceso**: escribe el nombre del colegio y el enlace de GitHub Pages (se imprime en las fichas).
-3. **Cargar lista**: sube el Excel (.xlsx) con las columnas **RUT, Nombre, Curso** (hay una plantilla en el mismo panel) o pega las columnas → revisa la vista previa → Guardar. Si el RUT viene en dos columnas (RUN y DV) se junta solo.
-4. Opcional: **Estudiantes → Imprimir fichas de acceso** (RUT y clave de cada estudiante, para recortar). Se puede filtrar por curso.
-5. **Proceso**: activa **Inscripción habilitada**. Opcional: programa fecha y hora de apertura y cierre.
+3. **Familias**: revisa que cada familia tenga su **nivel** (2° Medio o 3° Medio).
+4. **Registrar alumnos**: escribe una fila por alumno en las casillas (RUT, Nombre, Curso, Nivel), pega las columnas copiadas desde Excel en la grilla o sube el Excel (.xlsx; hay una plantilla en el mismo panel) → revisa el estado de cada fila → **Registrar N alumnos**. El nivel se completa solo si el curso empieza con él (ej. «2° Medio Ayun»); si no, elígelo en la fila o con «Nivel para todas las filas». Si el RUT viene en dos columnas (RUN y DV) se junta solo.
+5. Opcional: **Estudiantes → Imprimir fichas de acceso** (RUT y clave de cada estudiante, para recortar). Se puede filtrar por curso.
+6. **Proceso**: activa **Inscripción habilitada**. Opcional: programa fecha y hora de apertura y cierre.
 
 ## Cómo funciona
 
@@ -49,7 +50,9 @@ Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el 
 - **Claves olvidadas.** En **Estudiantes → Restablecer clave** vuelve a ser los 4 dígitos del RUT.
 - **Exportar a Excel.** En **Resumen**: un Excel con hoja Resumen, Todas y una hoja por familia (más «Sin inscribir»); también por familia o solo los sin inscribir. En **Estudiantes** se exporta la lista filtrada o los seleccionados. Sigue disponible «Abrir en planilla de Google».
 - **Selección múltiple.** En **Estudiantes**, marca casillas (o haz clic en las filas; la casilla del encabezado marca toda la lista) y aplica a todos: asignar familia (respeta el cupo), quitar inscripción, restablecer clave, imprimir fichas, Excel o eliminar.
+- **Niveles.** Cada familia tiene un nivel (2° Medio o 3° Medio) y cada estudiante solo ve y elige las de su nivel; la UTP tampoco puede asignarlo a una familia de otro nivel. Una familia «sin nivel» la ven todos (el panel avisa cuando hay alguna). Los niveles disponibles están en `NIVELES`, al inicio de `Codigo.gs`.
 - **Historial.** La hoja *Registro* guarda quién hizo qué y cuándo.
+- **Administración.** Descarga un respaldo en Excel (estudiantes, familias e historial) y limpia registros: quitar inscripciones, restablecer claves o eliminar estudiantes (de un nivel o de todos), limpiar el historial, o reiniciar el sistema para un año nuevo (borra estudiantes e historial y cierra la inscripción; mantiene familias, usuarios UTP y apariencia). Lo que borra pide escribir **BORRAR** para confirmar.
 
 ## Otra persona de la UTP
 
@@ -64,9 +67,9 @@ Pega el código nuevo en Apps Script y luego: **Implementar → Administrar impl
 | Hoja | Contenido |
 |---|---|
 | Config | Estado del proceso, fechas, nombre del colegio y enlace |
-| Familias | ID, nombre, electivos (separados por `;`) y cupo |
-| Estudiantes | RUT, nombre, curso, clave inicial pendiente, clave cifrada, familia y fecha |
+| Familias | ID, nombre, electivos (separados por `;`), cupo y nivel |
+| Estudiantes | RUT, nombre, curso, clave inicial pendiente, clave cifrada, familia, fecha y nivel |
 | UTP | Usuarios de la UTP |
 | Registro | Historial de actividad |
 
-No cambies los nombres de las hojas ni de las columnas. Las claves personales se guardan cifradas: nadie puede leerlas, ni siquiera desde la planilla.
+No cambies los nombres de las hojas ni de las columnas. Si la planilla viene de una versión anterior, la columna **Nivel** se agrega sola. Las claves personales se guardan cifradas: nadie puede leerlas, ni siquiera desde la planilla.

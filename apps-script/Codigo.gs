@@ -27,8 +27,8 @@ var APP = {
 
 var HOJAS = {
   Config: ['Clave', 'Valor'],
-  Familias: ['ID', 'Nombre', 'Electivos', 'Cupo'],
-  Estudiantes: ['RUT', 'Nombre', 'Curso', 'ClaveInicial', 'ClaveHash', 'Sal', 'Familia', 'FechaInscripcion', 'InscritoPor'],
+  Familias: ['ID', 'Nombre', 'Electivos', 'Cupo', 'Nivel'],
+  Estudiantes: ['RUT', 'Nombre', 'Curso', 'ClaveInicial', 'ClaveHash', 'Sal', 'Familia', 'FechaInscripcion', 'InscritoPor', 'Nivel'],
   UTP: ['Usuario', 'Nombre', 'ClaveInicial', 'ClaveHash', 'Sal'],
   Registro: ['Fecha', 'Usuario', 'Accion', 'Detalle']
 };
@@ -47,6 +47,10 @@ var LICEO = {
   primario: '#067D3E',   // verde
   secundario: '#EAEA17'  // amarillo
 };
+
+// Niveles que participan del proceso. Cada familia pertenece a un nivel y cada estudiante
+// solo ve (y solo puede inscribirse en) las familias de su nivel.
+var NIVELES = ['2° Medio', '3° Medio'];
 
 var FAMILIAS_INICIALES = [
   ['F1', 'Familia 1', 'Ciencias de la salud; Creación y composición musical; Comprensión histórica del presente', '25'],
@@ -147,7 +151,11 @@ var ACCIONES = {
   eliminarFamilia: accEliminarFamilia_,
   exportarHoja: accExportarHoja_,
   masivo: accMasivo_,
-  guardarApariencia: accGuardarApariencia_
+  guardarApariencia: accGuardarApariencia_,
+  // Administración
+  admin: accAdmin_,
+  historial: accHistorial_,
+  limpiar: accLimpiar_
 };
 
 function api(req) {
@@ -276,6 +284,7 @@ function accInscribir_(d, token) {
     if (u.Familia) throw falla_('Ya estás inscrito. Si necesitas un cambio, conversa con la UTP.', 'YA');
     var f = familiasConConteo_(t).filter(function (x) { return x.id === String(d.familia); })[0];
     if (!f) throw falla_('Esa familia no existe.');
+    if (!familiaParaNivel_(f, nivelEstudiante_(u))) throw falla_('Esa familia no corresponde a tu nivel.');
     if (f.inscritos >= f.cupo) {
       throw falla_('La ' + f.nombre + ' acaba de completar sus ' + f.cupo + ' cupos. Elige otra familia.', 'LLENO');
     }
@@ -293,12 +302,14 @@ function estadoEstudiante_(s, t) {
   var u = buscarUsuario_(t, s);
   if (!u) throw falla_('Tu RUT ya no está en la lista. Consulta con la UTP.', 'SESION');
   var cfg = config_();
+  var nivel = nivelEstudiante_(u), propia = String(u.Familia || '');
   return {
     estudiante: {
-      rut: normRut_(u.RUT), nombre: String(u.Nombre), curso: String(u.Curso || ''),
-      familia: String(u.Familia || ''), fecha: String(u.FechaInscripcion || '')
+      rut: normRut_(u.RUT), nombre: String(u.Nombre), curso: String(u.Curso || ''), nivel: nivel,
+      familia: propia, fecha: String(u.FechaInscripcion || '')
     },
-    familias: familiasConConteo_(t),
+    // Solo las familias de su nivel (y la suya, si la UTP lo dejó en otra)
+    familias: familiasConConteo_(t).filter(function (f) { return familiaParaNivel_(f, nivel) || f.id === propia; }),
     proceso: proceso_(cfg),
     colegio: cfg.colegio || LICEO.nombre
   };
@@ -316,11 +327,13 @@ function accPanel_(d, token) {
     colegio: cfg.colegio || LICEO.nombre,
     enlace: cfg.enlace || '',
     tema: tema_(cfg),
+    niveles: NIVELES.slice(),
     estudiantes: t.filas.filter(function (f) { return String(f.RUT).trim(); }).map(function (f) {
       return {
         rut: normRut_(f.RUT) || String(f.RUT),
         nombre: String(f.Nombre || ''),
         curso: String(f.Curso || ''),
+        nivel: nivelEstudiante_(f),
         familia: String(f.Familia || ''),
         fecha: String(f.FechaInscripcion || ''),
         por: String(f.InscritoPor || ''),
@@ -367,22 +380,28 @@ function accImportar_(d, token) {
       var rut = normRut_(f.rut);
       var nombre = limpiar_(f.nombre, 120);
       var curso = limpiar_(f.curso, 40);
-      var err = !rut || !rutValido_(rut) ? 'RUT inválido' : !nombre ? 'Falta el nombre' : vistos[rut] ? 'RUT repetido en la lista' : '';
+      var nivel = normNivel_(f.nivel) || nivelDeCurso_(curso);
+      var err = !rut || !rutValido_(rut) ? 'RUT inválido' : !nombre ? 'Falta el nombre'
+        : !nivel ? 'Falta el nivel (' + NIVELES.join(' o ') + ')' : vistos[rut] ? 'RUT repetido en la lista' : '';
       if (err) { errores.push({ linea: i + 1, rut: String(f.rut || ''), motivo: err }); return; }
       vistos[rut] = true;
       var ex = indice[rut];
       if (ex) {
-        if (String(ex.Nombre) !== nombre || String(ex.Curso) !== curso || String(ex.RUT) !== rut) {
-          ex.RUT = rut; ex.Nombre = nombre; ex.Curso = curso; ex._cambio = true;
+        if (String(ex.Nombre) !== nombre || String(ex.Curso) !== curso || String(ex.RUT) !== rut || String(ex.Nivel || '') !== nivel) {
+          if (ex.Familia && nivelEstudiante_(ex) !== nivel) {
+            errores.push({ linea: i + 1, rut: rut, motivo: 'Ya está inscrito en una familia de ' + nivelEstudiante_(ex) + '; quítale la inscripción antes de cambiarle el nivel' });
+            return;
+          }
+          ex.RUT = rut; ex.Nombre = nombre; ex.Curso = curso; ex.Nivel = nivel;
           actualizados++;
         } else sinCambios++;
       } else {
-        nuevos.push({ RUT: rut, Nombre: nombre, Curso: curso, ClaveInicial: claveRut_(rut) });
+        nuevos.push({ RUT: rut, Nombre: nombre, Curso: curso, Nivel: nivel, ClaveInicial: claveRut_(rut) });
       }
     });
     if (actualizados) escribirTodo_(t);
     agregarFilas_(t, nuevos);
-    registrar_(actor_(s), 'Cargar estudiantes', nuevos.length + ' nuevos, ' + actualizados + ' actualizados, ' + errores.length + ' con error');
+    registrar_(actor_(s), 'Registrar estudiantes', nuevos.length + ' nuevos, ' + actualizados + ' actualizados, ' + errores.length + ' con error');
     return { nuevos: nuevos.length, actualizados: actualizados, sinCambios: sinCambios, errores: errores };
   });
 }
@@ -399,6 +418,9 @@ function accAsignar_(d, token) {
     if (destino) {
       var f = familiasConConteo_(t).filter(function (x) { return x.id === destino; })[0];
       if (!f) throw falla_('Esa familia no existe.');
+      if (!familiaParaNivel_(f, nivelEstudiante_(u))) {
+        throw falla_('La ' + f.nombre + ' es de ' + f.nivel + ' y este estudiante es de ' + (nivelEstudiante_(u) || 'un nivel sin definir') + '.', 'NIVEL');
+      }
       if (f.inscritos >= f.cupo) throw falla_('La ' + f.nombre + ' no tiene cupos disponibles.', 'LLENO');
       u.Familia = destino;
       u.FechaInscripcion = ahora_();
@@ -425,13 +447,14 @@ function accMasivo_(d, token) {
     var marcados = {};
     ruts.forEach(function (r) { marcados[r] = true; });
     var objetivo = t.filas.filter(function (f) { return marcados[normRut_(f.RUT)]; });
-    var res = { hechos: 0, omitidos: 0, sinCupo: 0 };
+    var res = { hechos: 0, omitidos: 0, sinCupo: 0, otroNivel: 0 };
     if (accion === 'asignar') {
       var f = familiasConConteo_(t).filter(function (x) { return x.id === String(d.familia); })[0];
       if (!f) throw falla_('Esa familia no existe.');
       var libres = f.cupo - f.inscritos;
       objetivo.forEach(function (u) {
         if (String(u.Familia) === f.id) { res.omitidos++; return; }
+        if (!familiaParaNivel_(f, nivelEstudiante_(u))) { res.otroNivel++; return; }
         if (libres <= 0) { res.sinCupo++; return; }
         u.Familia = f.id; u.FechaInscripcion = ahora_(); u.InscritoPor = 'UTP (' + s.id + ')';
         libres--; res.hechos++;
@@ -461,7 +484,7 @@ function accMasivo_(d, token) {
       throw falla_('Acción desconocida.');
     }
     registrar_(actor_(s), 'Acción masiva: ' + accion, res.hechos + ' estudiantes' + (d.familia ? ' → ' + d.familia : '') +
-      (res.sinCupo ? ', ' + res.sinCupo + ' sin cupo' : ''));
+      (res.sinCupo ? ', ' + res.sinCupo + ' sin cupo' : '') + (res.otroNivel ? ', ' + res.otroNivel + ' de otro nivel' : ''));
     return res;
   });
 }
@@ -502,6 +525,8 @@ function accGuardarFamilia_(d, token) {
     var electivos = (Array.isArray(d.electivos) ? d.electivos : String(d.electivos || '').split(/[;\n]/))
       .map(function (e) { return limpiar_(e, 80); }).filter(String);
     var cupo = Math.floor(Number(d.cupo));
+    var nivel = d.nivel === undefined ? String(f.Nivel || '') : normNivel_(d.nivel);
+    if (d.nivel && !nivel) throw falla_('Nivel inválido.');
     if (!nombre) throw falla_('La familia necesita un nombre.');
     if (!electivos.length) throw falla_('Agrega al menos un electivo.');
     if (!(cupo >= 1 && cupo <= APP.cupoMax)) throw falla_('El cupo debe ser un número entre 1 y ' + APP.cupoMax + '.');
@@ -509,9 +534,13 @@ function accGuardarFamilia_(d, token) {
     if (conteo && cupo < conteo.inscritos) {
       throw falla_('Esta familia ya tiene ' + conteo.inscritos + ' inscritos; el cupo no puede ser menor.');
     }
-    f.Nombre = nombre; f.Electivos = electivos.join('; '); f.Cupo = String(cupo);
+    if (nivel && conteo && conteo.inscritos) {
+      var otro = leer_('Estudiantes').filas.filter(function (e) { return String(e.Familia) === f.ID && nivelEstudiante_(e) !== nivel; }).length;
+      if (otro) throw falla_('No se puede dejar en ' + nivel + ': tiene ' + otro + ' inscrito' + (otro === 1 ? '' : 's') + ' de otro nivel.');
+    }
+    f.Nombre = nombre; f.Electivos = electivos.join('; '); f.Cupo = String(cupo); f.Nivel = nivel;
     escribirFila_(tf, f);
-    registrar_(actor_(s), 'Editar familia', f.ID + ' ' + nombre + ' cupo ' + cupo);
+    registrar_(actor_(s), 'Editar familia', f.ID + ' ' + nombre + ' cupo ' + cupo + (nivel ? ' · ' + nivel : ''));
     return true;
   });
 }
@@ -520,11 +549,13 @@ function accAgregarFamilia_(d, token) {
   var s = sesion_(token, 'utp');
   return conLock_(function () {
     var tf = leer_('Familias');
+    var nivel = normNivel_(d.nivel);
     var max = 0;
     tf.filas.forEach(function (f) { var n = Number(String(f.ID).replace(/\D/g, '')); if (n > max) max = n; });
     var id = 'F' + (max + 1);
-    agregarFilas_(tf, [{ ID: id, Nombre: 'Familia ' + (max + 1), Electivos: 'Electivo 1; Electivo 2; Electivo 3', Cupo: '25' }]);
-    registrar_(actor_(s), 'Agregar familia', id);
+    var delNivel = tf.filas.filter(function (f) { return String(f.ID).trim() && String(f.Nivel || '') === nivel; }).length;
+    agregarFilas_(tf, [{ ID: id, Nombre: 'Familia ' + (delNivel + 1), Electivos: 'Electivo 1; Electivo 2; Electivo 3', Cupo: '25', Nivel: nivel }]);
+    registrar_(actor_(s), 'Agregar familia', id + (nivel ? ' · ' + nivel : ''));
     return { id: id };
   });
 }
@@ -559,14 +590,14 @@ function accExportarHoja_(d, token) {
     var oa = a.Familia ? orden[a.Familia] : 999, ob = b.Familia ? orden[b.Familia] : 999;
     return oa - ob || String(a.Curso).localeCompare(String(b.Curso)) || String(a.Nombre).localeCompare(String(b.Nombre));
   }).map(function (f) {
-    return [nombreFam[f.Familia] || (f.Familia ? f.Familia : 'Sin inscribir'), normRut_(f.RUT), f.Nombre, f.Curso, f.FechaInscripcion, f.InscritoPor];
+    return [nombreFam[f.Familia] || (f.Familia ? f.Familia : 'Sin inscribir'), nivelEstudiante_(f), normRut_(f.RUT), f.Nombre, f.Curso, f.FechaInscripcion, f.InscritoPor];
   });
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName('Exportación') || ss.insertSheet('Exportación');
   sh.clear();
-  var datos = [['Familia', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(filas);
-  sh.getRange(1, 1, datos.length, 6).setNumberFormat('@').setValues(datos);
-  sh.getRange(1, 1, 1, 6).setFontWeight('bold');
+  var datos = [['Familia', 'Nivel', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(filas);
+  sh.getRange(1, 1, datos.length, 7).setNumberFormat('@').setValues(datos);
+  sh.getRange(1, 1, 1, 7).setFontWeight('bold');
   sh.setFrozenRows(1);
   registrar_(actor_(s), 'Exportar a planilla', filtro || 'todas');
   return { url: ss.getUrl() + '#gid=' + sh.getSheetId(), filas: filas.length };
@@ -591,6 +622,78 @@ function accGuardarApariencia_(d, token) {
     registrar_(actor_(s), 'Cambiar apariencia', 'colores ' + cambios.colorPrimario + ' ' + cambios.colorSecundario +
       ', logos: ' + [cambios.logo1, cambios.logo2].filter(String).length);
     return tema_(config_());
+  });
+}
+
+/* ---------- Administración ---------- */
+
+/** Resumen para el panel de administración: tamaño del historial y sus últimos movimientos. */
+function accAdmin_(d, token) {
+  sesion_(token, 'utp');
+  var r = leer_('Registro').filas.filter(function (f) { return String(f.Fecha || f.Accion).trim(); });
+  return {
+    historial: r.length,
+    ultimos: r.slice(-40).reverse().map(function (f) {
+      return { fecha: String(f.Fecha), usuario: String(f.Usuario), accion: String(f.Accion), detalle: String(f.Detalle || '') };
+    })
+  };
+}
+
+/** Historial completo (para el respaldo en Excel). */
+function accHistorial_(d, token) {
+  sesion_(token, 'utp');
+  return leer_('Registro').filas.filter(function (f) { return String(f.Fecha || f.Accion).trim(); }).slice(-20000)
+    .map(function (f) { return [String(f.Fecha), String(f.Usuario), String(f.Accion), String(f.Detalle || '')]; });
+}
+
+/**
+ * Limpia registros del sistema.
+ *   historial     → vacía la hoja Registro
+ *   inscripciones → todos quedan sin familia (los estudiantes siguen cargados)
+ *   claves        → todas las claves de estudiantes vuelven a los 4 dígitos del RUT
+ *   estudiantes   → borra a los estudiantes
+ *   todo          → borra estudiantes e historial y cierra el proceso (familias, usuarios y apariencia se mantienen)
+ * "nivel" limita inscripciones, claves y estudiantes a un nivel. Las acciones que borran exigen escribir BORRAR.
+ */
+function accLimpiar_(d, token) {
+  var s = sesion_(token, 'utp');
+  var tipo = String(d.tipo || '');
+  if (['historial', 'inscripciones', 'claves', 'estudiantes', 'todo'].indexOf(tipo) < 0) throw falla_('Acción desconocida.');
+  var nivel = tipo === 'historial' || tipo === 'todo' ? '' : normNivel_(d.nivel);
+  if (d.nivel && !nivel && tipo !== 'historial' && tipo !== 'todo') throw falla_('Nivel inválido.');
+  if (['historial', 'estudiantes', 'todo'].indexOf(tipo) >= 0 && String(d.confirmacion || '').trim().toUpperCase() !== 'BORRAR') {
+    throw falla_('Para confirmar escribe BORRAR.');
+  }
+  return conLock_(function () {
+    var n = 0;
+    if (tipo === 'historial' || tipo === 'todo') {
+      var tr = leer_('Registro');
+      n = tr.filas.length;
+      if (n) tr.sh.getRange(2, 1, n, tr.enc.length).clearContent();
+    }
+    if (tipo !== 'historial') {
+      var t = leer_('Estudiantes');
+      var objetivo = t.filas.filter(function (f) { return String(f.RUT).trim() && (!nivel || nivelEstudiante_(f) === nivel); });
+      if (tipo === 'inscripciones') {
+        objetivo.forEach(function (u) { if (u.Familia) { u.Familia = ''; u.FechaInscripcion = ''; u.InscritoPor = ''; n++; } });
+        if (n) escribirTodo_(t);
+      } else if (tipo === 'claves') {
+        objetivo.forEach(function (u) { if (u.ClaveHash) { u.ClaveHash = ''; u.Sal = ''; u.ClaveInicial = claveRut_(u.RUT); n++; } });
+        if (n) escribirTodo_(t);
+      } else {
+        var borrar = {};
+        objetivo.forEach(function (u) { borrar[u._fila] = true; });
+        var quedan = t.filas.filter(function (f) { return String(f.RUT).trim() && !borrar[f._fila]; });
+        var total = t.filas.length;
+        if (quedan.length) t.sh.getRange(2, 1, quedan.length, t.enc.length).setValues(quedan.map(function (o) { return filaComoArreglo_(t, o); }));
+        if (total > quedan.length) t.sh.getRange(2 + quedan.length, 1, total - quedan.length, t.enc.length).clearContent();
+        if (tipo === 'todo') guardarConfig_({ procesoAbierto: 'NO' });
+        n = objetivo.length;
+      }
+    }
+    var nombres = { historial: 'Limpiar historial', inscripciones: 'Quitar inscripciones', claves: 'Restablecer claves', estudiantes: 'Eliminar estudiantes', todo: 'Reiniciar sistema' };
+    registrar_(actor_(s), nombres[tipo], n + (tipo === 'historial' ? ' registros' : ' estudiantes') + (nivel ? ' de ' + nivel : ''));
+    return { hechos: n };
   });
 }
 
@@ -622,12 +725,44 @@ function familiasConConteo_(tEstudiantes) {
     return {
       id: String(f.ID),
       nombre: String(f.Nombre || f.ID),
+      nivel: normNivel_(f.Nivel),
       electivos: String(f.Electivos || '').split(';').map(function (e) { return e.trim(); }).filter(String),
       cupo: cupo,
       inscritos: inscritos,
       libres: Math.max(0, cupo - inscritos)
     };
   });
+}
+
+/** Palabras y abreviaturas → número de nivel: "segundo", "2do", "2°" → "2". */
+function numeroNivel_(v) {
+  var t = String(v == null ? '' : v).toLowerCase().trim()
+    .replace(/^primero?\b/, '1').replace(/^segundo\b/, '2').replace(/^tercero?\b/, '3').replace(/^cuarto\b/, '4');
+  var m = /^([1-4])(?!\d)/.exec(t);
+  return m ? m[1] : '';
+}
+
+/** "2° medio", "2do Medio", "2M", "2", "segundo medio" → "2° Medio" (solo niveles de NIVELES). */
+function normNivel_(v) {
+  var t = String(v == null ? '' : v).trim();
+  if (!/^\S+(\s*(°|º))?(\s*(m|medio)\.?)?$/i.test(t)) return '';
+  var n = numeroNivel_(t);
+  return n && NIVELES.indexOf(n + '° Medio') >= 0 ? n + '° Medio' : '';
+}
+
+/** Deduce el nivel desde el curso: "2° Medio Ayun" → "2° Medio", "3°A" → "3° Medio". */
+function nivelDeCurso_(curso) {
+  var n = numeroNivel_(curso);
+  return n && NIVELES.indexOf(n + '° Medio') >= 0 ? n + '° Medio' : '';
+}
+
+function nivelEstudiante_(f) {
+  return normNivel_(f.Nivel) || nivelDeCurso_(f.Curso);
+}
+
+/** Una familia sin nivel la ven todos; una con nivel, solo los de ese nivel. */
+function familiaParaNivel_(f, nivel) {
+  return !f.nivel || f.nivel === nivel;
 }
 
 /* ------------------------------------------------------------
@@ -724,6 +859,14 @@ function leer_(nombre) {
   var sh = hoja_(nombre);
   var valores = sh.getDataRange().getValues();
   var enc = (valores[0] || []).map(function (h) { return String(h).trim(); });
+  // Si la planilla viene de una versión anterior, agrega solas las columnas nuevas (ej. Nivel).
+  var faltan = enc.filter(String).length ? (HOJAS[nombre] || []).filter(function (c) { return enc.indexOf(c) < 0; }) : [];
+  if (faltan.length) {
+    while (enc.length && !enc[enc.length - 1]) enc.pop();
+    sh.getRange(1, enc.length + 1, 1, faltan.length).setValues([faltan]).setFontWeight('bold');
+    enc = enc.concat(faltan);
+    valores = valores.map(function (fila) { fila = fila.slice(0, enc.length - faltan.length); while (fila.length < enc.length) fila.push(''); return fila; });
+  }
   var filas = [];
   for (var i = 1; i < valores.length; i++) {
     var o = { _fila: i + 1 };

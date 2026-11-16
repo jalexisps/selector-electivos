@@ -62,7 +62,7 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 /* ---------- Marca ---------- */
 .marca{width:36px;height:36px;flex:none}
 img.marca{object-fit:contain;width:auto;max-width:72px}
-.logos-login{display:flex;align-items:center;gap:14px;margin-bottom:16px;min-height:46px}
+.logos-login{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:16px;min-height:46px}
 .logos-login img{height:96px;max-width:150px;object-fit:contain;transition:transform .25s ease}
 .logos-login img:hover{transform:scale(1.06) rotate(-1deg)}
 .banda{height:5px;background:linear-gradient(90deg,var(--pri) 0 60%,var(--sec) 60% 100%)}
@@ -103,8 +103,13 @@ img.marca{object-fit:contain;width:auto;max-width:72px}
 .tabs button:hover{color:#fff;background:rgba(255,255,255,.24)}
 .tabs button.on{background:#fff;color:var(--pri-osc)}
 .tabs{gap:5px}
-@media(min-width:900px){.top-panel .top-in{flex-wrap:nowrap;gap:12px}.top-panel .tabs{flex:1;min-width:0;margin-left:10px}.top-panel .brand small{max-width:200px}}
+@media(min-width:1280px){.top-panel .top-in{flex-wrap:nowrap;gap:10px}.top-panel .tabs{flex:1;min-width:0;margin-left:6px;gap:4px}.top-panel .tabs button{padding:.45em .72em;font-size:.92rem}.top-panel .brand small{max-width:150px}}
+@media(max-width:1279px){.top-panel .tabs{order:3;width:100%;margin:0 -4px}}
 @media(min-width:900px){.tabs{order:0;width:auto;margin:0 0 0 18px}}
+.quien-est .nom{display:block;font-size:1.12rem;font-weight:900;letter-spacing:-.01em;line-height:1.1}
+.quien-est .ape{display:block;font-size:.84rem;font-weight:600;opacity:.92;line-height:1.2}
+.quien-est small{margin-top:1px}
+@media(max-width:560px){.top-est .top-in{gap:10px}.top-est .top-user{flex:1;min-width:0;margin-left:0}.top-est .quien{text-align:left;margin-right:auto;min-width:0}.top-est .quien .ape{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .top-panel .quien{display:none} /* en el panel UTP el espacio es para las pestañas */
 @media(max-width:560px){.brand>div{display:none}.top-in{flex-wrap:nowrap}.top-panel .top-in{flex-wrap:wrap}.top-user .quien{font-size:.86rem}}
 
@@ -300,6 +305,49 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
 .swatch{width:34px;height:34px;border-radius:10px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;transition:transform .15s}
 .muestra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px;border-radius:12px;background:var(--bg);margin:16px 0 18px}
 
+/* ---------- Niveles ---------- */
+.nv{display:inline-block;font-weight:800;font-size:.75rem;border-radius:6px;padding:.15em .5em;background:var(--gris-claro);color:var(--gris);white-space:nowrap;letter-spacing:.02em}
+.nv.falta{background:var(--warn-soft);color:var(--warn)}
+.nivel-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+.nivel-head h3{font-size:1.2rem;font-weight:900}
+.nivel-head span{color:var(--muted);font-size:.92rem}
+.nivel-head .btn{margin-left:auto}
+
+/* ---------- Registro de alumnos (grilla) ---------- */
+.reg-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line2)}
+.reg-tools .inp{width:auto;padding:.45em .7em;font-size:.9rem}
+.reg-tools .sp{flex:1}
+table.reg{width:100%;border-collapse:collapse;font-size:.93rem;min-width:760px}
+.reg th{text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:10px 6px;border-bottom:1px solid var(--line);background:#F6F7F8;position:sticky;top:0;z-index:1}
+.reg td{padding:4px 6px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.reg td.n{width:38px;text-align:right;color:var(--soft);font-weight:700;font-size:.82rem;padding-left:12px}
+.reg .inp{padding:.5em .6em;font-size:.92rem;border-radius:8px}
+.reg .inp.mono{font-family:var(--mono);font-size:.86rem}
+.reg td.est{width:150px;font-size:.84rem;white-space:nowrap}
+.reg td.x{width:44px;text-align:center}
+.reg tr.mal .inp{border-color:color-mix(in srgb,var(--err) 45%,var(--line))}
+.reg tr.vacia .inp{background:#FAFBFA}
+.reg-wrap{max-height:62vh;overflow:auto}
+.reg-pie{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--line2)}
+.reg-pie .resumen-carga{margin:0}
+.reg-pie .btn-pri{margin-left:auto}
+
+/* ---------- Administración ---------- */
+.admin-grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.admin-grid{grid-template-columns:1fr 1fr}}
+.admin-grid .ancho{grid-column:1/-1}
+.card h3.t{font-weight:800;margin-bottom:6px}
+.limpiar-fila{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line2)}
+.limpiar-fila b{display:block}
+.limpiar-fila small{color:var(--muted)}
+.limpiar-fila .btn{flex:none}
+.zona-peligro{border:1.5px solid color-mix(in srgb,var(--err) 40%,var(--line));background:color-mix(in srgb,var(--err) 4%,#fff)}
+.zona-peligro h3{color:var(--err)}
+.log-wrap{max-height:340px;overflow:auto;border:1px solid var(--line2);border-radius:10px;margin-top:12px}
+.log-wrap .tbl{font-size:.85rem}
+.log-wrap .tbl td{padding:7px 10px}
+.escribir{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;text-align:center;margin-top:14px}
+
 /* ---------- Impresión ---------- */
 #print-area{display:none}
 @media print{
@@ -356,8 +404,8 @@ const S = {
   debeCambiar: store.get('se_cambiar') === '1',
   colegio: '', loginRol: 'estudiante', tema: { logos: [] }, ap: null,
   est: null, panel: null, tab: 'resumen',
-  filtro: { q: '', fam: '', curso: '' },
-  carga: { texto: '', filas: [] }, sel: new Set(),
+  filtro: { q: '', fam: '', curso: '', nivel: '' },
+  carga: { filas: [], nivelTodos: '' }, sel: new Set(), admin: null, adminNivel: '',
   timer: null, modalAbierto: false
 };
 
@@ -579,14 +627,53 @@ function aInputFecha(ms) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 /** "Pérez Soto, Ana María" → "Ana"; "Ana Pérez" → "Ana" */
+/** "Alonso Nahuelqueo, Damian Arturo" → { nombres: "Damian Arturo", apellidos: "Alonso Nahuelqueo" } */
+function partesNombre(n) {
+  n = String(n || '').trim();
+  if (!n.includes(',')) return { nombres: n, apellidos: '' };
+  const i = n.indexOf(',');
+  return { nombres: n.slice(i + 1).trim() || n, apellidos: n.slice(0, i).trim() };
+}
 function primerNombre(n) {
   n = String(n || '').trim();
   const parte = n.includes(',') ? n.split(',')[1] : n;
   return (parte.trim().split(/\s+/)[0]) || n;
 }
+/** Color de la familia según su posición dentro de su nivel (así coincide en el panel y en la vista del estudiante). */
 function colorDe(id, familias) {
-  const i = (familias || []).findIndex((f) => f.id === id);
+  const f = (familias || []).find((x) => x.id === id);
+  const grupo = f ? familias.filter((x) => (x.nivel || '') === (f.nivel || '')) : [];
+  const i = grupo.indexOf(f);
   return COLORES[(i < 0 ? 0 : i) % COLORES.length];
+}
+/* ---------- Niveles (2° Medio, 3° Medio) ---------- */
+const niveles = () => (S.panel && S.panel.niveles) || ['2° Medio', '3° Medio'];
+function numeroNivel(v) {
+  const t = String(v == null ? '' : v).toLowerCase().trim()
+    .replace(/^primero?\b/, '1').replace(/^segundo\b/, '2').replace(/^tercero?\b/, '3').replace(/^cuarto\b/, '4');
+  const m = /^([1-4])(?!\d)/.exec(t);
+  return m ? m[1] : '';
+}
+/** "2do medio", "2M", "2" → "2° Medio" */
+function normNivel(v) {
+  const t = String(v == null ? '' : v).trim();
+  if (!/^\S+(\s*(°|º))?(\s*(m|medio)\.?)?$/i.test(t)) return '';
+  const n = numeroNivel(t);
+  return n && niveles().includes(n + '° Medio') ? n + '° Medio' : '';
+}
+/** "2° Medio Ayun" → "2° Medio" */
+function nivelDeCurso(curso) { const n = numeroNivel(curso); return n && niveles().includes(n + '° Medio') ? n + '° Medio' : ''; }
+const nivelCorto = (n) => (n ? String(n).replace(/\s*Medio$/i, ' M') : 'Todos');
+const tagNivel = (n) => (n ? `<span class="nv">${esc(nivelCorto(n))}</span>` : '<span class="nv falta" title="Sin nivel">Sin nivel</span>');
+/** Nombre de la familia con su nivel (en el panel conviven familias con el mismo nombre en distintos niveles). */
+const famLabel = (f) => (f ? f.nombre + (f.nivel ? ' · ' + nivelCorto(f.nivel) : '') : '');
+const familiaParaNivel = (f, nivel) => !f.nivel || f.nivel === nivel;
+/** Grupos para mostrar: un bloque por nivel y, si hay, uno con las familias sin nivel. */
+function gruposNivel(P) {
+  const g = niveles().map((n) => ({ nivel: n, fams: P.familias.filter((f) => f.nivel === n), ests: P.estudiantes.filter((e) => e.nivel === n) }));
+  const sinNivel = P.familias.filter((f) => !f.nivel);
+  if (sinNivel.length) g.push({ nivel: '', fams: sinNivel, ests: [] });
+  return g;
 }
 function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 function luminancia(hex) {
@@ -731,9 +818,9 @@ function errorHTML(e) {
 }
 
 function topEstudiante(u) {
-  return `<header class="top"><div class="top-in">
+  return `<header class="top top-est"><div class="top-in">
     <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(S.est.colegio || 'Inscripción de electivos')}</small></div></div>
-    <div class="top-user"><div class="quien">${esc(u.nombre)}<small>${esc(u.curso)}</small></div>
+    <div class="top-user"><div class="quien quien-est">${(({ nombres, apellidos }) => `<b class="nom">${esc(nombres)}</b>${apellidos ? `<span class="ape">${esc(apellidos)}</span>` : ''}`)(partesNombre(u.nombre))}<small>${esc(u.curso)}</small></div>
       <button class="btn btn-ghost btn-sm" data-act="claveModal" title="Cambiar mi clave">Clave</button>
       <button class="btn btn-ghost btn-sm" data-act="salir">Salir</button></div>
   </div></header>`;
@@ -747,9 +834,10 @@ function vistaEstudiante() {
     cuerpo = comprobanteHTML(u, familias);
   } else {
     cuerpo = `<div class="saludo"><h1>Hola, ${esc(primerNombre(u.nombre))}</h1>
-      <p>Elige la familia de electivos que cursarás. Cada familia agrupa tres asignaturas.</p></div>
+      <p>Elige la familia de electivos que cursarás${u.nivel ? ' en <b>' + esc(u.nivel) + '</b>' : ''}. Cada familia agrupa tres asignaturas.</p></div>
       ${bannerProceso(p, familias)}
-      <div class="fams" id="fams">${familias.map((f) => tarjetaFamilia(f, familias, p)).join('')}</div>`;
+      ${familias.length ? `<div class="fams" id="fams">${familias.map((f) => tarjetaFamilia(f, familias, p)).join('')}</div>`
+        : `<div class="card vacio">Todavía no hay familias de electivos para ${u.nivel ? esc(u.nivel) : 'tu nivel'}.<br>Consulta con la Unidad Técnico Pedagógica.</div>`}`;
     S.timer = setInterval(refrescarEstudiante, 20000);
   }
   $('#app').innerHTML = topEstudiante(u) + `<main class="wrap">${cuerpo}</main>`;
@@ -819,7 +907,7 @@ function comprobanteHTML(u, familias, paraImprimir) {
  *  PANEL UTP
  * ============================================================ */
 const TABS = [
-  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Cargar lista'], ['proceso', 'Proceso'], ['familias', 'Familias'], ['apariencia', 'Apariencia']
+  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Registrar alumnos'], ['proceso', 'Proceso'], ['familias', 'Familias'], ['apariencia', 'Apariencia'], ['admin', 'Administración']
 ];
 
 async function abrirPanel() {
@@ -841,7 +929,7 @@ function vistaPanel() {
   pararRefresco();
   const P = S.panel;
   const tabs = TABS.map(([k, t]) => `<button data-act="tab" data-tab="${k}" class="${S.tab === k ? 'on' : ''}">${t}</button>`).join('');
-  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias, apariencia: tabApariencia }[S.tab]();
+  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias, apariencia: tabApariencia, admin: tabAdmin }[S.tab]();
   $('#app').innerHTML = `<header class="top top-panel"><div class="top-in">
       <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(P.colegio || 'Panel UTP')}</small></div></div>
       <nav class="tabs">${tabs}</nav>
@@ -850,7 +938,8 @@ function vistaPanel() {
         <button class="btn btn-ghost btn-sm" data-act="salir" title="Salir (${esc(S.nombre)})">Salir</button></div>
     </div></header><main class="wrap">${cuerpo}</main>`;
   if (S.tab === 'estudiantes') renderTabla();
-  if (S.tab === 'cargar') { $('#txtCarga').value = S.carga.texto; renderPrevia(); }
+  if (S.tab === 'cargar') actualizarEstados();
+  if (S.tab === 'admin' && !S.admin) cargarAdmin();
   if (S.tab === 'resumen' || S.tab === 'estudiantes') S.timer = setInterval(() => { if (!S.modalAbierto && !document.hidden) recargarPanel(true); }, 30000);
 }
 
@@ -875,22 +964,45 @@ function tabResumen() {
     <div class="card kpi"><small>Sin inscribir</small><b>${ests.length - inscritos}</b></div>
     <div class="card kpi"><small>Cupos libres</small><b>${libres}<span class="muted" style="font-size:1rem;font-weight:600"> / ${cupoTotal}</span></b></div>
   </div>
-  <div class="famcards">${P.familias.map((f) => {
-    const c = colorDe(f.id, P.familias), pct = f.cupo ? Math.min(100, Math.round((f.inscritos / f.cupo) * 100)) : 100;
-    return `<div class="card famcard" style="--c:${c}">
-      <h3>${esc(f.nombre)}${f.libres <= 0 ? '<span class="lleno-tag">Completa</span>' : ''}</h3>
-      <div class="big"><b>${f.inscritos}</b><span>de ${f.cupo} cupos</span></div>
-      <div class="bar" style="--c:${c}"><i style="width:${pct}%"></i></div>
-      <p class="el">${f.electivos.map(esc).join(' · ')}</p>
-      <div class="acts"><button class="btn btn-sm" data-act="verFam" data-id="${esc(f.id)}">Ver lista</button>
-        <button class="btn btn-sm" data-act="excelFam" data-id="${esc(f.id)}">Descargar Excel</button></div></div>`;
-  }).join('')}</div>
+  ${avisosNivel(P)}
+  ${gruposNivel(P).map((g) => {
+    const ins = g.ests.filter((e) => e.familia).length;
+    if (!g.fams.length && !g.ests.length) return '';
+    return `<div class="nivel-head"><h3>${g.nivel ? esc(g.nivel) : 'Familias sin nivel'}</h3>
+      <span>${g.nivel ? `${g.ests.length} estudiante${g.ests.length === 1 ? '' : 's'} · ${ins} inscrito${ins === 1 ? '' : 's'} · ${g.ests.length - ins} sin inscribir` : 'Las ven todos los estudiantes'}</span>
+      ${g.nivel && g.ests.length ? `<button class="btn btn-sm" data-act="verNivel" data-nivel="${esc(g.nivel)}">Ver estudiantes</button>` : ''}</div>
+    ${g.fams.length ? `<div class="famcards">${g.fams.map((f) => famcardHTML(f, P)).join('')}</div>`
+      : '<p class="muted" style="margin:0 0 22px">Este nivel todavía no tiene familias. Créalas en la pestaña <b>Familias</b>.</p>'}`;
+  }).join('')}
   <div class="card pad"><h3 style="font-weight:800;margin-bottom:6px">Exportar</h3>
     <p class="muted" style="margin-bottom:14px">Un archivo Excel con un resumen, la lista completa y una hoja por familia, ordenado por curso y nombre.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn-pri" data-act="excelFam" data-id="">Descargar Excel (todas las familias)</button>
       <button class="btn" data-act="excelFam" data-id="SIN">Sin inscribir (Excel)</button>
       <button class="btn" data-act="exportarHoja" data-id="">Abrir en planilla de Google</button></div></div>`;
+}
+
+function famcardHTML(f, P) {
+  const c = colorDe(f.id, P.familias), pct = f.cupo ? Math.min(100, Math.round((f.inscritos / f.cupo) * 100)) : 100;
+  return `<div class="card famcard" style="--c:${c}">
+    <h3>${esc(f.nombre)}${f.libres <= 0 ? '<span class="lleno-tag">Completa</span>' : ''}</h3>
+    <div class="big"><b>${f.inscritos}</b><span>de ${f.cupo} cupos</span></div>
+    <div class="bar" style="--c:${c}"><i style="width:${pct}%"></i></div>
+    <p class="el">${f.electivos.map(esc).join(' · ')}</p>
+    <div class="acts"><button class="btn btn-sm" data-act="verFam" data-id="${esc(f.id)}">Ver lista</button>
+      <button class="btn btn-sm" data-act="excelFam" data-id="${esc(f.id)}">Descargar Excel</button></div></div>`;
+}
+/** Avisos cuando hay familias o estudiantes sin nivel. */
+function avisosNivel(P) {
+  const famSin = P.familias.filter((f) => !f.nivel).length, estSin = P.estudiantes.filter((e) => !e.nivel).length;
+  let h = '';
+  if (famSin) h += `<div class="banner warn"><div class="ico">!</div><div><h3>${famSin === 1 ? 'Hay 1 familia sin nivel' : 'Hay ' + famSin + ' familias sin nivel'}</h3>
+    <p>Una familia sin nivel la ven los estudiantes de todos los niveles. Asígnale 2° o 3° Medio en la pestaña Familias.</p></div>
+    <button class="btn btn-sm" data-act="tab" data-tab="familias" style="margin-left:auto">Ir a Familias</button></div>`;
+  if (estSin) h += `<div class="banner warn"><div class="ico">!</div><div><h3>${estSin === 1 ? 'Hay 1 estudiante sin nivel' : 'Hay ' + estSin + ' estudiantes sin nivel'}</h3>
+    <p>Solo ven las familias sin nivel. Corrígelo registrándolos de nuevo con su nivel en «Registrar alumnos».</p></div>
+    <button class="btn btn-sm" data-act="verNivel" data-nivel="SIN" style="margin-left:auto">Ver quiénes</button></div>`;
+  return h;
 }
 
 /* ---------- Estudiantes ---------- */
@@ -902,9 +1014,12 @@ function tabEstudiantes() {
   <div class="sec-head"><div><h2>Estudiantes</h2><p>Busca, cambia de familia, restablece claves o imprime fichas de acceso.</p></div></div>
   <div class="toolbar">
     <input class="inp search" id="fq" data-filtro="q" placeholder="Buscar por nombre o RUT" value="${esc(F.q)}">
+    <select class="inp" id="fnivel" data-filtro="nivel"><option value="">Todos los niveles</option>
+      ${niveles().map((n) => `<option ${F.nivel === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}
+      ${P.estudiantes.some((e) => !e.nivel) || F.nivel === 'SIN' ? `<option value="SIN" ${F.nivel === 'SIN' ? 'selected' : ''}>Sin nivel</option>` : ''}</select>
     <select class="inp" id="ffam" data-filtro="fam">
       <option value="">Todas las familias</option><option value="SIN" ${F.fam === 'SIN' ? 'selected' : ''}>Sin inscribir</option>
-      ${P.familias.map((f) => `<option value="${esc(f.id)}" ${F.fam === f.id ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('')}
+      ${P.familias.map((f) => `<option value="${esc(f.id)}" ${F.fam === f.id ? 'selected' : ''}>${esc(famLabel(f))}</option>`).join('')}
     </select>
     <select class="inp" id="fcurso" data-filtro="curso"><option value="">Todos los cursos</option>
       ${cursos.map((c) => `<option ${F.curso === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
@@ -921,6 +1036,7 @@ function estudiantesFiltrados() {
   return S.panel.estudiantes.filter((e) => {
     if (F.fam === 'SIN' ? e.familia : F.fam && e.familia !== F.fam) return false;
     if (F.curso && e.curso !== F.curso) return false;
+    if (F.nivel && (F.nivel === 'SIN' ? e.nivel : e.nivel !== F.nivel)) return false;
     if (!q) return true;
     return e.nombre.toLowerCase().includes(q) || (qr && e.rut.replace('-', '').includes(qr.replace('-', '')));
   }).sort((a, b) => a.curso.localeCompare(b.curso, 'es', { numeric: true }) || a.nombre.localeCompare(b.nombre, 'es'));
@@ -928,7 +1044,7 @@ function estudiantesFiltrados() {
 
 function renderTabla() {
   const P = S.panel, lista = estudiantesFiltrados(), fams = P.familias;
-  const nom = Object.fromEntries(fams.map((f) => [f.id, f.nombre]));
+  const nom = Object.fromEntries(fams.map((f) => [f.id, famLabel(f)]));
   const el = $('#tabla'); if (!el) return;
   if (!P.estudiantes.length) {
     el.innerHTML = `<div class="vacio">Todavía no hay estudiantes cargados.<br><br><button class="btn btn-pri" data-act="tab" data-tab="cargar">Cargar lista</button></div>`;
@@ -941,7 +1057,7 @@ function renderTabla() {
   const filas = visibles.map((e) => `<tr data-rut="${esc(e.rut)}" class="${S.sel.has(e.rut) ? 'sel' : ''}">
     <td class="ck"><input type="checkbox" data-sel="${esc(e.rut)}" ${S.sel.has(e.rut) ? 'checked' : ''} aria-label="Seleccionar ${esc(e.nombre)}"></td>
     <td class="mono" style="white-space:nowrap">${esc(fmtRut(e.rut))}</td>
-    <td><b>${esc(e.nombre)}</b></td><td>${esc(e.curso)}</td>
+    <td><b>${esc(e.nombre)}</b></td><td>${esc(e.curso)}</td><td>${tagNivel(e.nivel)}</td>
     <td>${e.familia ? `<span class="chip" style="--c:${colorDe(e.familia, fams)}">${esc(nom[e.familia] || e.familia)}</span>` : '<span class="chip none">Sin inscribir</span>'}</td>
     <td>${e.claveInicial ? `<code title="Últimos 4 dígitos del RUT">${esc(e.claveInicial)}</code>` : '<span class="muted" title="El estudiante creó su propia clave">Personal</span>'}</td>
     <td class="acc">
@@ -952,7 +1068,7 @@ function renderTabla() {
   const n = S.sel.size;
   const barra = n ? `<div class="selbar"><b>${n} seleccionado${n === 1 ? '' : 's'}</b>
       ${lista.some((e) => !S.sel.has(e.rut)) ? `<button class="link" data-act="selTodos">Seleccionar los ${lista.length} de la lista</button>` : ''}
-      <select class="inp" id="selFam"><option value="">Asignar a familia…</option>${fams.map((f) => `<option value="${esc(f.id)}">${esc(f.nombre)} (${f.libres} libres)</option>`).join('')}</select>
+      <select class="inp" id="selFam"><option value="">Asignar a familia…</option>${fams.map((f) => `<option value="${esc(f.id)}">${esc(famLabel(f))} (${f.libres} libres)</option>`).join('')}</select>
       <button class="btn btn-sm" data-act="selMasivo" data-accion="quitar">Quitar inscripción</button>
       <button class="btn btn-sm" data-act="selMasivo" data-accion="restablecer">Restablecer clave</button>
       <button class="btn btn-sm" data-act="selFichas">Imprimir fichas</button>
@@ -962,84 +1078,146 @@ function renderTabla() {
     : '<div class="selhint">Marca las casillas (o haz clic en una fila) para actuar sobre varios estudiantes a la vez. La casilla del encabezado marca toda la lista.</div>';
   el.innerHTML = lista.length ? `${barra}<table class="tbl"><thead><tr>
     <th class="ck"><input type="checkbox" id="selTodos" ${nSelVis && nSelVis === visibles.length ? 'checked' : ''} aria-label="Seleccionar todos"></th>
-    <th>RUT</th><th>Nombre</th><th>Curso</th><th>Familia</th><th>Clave</th><th></th></tr></thead>
+    <th>RUT</th><th>Nombre</th><th>Curso</th><th>Nivel</th><th>Familia</th><th>Clave</th><th></th></tr></thead>
     <tbody>${filas}</tbody></table>
     <div class="contador">Mostrando ${Math.min(lista.length, 500)} de ${lista.length} estudiantes${lista.length > 500 ? ' (usa el buscador para acotar)' : ''}</div>`
     : barra + '<div class="vacio">Ningún estudiante coincide con el filtro.</div>';
   const cab = $('#selTodos'); if (cab) cab.indeterminate = nSelVis > 0 && nSelVis < visibles.length;
 }
 
-/* ---------- Cargar lista ---------- */
+/* ---------- Registrar alumnos ---------- */
+const CAMPOS = ['rut', 'nombre', 'curso', 'nivel'];
+const filaVacia = () => ({ rut: '', nombre: '', curso: '', nivel: '', auto: true });
+const filaLlena = (f) => CAMPOS.some((k) => String(f[k] || '').trim());
+/** Siempre deja una fila vacía al final (y 10 al empezar). */
+function asegurarFilas() {
+  const F = S.carga.filas;
+  if (!F.length) for (let i = 0; i < 10; i++) F.push(filaVacia());
+  if (filaLlena(F[F.length - 1])) F.push(filaVacia());
+}
+function filaRegHTML(f, i) {
+  const opt = niveles().map((n) => `<option ${f.nivel === n ? 'selected' : ''}>${esc(n)}</option>`).join('');
+  return `<tr data-i="${i}"><td class="n">${i + 1}</td>
+    <td><input class="inp mono" data-campo="rut" data-rut value="${esc(f.rut)}" placeholder="12.345.678-5" autocomplete="off" spellcheck="false"></td>
+    <td><input class="inp" data-campo="nombre" value="${esc(f.nombre)}" placeholder="Apellidos, Nombres" autocomplete="off"></td>
+    <td><input class="inp" data-campo="curso" value="${esc(f.curso)}" placeholder="2° Medio Ayun" autocomplete="off"></td>
+    <td><select class="inp" data-campo="nivel"><option value="">Nivel…</option>${opt}</select></td>
+    <td class="est"></td>
+    <td class="x"><button class="btn btn-sm btn-ghost" type="button" data-act="quitarFila" data-i="${i}" title="Quitar esta fila" aria-label="Quitar fila ${i + 1}">✕</button></td></tr>`;
+}
 function tabCargar() {
+  asegurarFilas();
+  const C = S.carga;
   return `
-  <div class="sec-head"><div><h2>Cargar lista de estudiantes</h2>
-    <p>Cada estudiante entra con su RUT y, como clave, los últimos 4 dígitos de su RUT. Si un RUT ya existe se actualiza su nombre y curso, sin tocar su familia.</p></div></div>
-  <div class="grid2">
-    <div class="card pad">
-      <label class="f"><span>Sube el Excel o pega aquí las columnas copiadas desde Excel</span>
-        <textarea class="inp" id="txtCarga" rows="12" spellcheck="false" placeholder="RUT&#9;Nombre&#9;Curso&#10;12.345.678-5&#9;Pérez Soto, Ana&#9;3°A&#10;20.111.222-3&#9;Rojas Díaz, Benjamín&#9;3°B"></textarea></label>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <label class="btn btn-sm btn-pri">Subir archivo Excel<input type="file" id="archivoCsv" accept=".xlsx,.csv,.txt" hidden></label>
-        <button class="btn btn-sm" data-act="plantillaExcel">Descargar plantilla Excel</button>
-        <button class="btn btn-sm btn-ghost" data-act="limpiarCarga">Limpiar</button>
-      </div>
-      <p class="hint" style="margin-top:14px">Columnas en este orden: <b>RUT</b>, <b>Nombre</b>, <b>Curso</b>. Si el RUT viene separado del dígito verificador (RUN y DV), o el nombre en varias columnas (apellidos y nombres), se juntan solos. La fila de títulos se ignora. Se lee la primera hoja del Excel.</p>
+  <div class="sec-head"><div><h2>Registrar alumnos</h2>
+    <p>Completa una fila por alumno y registra a todos de una sola vez. También puedes pegar las columnas copiadas desde Excel en cualquier casilla, o subir el archivo.</p></div></div>
+  <div class="card">
+    <div class="reg-tools">
+      <label class="btn btn-sm btn-pri">Subir archivo Excel<input type="file" id="archivoCsv" accept=".xlsx,.csv,.txt" hidden></label>
+      <button class="btn btn-sm" data-act="plantillaExcel">Descargar plantilla</button>
+      <span class="sp"></span>
+      <select class="inp" id="nivelTodos" aria-label="Nivel para todas las filas"><option value="">Nivel para todas las filas…</option>
+        ${niveles().map((n) => `<option ${C.nivelTodos === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
+      <button class="btn btn-sm" data-act="nivelTodos">Aplicar</button>
     </div>
-    <div class="card pad" id="previa"></div>
-  </div>`;
+    <div class="reg-wrap"><table class="reg"><thead><tr><th></th><th>RUT</th><th>Nombre completo</th><th>Curso</th><th>Nivel</th><th>Estado</th><th></th></tr></thead>
+      <tbody id="regBody">${C.filas.map(filaRegHTML).join('')}</tbody></table></div>
+    <div class="reg-pie">
+      <button class="btn btn-sm" data-act="agregarFilas" data-n="1">+ 1 fila</button>
+      <button class="btn btn-sm" data-act="agregarFilas" data-n="10">+ 10 filas</button>
+      <button class="btn btn-sm btn-ghost" data-act="limpiarCarga">Vaciar todo</button>
+      <div class="resumen-carga" id="regResumen"></div>
+      <button class="btn btn-pri" data-act="importar" id="btnRegistrar" disabled>Registrar</button>
+    </div>
+  </div>
+  <p class="hint" style="margin-top:12px">Cada alumno entra con su RUT y, como clave, los últimos 4 dígitos de su RUT. Si el RUT ya existe se actualizan su nombre, curso y nivel, sin tocar su familia.
+    El nivel se completa solo cuando el curso empieza con él (ej. <b>2° Medio Ayun</b>). Al pegar desde Excel, las columnas van en este orden: <b>RUT</b>, <b>Nombre</b>, <b>Curso</b> y, si quieres, <b>Nivel</b>.</p>`;
 }
 
+/** Revisa todas las filas y devuelve su estado (sin redibujar la grilla, para no perder el foco). */
+function evaluarCarga() {
+  const existentes = Object.fromEntries(S.panel.estudiantes.map((e) => [e.rut, e]));
+  const vistos = {}, cuenta = { nuevos: 0, act: 0, igual: 0, errs: 0 };
+  const estados = S.carga.filas.map((f) => {
+    if (!filaLlena(f)) return null;
+    const r = normRut(f.rut), nivel = normNivel(f.nivel) || nivelDeCurso(f.curso);
+    let e;
+    if (!r || !rutValido(r)) e = ['err', f.rut.trim() ? 'RUT inválido' : 'Falta el RUT'];
+    else if (!f.nombre.trim()) e = ['err', 'Falta el nombre'];
+    else if (!nivel) e = ['err', 'Falta el nivel'];
+    else if (vistos[r]) e = ['err', 'RUT repetido'];
+    else {
+      vistos[r] = 1;
+      const ex = existentes[r];
+      const nombre = f.nombre.replace(/\s+/g, ' ').trim(), curso = f.curso.replace(/\s+/g, ' ').trim();
+      if (!ex) e = ['ok', 'Nuevo'];
+      else if (ex.nombre !== nombre || ex.curso !== curso || ex.nivel !== nivel) e = ex.familia && ex.nivel && ex.nivel !== nivel ? ['err', 'Inscrito en ' + nivelCorto(ex.nivel)] : ['warn', 'Actualiza'];
+      else e = ['igual', 'Ya registrado'];
+    }
+    if (f.errServidor && e[0] !== 'igual') e = ['err', f.errServidor];
+    cuenta[{ ok: 'nuevos', warn: 'act', igual: 'igual', err: 'errs' }[e[0]]]++;
+    return e;
+  });
+  return { estados, cuenta };
+}
+function actualizarEstados() {
+  const body = $('#regBody'); if (!body) return;
+  const { estados, cuenta } = evaluarCarga();
+  estados.forEach((e, i) => {
+    const tr = body.children[i]; if (!tr) return;
+    tr.className = !e ? 'vacia' : e[0] === 'err' ? 'mal' : '';
+    tr.querySelector('.est').innerHTML = !e ? '' : `<span class="${{ ok: 'ok-t', warn: 'warn-t', err: 'err-t', igual: 'muted' }[e[0]]}">${esc(e[1])}</span>`;
+  });
+  const n = cuenta.nuevos + cuenta.act;
+  $('#regResumen').innerHTML = `<span><b class="ok-t">${cuenta.nuevos}</b>nuevos</span><span><b class="warn-t">${cuenta.act}</b>actualizan</span>
+    <span><b>${cuenta.igual}</b>ya registrados</span><span><b class="err-t">${cuenta.errs}</b>con error</span>`;
+  const b = $('#btnRegistrar');
+  b.disabled = !n;
+  b.textContent = n ? `Registrar ${n} alumno${n === 1 ? '' : 's'}` : 'Registrar';
+  b.title = cuenta.errs ? 'Las filas con error no se registran' : '';
+}
+function redibujarGrilla() {
+  asegurarFilas();
+  const body = $('#regBody'); if (!body) return;
+  body.innerHTML = S.carga.filas.map(filaRegHTML).join('');
+  actualizarEstados();
+}
+/** Escribe en la fila i el valor de un campo y, si es el curso, deduce el nivel. */
+function fijarCampo(f, campo, valor) {
+  if (campo === 'nivel') { f.nivel = normNivel(valor); f.auto = !f.nivel; return; }
+  f[campo] = valor;
+  if (campo === 'curso' && (f.auto || !f.nivel)) { f.nivel = nivelDeCurso(valor); f.auto = true; }
+  delete f.errServidor;
+}
+/** Agrega filas de datos a la grilla (desde un Excel o un pegado), reemplazando las filas vacías del final. */
+function agregarDatosGrilla(nuevas, desde) {
+  const F = S.carga.filas;
+  if (desde == null) { while (F.length && !filaLlena(F[F.length - 1])) F.pop(); desde = F.length; }
+  nuevas.forEach((d, k) => {
+    const f = F[desde + k] || (F[desde + k] = filaVacia());
+    Object.keys(d).forEach((c) => { if (c !== 'nivel' || d[c]) fijarCampo(f, c, c === 'rut' && normRut(d[c]) ? fmtRut(d[c]) : d[c]); });
+  });
+  redibujarGrilla();
+}
+
+/** Texto copiado de Excel (o CSV) → filas { rut, nombre, curso, nivel }. */
 function parsearCarga(texto) {
   const filas = [];
-  texto.split(/\r?\n/).forEach((linea, i) => {
+  texto.split(/\r?\n/).forEach((linea) => {
     if (!linea.trim()) return;
     const sep = linea.includes('\t') ? '\t' : linea.includes(';') ? ';' : ',';
     const c = linea.split(sep).map((x) => x.trim().replace(/^"(.*)"$/, '$1').trim());
     while (c.length && c[c.length - 1] === '') c.pop();
     if (!filas.length && /ru[tn]/i.test(c[0] || '') && !normRut(c[0])) return; // títulos
     if (/^[\d.]+$/.test(c[0] || '') && /^[\dkK]$/.test(c[1] || '') && c.length >= 3) c.splice(0, 2, c[0] + '-' + c[1]); // RUN y DV separados
+    let nivel = '';
+    if (c.length >= 4 && normNivel(c[c.length - 1])) nivel = c.pop(); // última columna = nivel
     let rut = c[0] || '', nombre = '', curso = '';
     if (c.length === 2) nombre = c[1];
     else if (c.length >= 3) { nombre = c.slice(1, -1).join(' '); curso = c[c.length - 1]; }
-    filas.push({ rut, nombre: nombre.replace(/\s+/g, ' ').trim(), curso });
+    filas.push({ rut, nombre: nombre.replace(/\s+/g, ' ').trim(), curso, nivel });
   });
   return filas;
-}
-
-function renderPrevia() {
-  const el = $('#previa'); if (!el) return;
-  const filas = S.carga.filas;
-  if (!filas.length) {
-    el.innerHTML = `<h3 style="font-weight:800;margin-bottom:6px">Vista previa</h3><p class="muted">Pega la lista a la izquierda y aquí verás cómo quedará antes de guardarla.</p>`;
-    return;
-  }
-  const existentes = Object.fromEntries(S.panel.estudiantes.map((e) => [e.rut, e]));
-  const vistos = {};
-  let nuevos = 0, act = 0, igual = 0, errs = 0;
-  const filasHtml = filas.map((f) => {
-    const r = normRut(f.rut);
-    let est;
-    if (!r || !rutValido(r)) est = '<span class="err-t">RUT inválido</span>';
-    else if (!f.nombre) est = '<span class="err-t">Falta nombre</span>';
-    else if (vistos[r]) est = '<span class="err-t">Repetido</span>';
-    else {
-      vistos[r] = 1;
-      const ex = existentes[r];
-      if (!ex) { est = '<span class="ok-t">Nuevo</span>'; nuevos++; }
-      else if (ex.nombre !== f.nombre || ex.curso !== f.curso) { est = '<span class="warn-t">Actualiza</span>'; act++; }
-      else { est = '<span class="muted">Sin cambios</span>'; igual++; }
-    }
-    if (est.includes('err-t')) errs++;
-    return `<tr><td class="mono" style="white-space:nowrap">${esc(r ? fmtRut(r) : f.rut)}</td><td>${esc(f.nombre)}</td><td>${esc(f.curso)}</td><td>${est}</td></tr>`;
-  });
-  el.innerHTML = `<h3 style="font-weight:800">Vista previa</h3>
-    <div class="resumen-carga"><span><b class="ok-t">${nuevos}</b>nuevos</span><span><b class="warn-t">${act}</b>actualizan</span>
-      <span><b>${igual}</b>sin cambios</span><span><b class="err-t">${errs}</b>con error</span></div>
-    <div class="tbl-wrap" style="max-height:340px;overflow:auto;border:1px solid var(--line2);border-radius:10px">
-      <table class="tbl"><thead><tr><th>RUT</th><th>Nombre</th><th>Curso</th><th>Estado</th></tr></thead><tbody>${filasHtml.join('')}</tbody></table></div>
-    ${errs ? '<p class="hint" style="margin-top:10px">Las filas con error no se cargan. Corrígelas en la lista y vuelve a pegarla.</p>' : ''}
-    <button class="btn btn-pri btn-block" style="margin-top:14px" data-act="importar" ${nuevos + act ? '' : 'disabled'}>
-      ${nuevos + act ? `Guardar ${nuevos + act} estudiante${nuevos + act === 1 ? '' : 's'}` : 'No hay cambios para guardar'}</button>`;
 }
 
 /* ---------- Proceso ---------- */
@@ -1070,19 +1248,26 @@ function tabProceso() {
 /* ---------- Familias ---------- */
 function tabFamilias() {
   const P = S.panel;
-  return `<div class="wrap-narrow">
-  <div class="sec-head"><div><h2>Familias de electivos</h2><p>Edita nombres, asignaturas y cupos. El cupo no puede quedar bajo los inscritos actuales.</p></div>
-    <button class="btn btn-sm" data-act="agregarFam">Agregar familia</button></div>
-  ${P.familias.map((f) => `<form class="card famedit" style="--c:${colorDe(f.id, P.familias)}" data-form="familia" data-id="${esc(f.id)}" novalidate>
+  const form = (f) => `<form class="card famedit" style="--c:${colorDe(f.id, P.familias)}" data-form="familia" data-id="${esc(f.id)}" novalidate>
     <div class="row3">
       <label class="f"><span>Nombre</span><input class="inp" name="nombre" maxlength="60" value="${esc(f.nombre)}"></label>
       <label class="f"><span>Cupo <small class="muted">(${f.inscritos} inscritos)</small></span><input class="inp" name="cupo" type="number" min="${Math.max(1, f.inscritos)}" max="500" value="${f.cupo}"></label>
     </div>
+    <label class="f"><span>Nivel <small class="muted">(solo los estudiantes de este nivel verán la familia)</small></span>
+      <select class="inp" name="nivel"><option value="">Sin nivel (la ven todos)</option>
+        ${niveles().map((n) => `<option ${f.nivel === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
     <label class="f"><span>Electivos <small class="muted">(uno por línea)</small></span>
       <textarea class="inp" name="electivos" rows="3" style="font-family:var(--font);min-height:96px">${esc(f.electivos.join('\n'))}</textarea></label>
     <div class="acts"><button class="btn btn-sm btn-ghost btn-danger" type="button" data-act="eliminarFam" data-id="${esc(f.id)}" ${f.inscritos ? 'disabled title="Tiene estudiantes inscritos"' : ''}>Eliminar familia</button>
       <button class="btn btn-pri btn-sm" type="submit">Guardar</button></div>
-  </form>`).join('')}</div>`;
+  </form>`;
+  return `<div class="wrap-narrow">
+  <div class="sec-head"><div><h2>Familias de electivos</h2><p>Cada familia pertenece a un nivel: los de 2° Medio solo ven las de 2° Medio y los de 3° Medio, las de 3° Medio. El cupo no puede quedar bajo los inscritos actuales.</p></div></div>
+  ${gruposNivel(P).map((g) => `<div class="nivel-head"><h3>${g.nivel ? esc(g.nivel) : 'Sin nivel'}</h3>
+      <span>${g.nivel ? g.fams.length + (g.fams.length === 1 ? ' familia' : ' familias') : 'Las ven todos los estudiantes: asígnales un nivel'}</span>
+      ${g.nivel ? `<button class="btn btn-sm" data-act="agregarFam" data-nivel="${esc(g.nivel)}">Agregar familia a ${esc(g.nivel)}</button>` : ''}</div>
+    ${g.fams.length ? g.fams.map(form).join('') : '<p class="muted" style="margin:0 0 22px">Todavía no hay familias en este nivel.</p>'}`).join('')}
+  </div>`;
 }
 
 /* ---------- Apariencia ---------- */
@@ -1173,28 +1358,89 @@ function coloresDeImagen(src) {
 }
 function vistaPreviaTema() { aplicarTema(S.ap); }
 
+/* ---------- Administración ---------- */
+async function cargarAdmin() {
+  try { S.admin = await call('admin'); if (S.tab === 'admin' && !S.modalAbierto) vistaPanel(); }
+  catch (e) { manejarError(e); }
+}
+function tabAdmin() {
+  const P = S.panel, A = S.admin, nv = S.adminNivel;
+  const ests = P.estudiantes.filter((e) => !nv || e.nivel === nv);
+  const ins = ests.filter((e) => e.familia).length, personales = ests.filter((e) => !e.claveInicial).length;
+  const de = nv ? ' de ' + esc(nv) : '';
+  const fila = (tipo, titulo, texto, n, boton, peligro) => `<div class="limpiar-fila"><div><b>${titulo}</b><small>${texto}</small></div>
+    <button class="btn btn-sm ${peligro ? 'btn-danger' : ''}" data-act="limpiar" data-tipo="${tipo}" ${n ? '' : 'disabled'}>${boton}</button></div>`;
+  return `
+  <div class="sec-head"><div><h2>Administración</h2><p>Limpia los registros del sistema. Antes de borrar, descarga un respaldo: lo borrado no se puede recuperar.</p></div>
+    <button class="btn btn-pri" data-act="respaldo">Descargar respaldo (Excel)</button></div>
+  <div class="admin-grid">
+    <div class="card pad">
+      <h3 class="t">Datos de estudiantes</h3>
+      <p class="muted" style="margin-bottom:12px">Elige a quiénes afecta:</p>
+      <select class="inp" id="adminNivel" style="width:auto"><option value="">Todos los niveles (${P.estudiantes.length})</option>
+        ${niveles().map((n) => `<option value="${esc(n)}" ${nv === n ? 'selected' : ''}>${esc(n)} (${P.estudiantes.filter((e) => e.nivel === n).length})</option>`).join('')}</select>
+      <div style="margin-top:14px">
+      ${fila('inscripciones', 'Quitar inscripciones' + de, `${ins} inscrito${ins === 1 ? '' : 's'}. Siguen registrados y podrán volver a elegir; se liberan los cupos.`, ins, 'Quitar inscripciones')}
+      ${fila('claves', 'Restablecer claves' + de, `${personales} con clave personal. Vuelven a entrar con los 4 últimos dígitos de su RUT.`, personales, 'Restablecer claves')}
+      ${fila('estudiantes', 'Eliminar estudiantes' + de, `${ests.length} registrado${ests.length === 1 ? '' : 's'}. Se borran junto con su inscripción.`, ests.length, 'Eliminar estudiantes', true)}
+      </div>
+    </div>
+    <div class="card pad">
+      <h3 class="t">Historial de actividad</h3>
+      ${A ? `<p class="muted">${A.historial} movimiento${A.historial === 1 ? '' : 's'} registrado${A.historial === 1 ? '' : 's'} (entradas, inscripciones, cambios de la UTP).</p>
+        ${A.ultimos.length ? `<div class="log-wrap"><table class="tbl"><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th></tr></thead><tbody>
+          ${A.ultimos.map((l) => `<tr title="${esc(l.detalle)}"><td style="white-space:nowrap">${esc(l.fecha)}</td><td>${esc(l.usuario)}</td><td>${esc(l.accion)}${l.detalle ? `<br><small class="muted">${esc(l.detalle.length > 90 ? l.detalle.slice(0, 90) + '…' : l.detalle)}</small>` : ''}</td></tr>`).join('')}
+        </tbody></table></div><p class="hint" style="margin-top:8px">Últimos ${A.ultimos.length} movimientos.</p>` : ''}
+        <div class="limpiar-fila" style="margin-top:12px"><div><b>Limpiar historial</b><small>Borra la hoja Registro. Queda una sola línea indicando quién lo limpió.</small></div>
+          <button class="btn btn-sm btn-danger" data-act="limpiar" data-tipo="historial" ${A.historial > 1 ? '' : 'disabled'}>Limpiar historial</button></div>`
+        : '<div class="cargando" style="min-height:160px"><div><div class="spin"></div>Cargando historial…</div></div>'}
+    </div>
+    <div class="card pad zona-peligro ancho">
+      <h3 class="t">Reiniciar el sistema</h3>
+      <div class="limpiar-fila" style="border-top:0;padding-top:4px"><div><b>Empezar un año nuevo</b><small>Borra todos los estudiantes y el historial, y cierra la inscripción. Se mantienen las familias, los usuarios de la UTP y la apariencia.</small></div>
+        <button class="btn btn-danger solid" data-act="limpiar" data-tipo="todo">Reiniciar sistema</button></div>
+    </div>
+  </div>`;
+}
+/** Pide escribir BORRAR antes de una acción que no se puede deshacer. Devuelve lo escrito o null. */
+function confirmarEscribiendo(titulo, texto, ok) {
+  return new Promise((res) => {
+    modal(`<h2>${esc(titulo)}</h2><p class="muted">${texto}</p>
+      <p style="margin-top:14px;font-weight:600">Para confirmar, escribe <b>BORRAR</b>:</p>
+      <input class="inp escribir" id="mEscribe" autocomplete="off" spellcheck="false">
+      <div class="acts"><button class="btn" data-act="cerrarModal">Cancelar</button>
+      <button class="btn btn-danger solid" id="mOk" disabled>${esc(ok)}</button></div>`);
+    const i = $('#mEscribe'), b = $('#mOk');
+    i.addEventListener('input', () => { b.disabled = i.value.trim().toUpperCase() !== 'BORRAR'; });
+    i.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !b.disabled) b.click(); });
+    b.onclick = () => { const v = i.value; cerrarModal(); res(v); };
+    $$('#modal [data-act=cerrarModal]').forEach((x) => x.addEventListener('click', () => res(null)));
+  });
+}
+
 /* ---------- Exportar e imprimir ---------- */
 function ordenarParaExportar(lista) {
   const orden = Object.fromEntries(S.panel.familias.map((f, i) => [f.id, i]));
-  return lista.slice().sort((a, b) => (a.familia ? orden[a.familia] : 999) - (b.familia ? orden[b.familia] : 999)
+  return lista.slice().sort((a, b) => String(a.nivel || 'z').localeCompare(String(b.nivel || 'z'), 'es', { numeric: true })
+    || (a.familia ? orden[a.familia] : 999) - (b.familia ? orden[b.familia] : 999)
     || a.curso.localeCompare(b.curso, 'es', { numeric: true }) || a.nombre.localeCompare(b.nombre, 'es'));
 }
 /** Hoja con todos los datos (incluye familia y electivos). */
 function hojaGeneral(nombre, lista) {
   const porId = Object.fromEntries(S.panel.familias.map((f) => [f.id, f]));
-  return { nombre, anchos: [14, 60, 14, 36, 16, 20, 18], filas: [['Familia', 'Electivos', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(
-    ordenarParaExportar(lista).map((e) => { const f = porId[e.familia]; return [f ? f.nombre : 'Sin inscribir', f ? f.electivos.join(' / ') : '', fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por]; })) };
+  return { nombre, anchos: [12, 14, 60, 14, 36, 16, 20, 18], filas: [['Nivel', 'Familia', 'Electivos', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(
+    ordenarParaExportar(lista).map((e) => { const f = porId[e.familia]; return [e.nivel || 'Sin nivel', f ? f.nombre : 'Sin inscribir', f ? f.electivos.join(' / ') : '', fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por]; })) };
 }
 /** Hoja de una familia (sin columnas repetidas). */
 function hojaFamilia(f, lista) {
-  return { nombre: f ? f.nombre : 'Sin inscribir', anchos: [5, 14, 36, 16, 20, 18], filas: [['N°', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por']].concat(
-    ordenarParaExportar(lista).map((e, i) => [i + 1, fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por])) };
+  return { nombre: f ? (f.nivel ? nivelCorto(f.nivel) + ' ' : '') + f.nombre : 'Sin inscribir', anchos: [5, 14, 36, 16, 12, 20, 18], filas: [['N°', 'RUT', 'Nombre', 'Curso', 'Nivel', 'Fecha inscripción', 'Inscrito por']].concat(
+    ordenarParaExportar(lista).map((e, i) => [i + 1, fmtRut(e.rut), e.nombre, e.curso, e.nivel || 'Sin nivel', e.fecha, e.por])) };
 }
 function hojaResumen() {
   const P = S.panel;
-  return { nombre: 'Resumen', anchos: [16, 70, 11, 9, 9], filas: [['Familia', 'Electivos', 'Inscritos', 'Cupo', 'Libres']].concat(
-    P.familias.map((f) => [f.nombre, f.electivos.join(' / '), f.inscritos, f.cupo, f.libres]),
-    [['Sin inscribir', '', P.estudiantes.filter((e) => !e.familia).length, '', '']]) };
+  return { nombre: 'Resumen', anchos: [12, 16, 70, 11, 9, 9], filas: [['Nivel', 'Familia', 'Electivos', 'Inscritos', 'Cupo', 'Libres']].concat(
+    P.familias.map((f) => [f.nivel || 'Todos', f.nombre, f.electivos.join(' / '), f.inscritos, f.cupo, f.libres]),
+    [['', 'Sin inscribir', '', P.estudiantes.filter((e) => !e.familia).length, '', '']]) };
 }
 function nombreArchivo(base) {
   const d = new Date(), p = (n) => String(n).padStart(2, '0');
@@ -1214,7 +1460,7 @@ async function accionMasiva(accion, familia) {
   const ruts = [...S.sel], n = ruts.length; if (!n) return;
   const f = familia && S.panel.familias.find((x) => x.id === familia);
   const txt = {
-    asignar: [`¿Asignar ${n} estudiante${n === 1 ? '' : 's'} a ${f && esc(f.nombre)}?`, `Quedan ${f && f.libres} cupos en esa familia. Si no alcanzan, se asignan en orden y el resto queda como está.`, 'Asignar'],
+    asignar: [`¿Asignar ${n} estudiante${n === 1 ? '' : 's'} a ${f && esc(famLabel(f))}?`, `Quedan ${f && f.libres} cupos en esa familia. Si no alcanzan, se asignan en orden y el resto queda como está.${f && f.nivel ? ' Solo se asignan los de ' + esc(f.nivel) + '.' : ''}`, 'Asignar'],
     quitar: [`¿Quitar la inscripción a ${n} estudiante${n === 1 ? '' : 's'}?`, 'Se liberan sus cupos y podrán volver a elegir mientras el proceso esté abierto.', 'Quitar inscripción'],
     restablecer: [`¿Restablecer la clave de ${n} estudiante${n === 1 ? '' : 's'}?`, 'Su clave vuelve a ser los últimos 4 dígitos de su RUT.', 'Restablecer'],
     eliminar: [`¿Eliminar ${n} estudiante${n === 1 ? '' : 's'}?`, 'Se borran de la lista y se liberan sus cupos. <b>Esto no se puede deshacer.</b>', 'Eliminar']
@@ -1224,8 +1470,9 @@ async function accionMasiva(accion, familia) {
     const r = await call('masivo', { accion, ruts, familia: familia || '' });
     let m = `${r.hechos} estudiante${r.hechos === 1 ? '' : 's'} listo${r.hechos === 1 ? '' : 's'}.`;
     if (r.sinCupo) m += ` ${r.sinCupo} no se asignaron: la familia se llenó.`;
+    if (r.otroNivel) m += ` ${r.otroNivel} no se asignaron: son de otro nivel.`;
     if (r.omitidos) m += ` ${r.omitidos} ya estaban así.`;
-    toast(m, r.sinCupo ? 'err' : 'ok');
+    toast(m, r.sinCupo || r.otroNivel ? 'err' : 'ok');
     S.sel.clear(); await recargarPanel(true);
   } catch (e) { manejarError(e); }
 }
@@ -1270,10 +1517,12 @@ const ACT = {
   tab(b) {
     if (S.tab === 'apariencia' && b.dataset.tab !== 'apariencia') aplicarTema(S.panel.tema); // descarta la vista previa sin guardar
     if (b.dataset.tab === 'apariencia') S.ap = Object.assign({}, { primario: '', secundario: '', logo1: '', logo2: '' }, S.panel.tema, { sugeridos: [] });
+    if (b.dataset.tab === 'admin') S.admin = null;
     S.tab = b.dataset.tab; vistaPanel(); window.scrollTo(0, 0);
   },
   async refrescar(b) { ocupado(b, true, 'Actualizando…'); await recargarPanel(); ocupado(b, false); },
-  verFam(b) { S.filtro = { q: '', fam: b.dataset.id, curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
+  verFam(b) { S.filtro = { q: '', fam: b.dataset.id, curso: '', nivel: '' }; S.tab = 'estudiantes'; vistaPanel(); },
+  verNivel(b) { S.filtro = { q: '', fam: '', curso: '', nivel: b.dataset.nivel }; S.tab = 'estudiantes'; vistaPanel(); window.scrollTo(0, 0); },
   excelFam(b) {
     const id = b.dataset.id, P = S.panel, E = P.estudiantes;
     if (!id) {
@@ -1283,13 +1532,13 @@ const ACT = {
       descargarExcel(nombreArchivo('Sin_inscribir'), [hojaFamilia(null, E.filter((e) => !e.familia))]);
     } else {
       const f = P.familias.find((x) => x.id === id);
-      descargarExcel(nombreArchivo(f.nombre), [hojaFamilia(f, E.filter((e) => e.familia === id))]);
+      descargarExcel(nombreArchivo(famLabel(f).replace(/[°·]/g, '')), [hojaFamilia(f, E.filter((e) => e.familia === id))]);
     }
   },
   excelLista() { descargarExcel(nombreArchivo('Estudiantes'), [hojaGeneral('Estudiantes', estudiantesFiltrados())]); },
   plantillaExcel() {
-    descargarExcel('plantilla-estudiantes.xlsx', [{ nombre: 'Estudiantes', anchos: [16, 36, 18],
-      filas: [['RUT', 'Nombre', 'Curso'], ['12.345.678-5', 'Pérez Soto, Ana María', '2° Medio Ayun'], ['11.111.111-1', 'Rojas Díaz, Benjamín', '2° Medio Ayun']] }]);
+    descargarExcel('plantilla-estudiantes.xlsx', [{ nombre: 'Estudiantes', anchos: [16, 36, 18, 12],
+      filas: [['RUT', 'Nombre', 'Curso', 'Nivel'], ['12.345.678-5', 'Pérez Soto, Ana María', '2° Medio Ayun', '2° Medio'], ['11.111.111-1', 'Rojas Díaz, Benjamín', '3° Medio Lafken', '3° Medio']] }]);
   },
   async exportarHoja(b) {
     ocupado(b, true, 'Preparando…');
@@ -1307,12 +1556,12 @@ const ACT = {
   },
   asignar(b) {
     const P = S.panel, e = P.estudiantes.find((x) => x.rut === b.dataset.rut); if (!e) return;
-    const opts = P.familias.map((f) => {
+    const opts = P.familias.filter((f) => familiaParaNivel(f, e.nivel) || f.id === e.familia).map((f) => {
       const actual = e.familia === f.id, dis = !actual && f.libres <= 0;
       return `<label class="opt ${dis ? 'dis' : ''}"><input type="radio" name="fam" value="${esc(f.id)}" ${actual ? 'checked' : ''} ${dis ? 'disabled' : ''}>
         <span><b>${esc(f.nombre)}</b><small>${actual ? 'Familia actual' : f.libres <= 0 ? 'Sin cupos' : f.libres + ' cupos libres'} · ${f.electivos.map(esc).join(', ')}</small></span></label>`;
     }).join('');
-    modal(`<h2>Familia de ${esc(primerNombre(e.nombre))}</h2><p class="muted">${esc(e.nombre)} · ${esc(fmtRut(e.rut))} · ${esc(e.curso)}</p>
+    modal(`<h2>Familia de ${esc(primerNombre(e.nombre))}</h2><p class="muted">${esc(e.nombre)} · ${esc(fmtRut(e.rut))} · ${esc(e.curso)} · ${esc(e.nivel || 'Sin nivel')}</p>
       <form data-form="asignar" data-rut="${esc(e.rut)}"><div class="opts">${opts}
         <label class="opt"><input type="radio" name="fam" value="" ${e.familia ? '' : 'checked'}><span><b>Sin familia</b><small>${e.familia ? 'Quita la inscripción y libera el cupo' : 'Estado actual'}</small></span></label></div>
         <div class="acts"><button type="button" class="btn" data-act="cerrarModal">Cancelar</button><button class="btn btn-pri" type="submit">Guardar</button></div></form>`);
@@ -1336,21 +1585,47 @@ const ACT = {
     try { await call('eliminarEstudiante', { rut: e.rut }); toast('Estudiante eliminado.', 'ok'); await recargarPanel(); }
     catch (err) { manejarError(err); }
   },
-  limpiarCarga() { S.carga = { texto: '', filas: [] }; $('#txtCarga').value = ''; renderPrevia(); },
+  async limpiarCarga() {
+    if (S.carga.filas.some(filaLlena) && !(await confirmar('¿Vaciar la grilla?', 'Se borran las filas escritas que todavía no registras.', { ok: 'Vaciar' }))) return;
+    S.carga = { filas: [], nivelTodos: S.carga.nivelTodos }; redibujarGrilla();
+  },
+  agregarFilas(b) { for (let i = 0; i < Number(b.dataset.n || 1); i++) S.carga.filas.push(filaVacia()); redibujarGrilla(); },
+  quitarFila(b) { S.carga.filas.splice(Number(b.dataset.i), 1); redibujarGrilla(); },
+  nivelTodos() {
+    const n = S.carga.nivelTodos;
+    if (!n) { toast('Elige primero el nivel.'); return; }
+    const llenas = S.carga.filas.filter(filaLlena);
+    if (!llenas.length) { toast('Escribe primero algunas filas.'); return; }
+    llenas.forEach((f) => { f.nivel = n; f.auto = false; delete f.errServidor; });
+    redibujarGrilla(); toast(`${llenas.length} fila${llenas.length === 1 ? '' : 's'} en ${n}.`, 'ok');
+  },
   async importar(b) {
-    const filas = S.carga.filas;
-    ocupado(b, true, 'Guardando…');
+    const { estados } = evaluarCarga();
+    const envio = [];
+    S.carga.filas.forEach((f, i) => {
+      const e = estados[i];
+      if (e && (e[0] === 'ok' || e[0] === 'warn')) envio.push({ i, dato: { rut: f.rut, nombre: f.nombre, curso: f.curso, nivel: normNivel(f.nivel) || nivelDeCurso(f.curso) } });
+    });
+    if (!envio.length) return;
+    ocupado(b, true, 'Registrando…');
     try {
-      const r = await call('importar', { filas });
-      S.carga = { texto: '', filas: [] };
+      const r = await call('importar', { filas: envio.map((x) => x.dato) });
+      const malas = {};
+      r.errores.forEach((x) => { const env = envio[x.linea - 1]; if (env) malas[env.i] = x.motivo; });
+      const enviadas = new Set(envio.map((x) => x.i));
+      // Quedan en la grilla solo las filas con error, para corregirlas
+      const viejas = S.carga.filas;
+      viejas.forEach((f, i) => { if (malas[i]) f.errServidor = malas[i]; });
+      S.carga.filas = viejas.filter((f, i) => filaLlena(f) && (malas[i] || (!enviadas.has(i) && estados[i] && estados[i][0] === 'err')));
       S.panel = await call('panel');
       vistaPanel();
-      modal(`<h2>Lista cargada</h2>
+      const quedan = S.carga.filas.filter(filaLlena).length;
+      modal(`<h2>Alumnos registrados</h2>
         <div class="resumen-carga"><span><b class="ok-t">${r.nuevos}</b>nuevos</span><span><b class="warn-t">${r.actualizados}</b>actualizados</span>
         <span><b>${r.sinCambios}</b>sin cambios</span><span><b class="err-t">${r.errores.length}</b>con error</span></div>
-        ${r.errores.length ? `<p class="hint">No se cargaron: ${r.errores.slice(0, 8).map((x) => `línea ${x.linea} (${esc(x.motivo)})`).join(', ')}${r.errores.length > 8 ? '…' : ''}</p>` : ''}
+        ${quedan ? `<p class="hint">Quedaron ${quedan} fila${quedan === 1 ? '' : 's'} con error en la grilla para que las corrijas.</p>` : ''}
         <p class="muted" style="margin-top:12px">Ya pueden entrar con su RUT y, como clave, los últimos 4 dígitos de su RUT. Si quieres, imprime fichas de acceso desde Estudiantes.</p>
-        <div class="acts"><button class="btn" data-act="cerrarModal">Cerrar</button><button class="btn btn-pri" data-act="irFichas">Ir a Estudiantes</button></div>`);
+        <div class="acts"><button class="btn" data-act="cerrarModal">${quedan ? 'Corregir errores' : 'Seguir registrando'}</button><button class="btn btn-pri" data-act="irFichas">Ir a Estudiantes</button></div>`);
     } catch (e) { manejarError(e); ocupado(b, false); }
   },
   quitarLogo(b) { S.ap['logo' + b.dataset.i] = ''; if (b.dataset.i === '1') S.ap.sugeridos = []; vistaPreviaTema(); vistaPanel(); },
@@ -1378,10 +1653,10 @@ const ACT = {
     imprimir(fichasHTML(lista));
   },
   async selMasivo(b) { await accionMasiva(b.dataset.accion); },
-  irFichas() { cerrarModal(); S.filtro = { q: '', fam: '', curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
+  irFichas() { cerrarModal(); S.filtro = { q: '', fam: '', curso: '', nivel: '' }; S.tab = 'estudiantes'; vistaPanel(); },
   async agregarFam(b) {
     ocupado(b, true, 'Agregando…');
-    try { await call('agregarFamilia'); await recargarPanel(); toast('Familia agregada. Completa sus datos y guarda.', 'ok'); }
+    try { await call('agregarFamilia', { nivel: b.dataset.nivel || '' }); await recargarPanel(); toast('Familia agregada en ' + (b.dataset.nivel || 'sin nivel') + '. Completa sus datos y guarda.', 'ok'); }
     catch (e) { manejarError(e); ocupado(b, false); }
   },
   async eliminarFam(b) {
@@ -1389,6 +1664,50 @@ const ACT = {
     if (!(await confirmar('¿Eliminar familia?', `Se eliminará <b>${esc(f.nombre)}</b>. Los estudiantes ya no podrán elegirla.`, { ok: 'Eliminar', peligro: true }))) return;
     try { await call('eliminarFamilia', { id: f.id }); toast('Familia eliminada.', 'ok'); await recargarPanel(); }
     catch (e) { manejarError(e); }
+  },
+
+  /* Administración */
+  async respaldo(b) {
+    ocupado(b, true, 'Preparando…');
+    try {
+      const [P, hist] = await Promise.all([call('panel'), call('historial')]);
+      S.panel = P;
+      descargarExcel(nombreArchivo('Respaldo_selector_electivos'), [
+        hojaResumen(), hojaGeneral('Estudiantes', P.estudiantes),
+        { nombre: 'Familias', anchos: [12, 8, 16, 70, 9, 11], filas: [['Nivel', 'ID', 'Familia', 'Electivos', 'Cupo', 'Inscritos']].concat(P.familias.map((f) => [f.nivel || 'Todos', f.id, f.nombre, f.electivos.join(' / '), f.cupo, f.inscritos])) },
+        { nombre: 'Historial', anchos: [20, 18, 26, 80], filas: [['Fecha', 'Usuario', 'Acción', 'Detalle']].concat(hist) }
+      ]);
+      toast('Respaldo descargado.', 'ok');
+    } catch (e) { manejarError(e); }
+    ocupado(b, false);
+  },
+  async limpiar(b) {
+    const tipo = b.dataset.tipo, nv = S.adminNivel, P = S.panel;
+    const ests = P.estudiantes.filter((e) => !nv || e.nivel === nv), quien = nv ? 'de ' + esc(nv) : 'de todos los niveles';
+    let conf = '';
+    if (tipo === 'inscripciones') {
+      const n = ests.filter((e) => e.familia).length;
+      if (!(await confirmar(`¿Quitar ${n} inscripcion${n === 1 ? '' : 'es'}?`, `Los estudiantes ${quien} quedan sin familia y podrán volver a elegir mientras el proceso esté abierto.`, { ok: 'Quitar inscripciones', peligro: true }))) return;
+    } else if (tipo === 'claves') {
+      if (!(await confirmar('¿Restablecer claves?', `Las claves personales de los estudiantes ${quien} vuelven a ser los 4 últimos dígitos de su RUT.`, { ok: 'Restablecer' }))) return;
+    } else if (tipo === 'estudiantes') {
+      conf = await confirmarEscribiendo(`¿Eliminar ${ests.length} estudiante${ests.length === 1 ? '' : 's'}?`, `Se borran los estudiantes ${quien} con su inscripción. <b>No se puede deshacer.</b> Si no tienes respaldo, cancela y descárgalo primero.`, 'Eliminar estudiantes');
+    } else if (tipo === 'historial') {
+      conf = await confirmarEscribiendo('¿Limpiar el historial?', `Se borran ${S.admin ? S.admin.historial : ''} movimientos de la hoja Registro. <b>No se puede deshacer.</b>`, 'Limpiar historial');
+    } else if (tipo === 'todo') {
+      conf = await confirmarEscribiendo('¿Reiniciar el sistema?', `Se borran <b>los ${P.estudiantes.length} estudiantes</b> y todo el historial, y se cierra la inscripción. Se mantienen las familias, los usuarios de la UTP y la apariencia. <b>No se puede deshacer.</b>`, 'Reiniciar sistema');
+    }
+    if (conf === null) return;
+    const btn = $(`[data-act=limpiar][data-tipo=${tipo}]`);
+    ocupado(btn, true, 'Procesando…');
+    try {
+      const r = await call('limpiar', { tipo, nivel: tipo === 'historial' || tipo === 'todo' ? '' : nv, confirmacion: conf });
+      const txt = { inscripciones: 'inscripciones quitadas', claves: 'claves restablecidas', estudiantes: 'estudiantes eliminados', historial: 'movimientos borrados del historial', todo: 'estudiantes eliminados; historial limpio y proceso cerrado' }[tipo];
+      toast(`Listo: ${r.hechos} ${txt}.`, 'ok');
+      S.sel.clear();
+      const [P2, A2] = await Promise.all([call('panel'), call('admin')]);
+      S.panel = P2; S.admin = A2; vistaPanel();
+    } catch (e) { manejarError(e); ocupado(btn, false); }
   }
 };
 
@@ -1442,7 +1761,7 @@ const FORMS = {
     const d = Object.fromEntries(new FormData(f)), btn = f.querySelector('[type=submit]');
     ocupado(btn, true, 'Guardando…');
     try {
-      await call('guardarFamilia', { id: f.dataset.id, nombre: d.nombre, cupo: d.cupo, electivos: d.electivos.split('\n') });
+      await call('guardarFamilia', { id: f.dataset.id, nombre: d.nombre, cupo: d.cupo, nivel: d.nivel || '', electivos: d.electivos.split('\n') });
       toast('Familia guardada.', 'ok'); await recargarPanel();
     } catch (e) { manejarError(e); ocupado(btn, false); }
   },
@@ -1476,11 +1795,25 @@ document.addEventListener('submit', (e) => {
   FORMS[f.dataset.form](f);
 });
 const filtrar = debounce(() => renderTabla(), 120);
-const previa = debounce(() => { S.carga.filas = parsearCarga(S.carga.texto); renderPrevia(); }, 200);
+const revisarGrilla = debounce(() => actualizarEstados(), 150);
+/** Casilla de la grilla de registro → { f, i, campo } */
+function celda(t) {
+  const tr = t.closest && t.closest('#regBody tr[data-i]');
+  if (!tr || !t.dataset.campo) return null;
+  const i = Number(tr.dataset.i);
+  return { i, f: S.carga.filas[i], campo: t.dataset.campo, tr };
+}
 document.addEventListener('input', (e) => {
   const t = e.target;
   if (t.dataset.filtro) { S.filtro[t.dataset.filtro] = t.value; filtrar(); }
-  if (t.id === 'txtCarga') { S.carga.texto = t.value; previa(); }
+  const c = celda(t);
+  if (c && c.f && t.tagName === 'INPUT') {
+    fijarCampo(c.f, c.campo, t.value);
+    if (c.campo === 'curso') { const sel = c.tr.querySelector('[data-campo=nivel]'); if (sel) sel.value = c.f.nivel; }
+    // Al escribir en la última fila aparece otra vacía debajo
+    if (c.i === S.carga.filas.length - 1 && filaLlena(c.f)) { S.carga.filas.push(filaVacia()); $('#regBody').insertAdjacentHTML('beforeend', filaRegHTML(S.carga.filas[c.i + 1], c.i + 1)); }
+    revisarGrilla();
+  }
   if (t.dataset.color) { S.ap[t.dataset.color] = t.value.toUpperCase(); const tx = $(`[data-colortxt=${t.dataset.color}]`); if (tx) tx.value = t.value.toUpperCase(); vistaPreviaTema(); }
   if (t.dataset.colortxt) {
     let v = t.value.trim(); if (v && v[0] !== '#') v = '#' + v;
@@ -1492,6 +1825,10 @@ document.addEventListener('change', (e) => {
   const t = e.target;
   // Solo selects: en el buscador "change" llega al perder el foco y redibujar ahí anularía el clic en la tabla.
   if (t.dataset.filtro && t.tagName === 'SELECT') { S.filtro[t.dataset.filtro] = t.value; renderTabla(); }
+  const c = celda(t);
+  if (c && c.f && t.tagName === 'SELECT') { fijarCampo(c.f, 'nivel', t.value); c.f.auto = !t.value; actualizarEstados(); }
+  if (t.id === 'nivelTodos') S.carga.nivelTodos = t.value;
+  if (t.id === 'adminNivel') { S.adminNivel = t.value; vistaPanel(); }
   if (t.dataset.sel) { t.checked ? S.sel.add(t.dataset.sel) : S.sel.delete(t.dataset.sel); renderTabla(); }
   if (t.id === 'selTodos') { estudiantesFiltrados().slice(0, 500).forEach((e) => (t.checked ? S.sel.add(e.rut) : S.sel.delete(e.rut))); renderTabla(); }
   if (t.id === 'selFam' && t.value) accionMasiva('asignar', t.value);
@@ -1508,7 +1845,11 @@ document.addEventListener('change', (e) => {
   }
   if (t.id === 'archivoCsv' && t.files[0]) {
     const archivo = t.files[0];
-    const cargar = (txt) => { S.carga.texto = txt.replace(/^\ufeff/, ''); $('#txtCarga').value = S.carga.texto; S.carga.filas = parsearCarga(S.carga.texto); renderPrevia(); t.value = ''; };
+    const cargar = (txt) => {
+      const filas = parsearCarga(txt.replace(/^\ufeff/, '')); t.value = '';
+      if (!filas.length) { toast('El archivo no tiene filas para registrar.', 'err'); return; }
+      agregarDatosGrilla(filas); toast(`${filas.length} fila${filas.length === 1 ? '' : 's'} agregada${filas.length === 1 ? '' : 's'} a la grilla. Revísalas y presiona Registrar.`, 'ok');
+    };
     if (/\.xlsx$/i.test(archivo.name)) {
       archivo.arrayBuffer().then(XLSX.leer).then((filas) => cargar(filas.map((f) => f.map((v) => String(v).replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n')))
         .catch((e) => toast(e.message || 'No se pudo leer el Excel.', 'err'));
@@ -1520,7 +1861,24 @@ document.addEventListener('change', (e) => {
 });
 document.addEventListener('focusout', (e) => {
   const t = e.target;
-  if (t.hasAttribute && t.hasAttribute('data-rut') && normRut(t.value)) t.value = fmtRut(t.value);
+  if (t.hasAttribute && t.hasAttribute('data-rut') && normRut(t.value)) {
+    t.value = fmtRut(t.value);
+    const c = celda(t); if (c && c.f) { c.f.rut = t.value; revisarGrilla(); }
+  }
+});
+// Pegar varias celdas copiadas de Excel dentro de la grilla: se reparten en filas y columnas
+document.addEventListener('paste', (e) => {
+  const c = celda(e.target); if (!c) return;
+  const txt = (e.clipboardData || window.clipboardData).getData('text') || '';
+  if (!/[\t\n]/.test(txt.replace(/[\r\n]+$/, ''))) return; // una sola celda: pegado normal
+  e.preventDefault();
+  const col = CAMPOS.indexOf(c.campo);
+  const lineas = txt.replace(/\r/g, '').replace(/\n+$/, '').split('\n');
+  let datos;
+  if (col === 0 && lineas.some((l) => l.split('\t').length >= 3)) datos = parsearCarga(lineas.join('\n'));
+  else datos = lineas.map((l) => { const o = {}; l.split('\t').forEach((v, j) => { if (CAMPOS[col + j]) o[CAMPOS[col + j]] = v.trim(); }); return o; });
+  agregarDatosGrilla(datos, c.i);
+  toast(`${datos.length} fila${datos.length === 1 ? '' : 's'} pegada${datos.length === 1 ? '' : 's'}.`, 'ok');
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.modalAbierto) cerrarModal(); });
 

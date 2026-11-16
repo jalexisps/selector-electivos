@@ -193,6 +193,91 @@ api('guardarProceso', { abierto: false }, tUtp);
 ok(api('inscribir', { familia: 'F3' }, entrarEstudiante(70)).code === 'CERRADO', 'cerrar el proceso bloquea inscripciones');
 ok(mock.hojas.Registro.getLastRow() > 20, 'registro de actividad (' + mock.hojas.Registro.getLastRow() + ' filas)');
 
+seccion('Niveles');
+function nuevoSistema() {
+  const m = crearMock({ digest: (x) => Array.from(crypto.createHash('sha256').update(x, 'utf8').digest()).map((b) => (b > 127 ? b - 256 : b)) });
+  const c = vm.createContext(Object.assign({ console }, m.globals));
+  ['Codigo.gs', 'Logo.gs'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(__dirname, '../apps-script', f), 'utf8'), c, { filename: f }));
+  c.instalar();
+  const call = (accion, datos, token) => JSON.parse(JSON.stringify(c.api({ accion, datos, token })));
+  const cu = m.hojas.UTP.data[1][2];
+  const tk = call('login', { rol: 'utp', usuario: 'utp', clave: cu }).data.token;
+  call('cambiarClave', { nueva: 'clave-utp-2026' }, tk);
+  return { m, c, call, tk };
+}
+{
+  const { m, c, call, tk } = nuevoSistema();
+  ok(m.hojas.Familias.data[0].includes('Nivel') && m.hojas.Estudiantes.data[0].includes('Nivel'), 'columna Nivel en Familias y Estudiantes');
+  ok(c.normNivel_('2do medio') === '2° Medio' && c.normNivel_('3') === '3° Medio' && c.normNivel_('4° Medio') === '', 'normaliza niveles');
+  ok(c.nivelDeCurso_('2° Medio Ayun') === '2° Medio' && c.nivelDeCurso_('3°B') === '3° Medio', 'deduce nivel desde el curso');
+  call('guardarFamilia', { id: 'F1', nombre: 'Familia 1', electivos: ['A'], cupo: 2, nivel: '2° Medio' }, tk);
+  call('guardarFamilia', { id: 'F2', nombre: 'Familia 2', electivos: ['B'], cupo: 25, nivel: '2° Medio' }, tk);
+  call('guardarFamilia', { id: 'F3', nombre: 'Familia 1', electivos: ['C'], cupo: 25, nivel: '3° Medio' }, tk);
+  let x = call('agregarFamilia', { nivel: '3° Medio' }, tk);
+  ok(x.ok && fila2(m, 'Familias', (f) => f.ID === x.data.id).Nivel === '3° Medio' && fila2(m, 'Familias', (f) => f.ID === x.data.id).Nombre === 'Familia 2', 'agrega familia al nivel con su número');
+  const L = [
+    { rut: rut(15000001), nombre: 'Ana Dos', curso: '2° Medio Ayun' },
+    { rut: rut(15000002), nombre: 'Beto Dos', curso: 'Ayun', nivel: '2° Medio' },
+    { rut: rut(15000003), nombre: 'Caro Tres', curso: '3°A' },
+    { rut: rut(15000004), nombre: 'Dani Tres', curso: 'B', nivel: '3' },
+    { rut: rut(15000005), nombre: 'Sin Nivel', curso: 'Ayun' }
+  ];
+  x = call('importar', { filas: L }, tk);
+  ok(x.ok && x.data.nuevos === 4 && x.data.errores.length === 1 && /nivel/i.test(x.data.errores[0].motivo), 'registro en una acción; exige nivel: ' + JSON.stringify(x.data));
+  ok(fila2(m, 'Estudiantes', (f) => f.RUT === rut(15000002)).Nivel === '2° Medio', 'nivel guardado');
+  const ent = (r) => call('login', { rol: 'estudiante', usuario: r, clave: c.claveRut_(r) }).data.token;
+  call('guardarProceso', { abierto: true }, tk);
+  const tA = ent(rut(15000001)), tC = ent(rut(15000003));
+  let e = call('miEstado', {}, tA).data;
+  ok(e.estudiante.nivel === '2° Medio' && e.familias.map((f) => f.id).join() === 'F1,F2', '2° Medio ve solo sus familias');
+  e = call('miEstado', {}, tC).data;
+  ok(e.familias.every((f) => f.nivel === '3° Medio') && e.familias.length === 2, '3° Medio ve solo sus familias');
+  ok(call('inscribir', { familia: 'F1' }, tC).ok === false, 'no se inscribe en familia de otro nivel');
+  ok(call('inscribir', { familia: 'F3' }, tC).ok, 'se inscribe en familia de su nivel');
+  ok(call('asignar', { rut: rut(15000002), familia: 'F3' }, tk).code === 'NIVEL', 'UTP no asigna a otro nivel');
+  x = call('masivo', { accion: 'asignar', familia: 'F1', ruts: [rut(15000001), rut(15000002), rut(15000004)] }, tk);
+  ok(x.ok && x.data.hechos === 2 && x.data.otroNivel === 1, 'masivo omite otro nivel: ' + JSON.stringify(x.data));
+  ok(call('guardarFamilia', { id: 'F3', nombre: 'Familia 1', electivos: ['C'], cupo: 25, nivel: '2° Medio' }, tk).ok === false, 'no cambia de nivel una familia con inscritos de otro nivel');
+  x = call('importar', { filas: [{ rut: rut(15000003), nombre: 'Caro Tres', curso: '2°A' }] }, tk);
+  ok(x.ok && x.data.errores.length === 1 && x.data.actualizados === 0, 'no cambia de nivel a un inscrito');
+  const P = call('panel', {}, tk).data;
+  ok(P.niveles.join() === '2° Medio,3° Medio' && P.estudiantes.find((s) => s.rut === rut(15000004)).nivel === '3° Medio', 'panel con niveles');
+
+  seccion('Administración');
+  ok(call('admin', {}, tA).code === 'SESION', 'estudiante no entra a administración');
+  let a = call('admin', {}, tk).data;
+  ok(a.historial > 5 && a.ultimos.length && a.ultimos[0].accion, 'muestra historial: ' + a.historial);
+  ok(call('historial', {}, tk).data.length === a.historial, 'historial completo para respaldo');
+  ok(call('limpiar', { tipo: 'historial' }, tk).ok === false, 'limpiar historial exige BORRAR');
+  x = call('limpiar', { tipo: 'historial', confirmacion: 'borrar' }, tk);
+  a = call('admin', {}, tk).data;
+  ok(x.ok && a.historial === 1 && a.ultimos[0].accion === 'Limpiar historial', 'limpia historial y deja constancia');
+  call('cambiarClave', { actual: c.claveRut_(rut(15000001)), nueva: 'propia-123' }, tA);
+  x = call('limpiar', { tipo: 'claves', nivel: '2° Medio' }, tk);
+  ok(x.ok && x.data.hechos === 1 && fila2(m, 'Estudiantes', (f) => f.RUT === rut(15000001)).ClaveHash === '', 'restablece claves del nivel');
+  x = call('limpiar', { tipo: 'inscripciones', nivel: '3° Medio' }, tk);
+  ok(x.ok && x.data.hechos === 1 && call('panel', {}, tk).data.estudiantes.filter((s) => s.familia).length === 2, 'quita inscripciones solo de 3° Medio');
+  ok(call('limpiar', { tipo: 'estudiantes', nivel: '3° Medio' }, tk).ok === false, 'eliminar estudiantes exige BORRAR');
+  x = call('limpiar', { tipo: 'estudiantes', nivel: '3° Medio', confirmacion: 'BORRAR' }, tk);
+  let ests = call('panel', {}, tk).data.estudiantes;
+  ok(x.ok && x.data.hechos === 2 && ests.length === 2 && ests.every((s) => s.nivel === '2° Medio' && s.nombre), 'elimina estudiantes de un nivel');
+  x = call('limpiar', { tipo: 'todo', confirmacion: 'BORRAR' }, tk);
+  const P2 = call('panel', {}, tk).data;
+  ok(x.ok && P2.estudiantes.length === 0 && P2.proceso.estado === 'cerrado' && P2.familias.length === 4, 'reinicio: sin estudiantes, proceso cerrado, familias intactas');
+  ok(call('admin', {}, tk).data.historial === 1, 'reinicio deja solo su constancia en el historial');
+  ok(call('limpiar', { tipo: 'nada' }, tk).ok === false, 'tipo de limpieza desconocido');
+}
+{
+  seccion('Planilla de una versión anterior');
+  const { m, call, tk } = nuevoSistema();
+  ['Familias', 'Estudiantes'].forEach((h) => { const i = m.hojas[h].data[0].indexOf('Nivel'); m.hojas[h].data.forEach((r) => r.splice(i, 1)); });
+  call('importar', { filas: [{ rut: rut(16000001), nombre: 'Viejo', curso: '2° Medio Ayun' }] }, tk);
+  const P = call('panel', {}, tk).data;
+  ok(m.hojas.Estudiantes.data[0].includes('Nivel') && m.hojas.Familias.data[0].includes('Nivel'), 'agrega la columna Nivel sola');
+  ok(P.estudiantes[0].nivel === '2° Medio' && P.familias.every((f) => f.nivel === ''), 'datos antiguos siguen funcionando');
+}
+function fila2(m, h, o) { return m.hojas[h].data.slice(1).map((r) => Object.fromEntries(m.hojas[h].data[0].map((k, i) => [k, r[i]]))).find(o); }
+
 seccion('Interfaz');
 const html = fs.readFileSync(path.join(__dirname, '../apps-script/Index.html'), 'utf8');
 ok(!/<\?|\?>/.test(html), 'Index.html sin signos de plantilla de Apps Script (rompen la página)');
