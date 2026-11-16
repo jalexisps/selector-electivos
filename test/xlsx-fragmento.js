@@ -1,6 +1,8 @@
 /* XLSX-INICIO — Excel sin librerías externas: escribir (zip sin compresión) y leer (.xlsx de Excel o Google). */
 const XLSX = (() => {
   const enc = new TextEncoder();
+  // Armado por partes: Apps Script interpreta los signos de plantilla si aparecen juntos en el HTML.
+  const DECL = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
   const TABLA_CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
   const crc32 = (u8) => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = TABLA_CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
   const xml = (s) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
@@ -41,7 +43,7 @@ const XLSX = (() => {
       return `<col min="${j + 1}" max="${j + 1}" width="${w}" customWidth="1"/>`;
     }).join('');
     const ref = `A1:${col(nc - 1)}${Math.max(1, filas.length)}`;
-    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    return DECL +
       '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
       '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
       `<cols>${cols}</cols><sheetData>${datos}</sheetData>` + (filas.length > 1 ? `<autoFilter ref="${ref}"/>` : '') + '</worksheet>';
@@ -59,14 +61,14 @@ const XLSX = (() => {
     const color = 'FF' + String(colorEncabezado || '#067D3E').replace('#', '').toUpperCase();
     const ns = 'http://schemas.openxmlformats.org';
     const archivos = [
-      { nombre: '[Content_Types].xml', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      { nombre: '[Content_Types].xml', texto: DECL +
         `<Types xmlns="${ns}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>` +
         '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
         '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
         hojas.map((h, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + '</Types>' },
-      { nombre: '_rels/.rels', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      { nombre: '_rels/.rels', texto: DECL +
         `<Relationships xmlns="${ns}/package/2006/relationships"><Relationship Id="rId1" Type="${ns}/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
-      { nombre: 'xl/workbook.xml', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      { nombre: 'xl/workbook.xml', texto: DECL +
         `<workbook xmlns="${ns}/spreadsheetml/2006/main" xmlns:r="${ns}/officeDocument/2006/relationships"><sheets>` +
         hojas.map((h, i) => `<sheet name="${xml(h.nombre)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') + '</sheets>' +
         (() => {
@@ -74,11 +76,11 @@ const XLSX = (() => {
             ? `<definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${xml(h.nombre.replace(/'/g, "''"))}'!$A$1:$${col(Math.max(1, ...h.filas.map((f) => f.length)) - 1)}$${h.filas.length}</definedName>` : '').join('');
           return dn ? `<definedNames>${dn}</definedNames>` : '';
         })() + '</workbook>' },
-      { nombre: 'xl/_rels/workbook.xml.rels', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      { nombre: 'xl/_rels/workbook.xml.rels', texto: DECL +
         `<Relationships xmlns="${ns}/package/2006/relationships">` +
         hojas.map((h, i) => `<Relationship Id="rId${i + 1}" Type="${ns}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') +
         `<Relationship Id="rId${hojas.length + 1}" Type="${ns}/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
-      { nombre: 'xl/styles.xml', texto: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      { nombre: 'xl/styles.xml', texto: DECL +
         `<styleSheet xmlns="${ns}/spreadsheetml/2006/main">` +
         '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts>' +
         `<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="${color}"/><bgColor indexed="64"/></patternFill></fill></fills>` +

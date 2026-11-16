@@ -193,5 +193,9 @@ api('guardarProceso', { abierto: false }, tUtp);
 ok(api('inscribir', { familia: 'F3' }, entrarEstudiante(70)).code === 'CERRADO', 'cerrar el proceso bloquea inscripciones');
 ok(mock.hojas.Registro.getLastRow() > 20, 'registro de actividad (' + mock.hojas.Registro.getLastRow() + ' filas)');
 
+seccion('Interfaz');
+const html = fs.readFileSync(path.join(__dirname, '../apps-script/Index.html'), 'utf8');
+ok(!/<\?|\?>/.test(html), 'Index.html sin signos de plantilla de Apps Script (rompen la página)');
+
 console.log(`\n${pasadas} pruebas pasaron, ${fallas} fallaron`);
 process.exit(fallas ? 1 : 0);
