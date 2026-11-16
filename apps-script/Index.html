@@ -105,7 +105,7 @@ img.marca{object-fit:contain;width:auto;max-width:72px}
 .tabs{gap:5px}
 @media(min-width:900px){.top-panel .top-in{flex-wrap:nowrap;gap:12px}.top-panel .tabs{flex:1;min-width:0;margin-left:10px}.top-panel .brand small{max-width:200px}}
 @media(min-width:900px){.tabs{order:0;width:auto;margin:0 0 0 18px}}
-@media(max-width:1380px){.top-panel .quien{display:none}}
+.top-panel .quien{display:none} /* en el panel UTP el espacio es para las pestañas */
 @media(max-width:560px){.brand>div{display:none}.top-in{flex-wrap:nowrap}.top-panel .top-in{flex-wrap:wrap}.top-user .quien{font-size:.86rem}}
 
 .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
@@ -846,8 +846,8 @@ function vistaPanel() {
       <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(P.colegio || 'Panel UTP')}</small></div></div>
       <nav class="tabs">${tabs}</nav>
       <div class="top-user"><div class="quien">${esc(S.nombre)}<small>UTP</small></div>
-        <button class="btn btn-ghost btn-sm" data-act="claveModal">Clave</button>
-        <button class="btn btn-ghost btn-sm" data-act="salir">Salir</button></div>
+        <button class="btn btn-ghost btn-sm" data-act="claveModal" title="Cambiar la clave de ${esc(S.nombre)}">Clave</button>
+        <button class="btn btn-ghost btn-sm" data-act="salir" title="Salir (${esc(S.nombre)})">Salir</button></div>
     </div></header><main class="wrap">${cuerpo}</main>`;
   if (S.tab === 'estudiantes') renderTabla();
   if (S.tab === 'cargar') { $('#txtCarga').value = S.carga.texto; renderPrevia(); }
