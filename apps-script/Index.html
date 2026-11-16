@@ -326,6 +326,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
 <div id="modal" hidden></div>
 <div id="toast"></div>
 <div id="print-area"></div>
+<script>
+  // Si algo falla al cargar, mostrarlo en pantalla en vez de quedar en "Cargando…"
+  window.addEventListener('error', function (e) {
+    var app = document.getElementById('app');
+    if (app && /Cargando/.test(app.textContent)) app.innerHTML = '<div class="cargando"><div style="max-width:520px;text-align:center">No se pudo iniciar la aplicación.<br><small>' +
+      String(e.message || e.error || 'Error').replace(/[<>&]/g, '') + (e.lineno ? ' (línea ' + e.lineno + ')' : '') + '</small></div></div>';
+  });
+</script>
 
 <script>
 /* ============================================================
