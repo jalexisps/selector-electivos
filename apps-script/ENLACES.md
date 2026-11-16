@@ -3,7 +3,7 @@
 Enlace para estudiantes y UTP (GitHub Pages, sin aviso de Google):
 https://jalexisps.github.io/selector-electivos/
 
-Aplicación web de Apps Script (implementación «v1.0», versión 1 del 16-11-2026):
+Aplicación web de Apps Script (implementación «v1.2», versión 4 del 16-11-2026; mismo enlace desde la v1.0):
 https://script.google.com/macros/s/AKfycbzx_AF2q8k_zDZGGxThQh_-UJJ0HW8f0ewLsL2z_n02cE543hbX0rWSh1eS0qmVxMk/exec
 
 Planilla (base de datos): https://docs.google.com/spreadsheets/d/1DVScIPO1ZGHjregZoTT9sjfhgIbx3Yabba2LmZpj1ak/edit
