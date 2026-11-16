@@ -1,4 +1,4 @@
-# Selector de Electivos · v1.1 — Instalación
+# Selector de Electivos · v1.2 — Instalación
 
 Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el programa). La página para los estudiantes se publica en GitHub Pages. No necesita servidor ni pagar nada.
 
@@ -34,7 +34,7 @@ Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el 
 
 1. Entra en el enlace → pestaña **UTP** → usuario `utp` y la clave inicial → crea tu clave personal.
 2. **Proceso**: escribe el nombre del colegio y el enlace de GitHub Pages (se imprime en las fichas).
-3. **Cargar lista**: pega desde Excel las columnas **RUT, Nombre, Curso** → revisa la vista previa → Guardar.
+3. **Cargar lista**: sube el Excel (.xlsx) con las columnas **RUT, Nombre, Curso** (hay una plantilla en el mismo panel) o pega las columnas → revisa la vista previa → Guardar. Si el RUT viene en dos columnas (RUN y DV) se junta solo.
 4. Opcional: **Estudiantes → Imprimir fichas de acceso** (RUT y clave de cada estudiante, para recortar). Se puede filtrar por curso.
 5. **Proceso**: activa **Inscripción habilitada**. Opcional: programa fecha y hora de apertura y cierre.
 
@@ -47,7 +47,8 @@ Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el 
 - **Cupos.** Cada familia tiene 25 cupos (se cambia en **Familias**). Al inscribirse el estudiante número 25, la familia se bloquea sola. Las inscripciones se procesan de a una, así que nunca se pasa del cupo aunque varios elijan al mismo tiempo.
 - **Elección definitiva.** El estudiante no puede cambiarse. La UTP puede reasignarlo o quitarle la inscripción (libera el cupo) desde **Estudiantes → Familia**.
 - **Claves olvidadas.** En **Estudiantes → Restablecer clave** vuelve a ser los 4 dígitos del RUT.
-- **Exportar.** En **Resumen**: CSV por familia, todo junto o solo los que no se inscribieron, o «Abrir en planilla de Google» (llena la hoja *Exportación*).
+- **Exportar a Excel.** En **Resumen**: un Excel con hoja Resumen, Todas y una hoja por familia (más «Sin inscribir»); también por familia o solo los sin inscribir. En **Estudiantes** se exporta la lista filtrada o los seleccionados. Sigue disponible «Abrir en planilla de Google».
+- **Selección múltiple.** En **Estudiantes**, marca casillas (o haz clic en las filas; la casilla del encabezado marca toda la lista) y aplica a todos: asignar familia (respeta el cupo), quitar inscripción, restablecer clave, imprimir fichas, Excel o eliminar.
 - **Historial.** La hoja *Registro* guarda quién hizo qué y cuándo.
 
 ## Otra persona de la UTP
