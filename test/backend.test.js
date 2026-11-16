@@ -196,6 +196,7 @@ ok(mock.hojas.Registro.getLastRow() > 20, 'registro de actividad (' + mock.hojas
 seccion('Interfaz');
 const html = fs.readFileSync(path.join(__dirname, '../apps-script/Index.html'), 'utf8');
 ok(!/<\?|\?>/.test(html), 'Index.html sin signos de plantilla de Apps Script (rompen la página)');
+ok(!/:\/\/|\\\/\//.test(html), 'Index.html sin "//" dentro de textos o expresiones (Apps Script los borra como comentario)');
 
 console.log(`\n${pasadas} pruebas pasaron, ${fallas} fallaron`);
 process.exit(fallas ? 1 : 0);

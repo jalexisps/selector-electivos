@@ -3,6 +3,8 @@ const XLSX = (() => {
   const enc = new TextEncoder();
   // Armado por partes: Apps Script interpreta los signos de plantilla si aparecen juntos en el HTML.
   const DECL = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
+  // Apps Script borra todo lo que sigue a dos barras seguidas en una línea: por eso la URL se arma por partes.
+  const NS = 'http:' + '/' + '/schemas.openxmlformats.org';
   const TABLA_CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
   const crc32 = (u8) => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = TABLA_CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
   const xml = (s) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
@@ -44,7 +46,7 @@ const XLSX = (() => {
     }).join('');
     const ref = `A1:${col(nc - 1)}${Math.max(1, filas.length)}`;
     return DECL +
-      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+      `<worksheet xmlns="${NS}/spreadsheetml/2006/main" xmlns:r="${NS}/officeDocument/2006/relationships">` +
       '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
       `<cols>${cols}</cols><sheetData>${datos}</sheetData>` + (filas.length > 1 ? `<autoFilter ref="${ref}"/>` : '') + '</worksheet>';
   }
@@ -59,7 +61,7 @@ const XLSX = (() => {
       return Object.assign({}, h, { nombre: n });
     });
     const color = 'FF' + String(colorEncabezado || '#067D3E').replace('#', '').toUpperCase();
-    const ns = 'http://schemas.openxmlformats.org';
+    const ns = NS;
     const archivos = [
       { nombre: '[Content_Types].xml', texto: DECL +
         `<Types xmlns="${ns}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>` +
@@ -122,9 +124,9 @@ const XLSX = (() => {
     const wb = await sacar('xl/workbook.xml'), rels = await sacar('xl/_rels/workbook.xml.rels');
     if (wb && rels) {
       const hoja = porNombre(parse(wb), 'sheet')[0];
-      const rid = hoja && (hoja.getAttribute('r:id') || hoja.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id'));
+      const rid = hoja && (hoja.getAttribute('r:id') || hoja.getAttributeNS(NS + '/officeDocument/2006/relationships', 'id'));
       const rel = porNombre(parse(rels), 'Relationship').find((r) => r.getAttribute('Id') === rid);
-      if (rel) { const t = rel.getAttribute('Target'); ruta = t.startsWith('/') ? t.slice(1) : 'xl/' + t.replace(/^\.\//, ''); }
+      if (rel) { const t = rel.getAttribute('Target'); ruta = t.startsWith('/') ? t.slice(1) : 'xl/' + t.replace(/^\.\x2F/, ''); }
     }
     const hx = await sacar(ruta);
     if (!hx) throw new Error('No encontré la primera hoja del Excel.');
