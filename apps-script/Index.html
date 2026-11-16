@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selector de Electivos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F1EA; --card:#FFFFFF; --ink:#1A2132; --muted:#5D6577; --soft:#8A90A0; --line:#E2DDD2; --line2:#EEEAE2;
+  --pri:#2442C4; --pri-ink:#fff; --pri-soft:#E8ECFB;
+  --ok:#17845A; --ok-soft:#E3F4EC; --warn:#B86E00; --warn-soft:#FBF0DD; --err:#C0353F; --err-soft:#FBE7E8;
+  --r:14px; --r-sm:10px;
+  --sh:0 1px 2px rgba(26,33,50,.06),0 6px 20px -8px rgba(26,33,50,.12);
+  --font:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;line-height:1.15;letter-spacing:-.01em}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+[hidden]{display:none!important}
+
+/* ---------- Botones ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45em;border:1px solid transparent;border-radius:var(--r-sm);padding:.7em 1.15em;font-weight:700;cursor:pointer;background:#fff;border-color:var(--line);transition:transform .08s,background .15s,border-color .15s,box-shadow .15s;white-space:nowrap;text-decoration:none}
+.btn:hover{border-color:#cfc8ba}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-pri{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+.btn-pri:hover{background:#1c37a8;border-color:#1c37a8}
+.btn-danger{color:var(--err)}
+.btn-danger.solid{background:var(--err);color:#fff;border-color:var(--err)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-ghost:hover{background:rgba(26,33,50,.06);border-color:transparent;color:var(--ink)}
+.btn-sm{padding:.45em .8em;font-size:.9rem;border-radius:8px}
+.btn-block{width:100%}
+.btn .spin{width:1em;height:1em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:gira .7s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+
+/* ---------- Formularios ---------- */
+label.f{display:block;font-weight:600;font-size:.92rem;margin-bottom:14px}
+label.f>span{display:block;margin-bottom:6px}
+.inp,select.inp,textarea.inp{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:var(--r-sm);padding:.72em .85em;outline:none;transition:border-color .15s,box-shadow .15s}
+.inp:focus{border-color:var(--pri);box-shadow:0 0 0 4px var(--pri-soft)}
+textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:.88rem;line-height:1.5}
+.pw{position:relative}
+.pw .inp{padding-right:4.2em}
+.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer;padding:.4em .6em;border-radius:6px}
+.pw button:hover{background:var(--line2)}
+.form-err{color:var(--err);font-weight:600;font-size:.92rem;min-height:1.3em;margin:-4px 0 10px}
+.hint{color:var(--muted);font-size:.9rem}
+
+/* ---------- Marca ---------- */
+.marca{width:36px;height:36px;flex:none}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand b{display:block;font-weight:800;font-size:1rem;letter-spacing:-.01em}
+.brand small{display:block;color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
+
+/* ---------- Login ---------- */
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:28px 16px;
+  background:
+    radial-gradient(1200px 500px at 110% -10%,rgba(36,66,196,.10),transparent 60%),
+    radial-gradient(900px 500px at -20% 110%,rgba(14,124,123,.10),transparent 60%),var(--bg)}
+.login-card{width:100%;max-width:410px;background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:30px 26px 24px;border:1px solid var(--line2)}
+.login-card .marca{width:46px;height:46px;margin-bottom:14px}
+.login-card h1{font-size:1.65rem;font-weight:800}
+.login-card .colegio{color:var(--muted);margin-top:4px;font-weight:500}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--line2);border-radius:12px;padding:4px;margin:22px 0 20px}
+.seg button{border:0;background:none;padding:.6em;border-radius:9px;font-weight:700;color:var(--muted);cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.login-card .hint{margin-top:16px;text-align:center}
+
+/* ---------- Barra superior ---------- */
+.top{position:sticky;top:0;z-index:20;background:rgba(244,241,234,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:10px 18px;flex-wrap:wrap}
+.top-user{margin-left:auto;display:flex;align-items:center;gap:4px}
+.top-user .quien{font-weight:600;font-size:.92rem;margin-right:6px;text-align:right;line-height:1.2}
+.top-user .quien small{display:block;color:var(--muted);font-weight:500}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;order:3;width:100%;margin:0 -4px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:none;padding:.65em .9em;font-weight:700;color:var(--muted);cursor:pointer;border-radius:9px;white-space:nowrap;position:relative}
+.tabs button:hover{color:var(--ink);background:rgba(26,33,50,.05)}
+.tabs button.on{color:var(--pri)}
+.tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-11px;height:3px;border-radius:3px;background:var(--pri)}
+@media(min-width:900px){.tabs{order:0;width:auto;margin:0 0 0 18px}}
+@media(max-width:1380px){.top-panel .quien{display:none}}
+@media(max-width:560px){.brand>div{display:none}.top-in{flex-wrap:nowrap}.top-panel .top-in{flex-wrap:wrap}.top-user .quien{font-size:.86rem}}
+
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
+.wrap-narrow{max-width:880px}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sec-head h2{font-size:1.45rem;font-weight:800}
+.sec-head p{color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:20px}
+
+/* ---------- Avisos ---------- */
+.banner{display:flex;gap:14px;align-items:flex-start;border-radius:var(--r);padding:16px 18px;margin-bottom:20px;border:1px solid}
+.banner .ico{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800}
+.banner h3{font-size:1.05rem;font-weight:800}
+.banner p{margin-top:2px;color:var(--muted)}
+.banner.ok{background:var(--ok-soft);border-color:#bfe4d1}.banner.ok .ico{background:var(--ok)}
+.banner.warn{background:var(--warn-soft);border-color:#f0d7ae}.banner.warn .ico{background:var(--warn)}
+.banner.off{background:#ECE9E2;border-color:var(--line)}.banner.off .ico{background:var(--soft)}
+
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:.25em .7em;font-weight:700;font-size:.82rem}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.abierto{background:var(--ok-soft);color:var(--ok)}
+.pill.programado{background:var(--warn-soft);color:var(--warn)}
+.pill.cerrado,.pill.finalizado{background:#E9E6DF;color:var(--muted)}
+
+/* ---------- Familias (estudiante) ---------- */
+.saludo{margin:6px 0 18px}
+.saludo h1{font-size:1.6rem;font-weight:800}
+.saludo p{color:var(--muted);margin-top:4px}
+.fams{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.fam{--c:#2442C4;background:var(--card);border-radius:18px;border:1px solid var(--line2);box-shadow:var(--sh);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.fam::before{content:"";height:7px;background:var(--c)}
+.fam-body{padding:18px 18px 16px;display:flex;flex-direction:column;flex:1}
+.fam-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.fam-head h3{font-size:1.25rem;font-weight:800;color:var(--c)}
+.cupo-tag{font-weight:700;font-size:.8rem;border-radius:999px;padding:.25em .65em;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);white-space:nowrap}
+.cupo-tag.poco{background:var(--warn-soft);color:var(--warn)}
+.cupo-tag.lleno{background:#E9E6DF;color:var(--muted)}
+.elist{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:8px;flex:1}
+.elist li{display:flex;gap:10px;align-items:flex-start;font-weight:600}
+.elist li i{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:.78rem;font-weight:800;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);margin-top:-1px}
+.bar{height:8px;border-radius:99px;background:var(--line2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--c);transition:width .5s}
+.cupo-txt{display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted);margin:7px 0 14px}
+.fam .btn-pick{background:var(--c);border-color:var(--c);color:#fff;width:100%}
+.fam .btn-pick:hover{filter:brightness(.93)}
+.fam.lleno{opacity:.72}
+.fam.lleno::after{content:"Completa";position:absolute;top:18px;right:-34px;transform:rotate(35deg);background:var(--ink);color:#fff;font-weight:800;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:4px 40px}
+.fam.lleno .cupo-tag{visibility:hidden}
+
+/* ---------- Comprobante ---------- */
+.comp{max-width:560px;margin:10px auto 0;text-align:center;padding:34px 26px 26px;border-radius:22px;background:var(--card);box-shadow:var(--sh);border:1px solid var(--line2);position:relative;overflow:hidden}
+.comp::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:var(--c)}
+.check{width:68px;height:68px;border-radius:50%;background:var(--ok);display:grid;place-items:center;margin:0 auto 16px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.comp h1{font-size:1.5rem;font-weight:800}
+.comp .fam-name{font-size:1.9rem;font-weight:800;color:var(--c);margin:16px 0 10px}
+.comp .elist{max-width:360px;margin:0 auto 20px;text-align:left}
+.comp dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;text-align:left;max-width:360px;margin:0 auto 22px;font-size:.92rem;border-top:1px dashed var(--line);padding-top:16px}
+.comp dt{color:var(--muted)}
+.comp dd{margin:0;font-weight:600}
+.comp .nota{font-size:.88rem;color:var(--muted);margin-bottom:18px}
+
+/* ---------- Panel UTP ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.kpi{padding:16px 18px}
+.kpi small{color:var(--muted);font-weight:600;font-size:.85rem}
+.kpi b{display:block;font-size:2rem;font-weight:800;letter-spacing:-.02em;margin-top:2px}
+.estado-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;margin-bottom:16px}
+.estado-row .det{color:var(--muted);font-size:.92rem}
+.estado-row .btn{margin-left:auto}
+.famcards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));margin-bottom:22px}
+.famcard{--c:#2442C4;padding:18px;border-top:6px solid var(--c)}
+.famcard .big{display:flex;align-items:baseline;gap:6px;margin:6px 0 10px}
+.famcard .big b{font-size:2.3rem;font-weight:800;color:var(--c);letter-spacing:-.02em}
+.famcard .big span{color:var(--muted);font-weight:600}
+.famcard h3{font-weight:800;font-size:1.1rem}
+.famcard .el{color:var(--muted);font-size:.86rem;margin:10px 0 14px}
+.famcard .acts{display:flex;gap:8px;flex-wrap:wrap}
+.lleno-tag{font-size:.75rem;font-weight:800;background:var(--ink);color:#fff;border-radius:6px;padding:2px 7px;margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.04em}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar .inp{width:auto;padding:.6em .8em}
+.toolbar .search{flex:1;min-width:200px}
+.toolbar .sp{flex:1}
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
+.tbl th{text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);background:#FBFAF7;position:sticky;top:0}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr:hover td{background:#FBFAF7}
+.tbl .acc{white-space:nowrap;text-align:right}
+.tbl code{font-family:var(--mono);font-weight:700;background:var(--pri-soft);color:var(--pri);padding:2px 7px;border-radius:6px;letter-spacing:.06em}
+.chip{--c:#2442C4;display:inline-block;font-weight:700;font-size:.82rem;border-radius:999px;padding:.2em .7em;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c);white-space:nowrap}
+.chip.none{--c:#8A90A0;background:#EEEBE4}
+.contador{color:var(--muted);font-size:.88rem;padding:10px 14px;border-top:1px solid var(--line2)}
+.vacio{padding:40px 20px;text-align:center;color:var(--muted)}
+.ok-t{color:var(--ok);font-weight:700}.err-t{color:var(--err);font-weight:700}.warn-t{color:var(--warn);font-weight:700}
+
+.grid2{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.grid2{grid-template-columns:1.25fr 1fr}}
+.resumen-carga{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.resumen-carga span b{font-size:1.25rem;display:block}
+
+.switch{display:flex;align-items:center;gap:14px;padding:16px;border:1.5px solid var(--line);border-radius:var(--r-sm);cursor:pointer;margin-bottom:18px;background:#fff}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.switch .sw{flex:none;width:52px;height:30px;border-radius:99px;background:#D6D1C6;position:relative;transition:background .2s}
+.switch .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
+.switch input:checked+.sw{background:var(--ok)}
+.switch input:checked+.sw::after{transform:translateX(22px)}
+.switch input:focus-visible+.sw{box-shadow:0 0 0 4px var(--pri-soft)}
+.switch b{display:block}
+.switch small{color:var(--muted)}
+.row2{display:grid;gap:0 14px;grid-template-columns:1fr}
+@media(min-width:600px){.row2{grid-template-columns:1fr 1fr}}
+
+.famedit{--c:#2442C4;padding:18px;border-left:6px solid var(--c);margin-bottom:14px}
+.famedit .row3{display:grid;gap:0 14px;grid-template-columns:1fr}
+@media(min-width:700px){.famedit .row3{grid-template-columns:2fr 1fr}}
+.famedit .acts{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+
+/* ---------- Modal y avisos flotantes ---------- */
+#modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px}
+.modal-back{position:absolute;inset:0;background:rgba(20,24,36,.45);animation:fade .15s}
+.modal-card{position:relative;background:#fff;border-radius:20px;max-width:460px;width:100%;padding:24px;box-shadow:0 20px 60px -10px rgba(0,0,0,.35);animation:sube .2s ease-out;max-height:calc(100vh - 32px);overflow:auto}
+.modal-card h2{font-size:1.3rem;font-weight:800;margin-bottom:8px}
+.modal-card .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+@keyframes fade{from{opacity:0}}
+@keyframes sube{from{transform:translateY(14px);opacity:0}}
+.opts{display:grid;gap:8px;margin-top:14px}
+.opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--pri);background:var(--pri-soft)}
+.opt.dis{opacity:.5;cursor:not-allowed}
+.opt small{display:block;color:var(--muted)}
+.clave-grande{font-family:var(--mono);font-size:2rem;font-weight:700;letter-spacing:.18em;text-align:center;background:var(--pri-soft);color:var(--pri);border-radius:12px;padding:14px;margin:14px 0}
+
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;display:grid;gap:8px;width:min(92vw,440px)}
+.toast{background:var(--ink);color:#fff;border-radius:12px;padding:12px 16px;font-weight:600;box-shadow:0 10px 30px -6px rgba(0,0,0,.35);animation:sube .2s}
+.toast.err{background:var(--err)}
+.toast.ok{background:var(--ok)}
+
+.cargando{min-height:70vh;display:grid;place-items:center;color:var(--muted);font-weight:600}
+.cargando .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:gira .8s linear infinite;margin:0 auto 12px}
+
+/* ---------- Impresión ---------- */
+#print-area{display:none}
+@media print{
+  body.imprimiendo>*:not(#print-area){display:none!important}
+  body.imprimiendo #print-area{display:block}
+  body{background:#fff}
+  .fichas{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .ficha{border:1px dashed #999;padding:14px 16px;break-inside:avoid;font-size:12px}
+  .ficha .ft{display:flex;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding-bottom:6px;margin-bottom:8px}
+  .ficha .ft svg{width:20px;height:20px}
+  .ficha .ft small{color:#666;margin-left:auto;text-align:right}
+  .ficha .fn{font-size:15px;font-weight:800}
+  .ficha dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0}
+  .ficha dt{color:#666}.ficha dd{margin:0;font-weight:700}
+  .ficha .cl{font-family:var(--mono);font-size:17px;letter-spacing:.15em}
+  .ficha p{color:#555;font-size:10.5px}
+  .comp{box-shadow:none;border:1px solid #ccc}
+  .comp .no-print{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="cargando"><div><div class="spin"></div>Cargando…</div></div></div>
+<div id="modal" hidden></div>
+<div id="toast"></div>
+<div id="print-area"></div>
+
+<script>
+/* ============================================================
+ *  SELECTOR DE ELECTIVOS — Interfaz
+ * ============================================================ */
+const COLORES = ['#0E7C7B', '#D1495B', '#5B4BC4', '#D98200', '#2E7D32', '#1565C0', '#8E3B9E', '#6D4C41'];
+const ESTADOS = { abierto: 'Abierta', cerrado: 'Cerrada', programado: 'Programada', finalizado: 'Finalizada' };
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const store = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} }
+};
+
+const S = {
+  token: store.get('se_token'), rol: store.get('se_rol'), nombre: store.get('se_nombre') || '',
+  debeCambiar: store.get('se_cambiar') === '1',
+  colegio: '', loginRol: 'estudiante',
+  est: null, panel: null, tab: 'resumen',
+  filtro: { q: '', fam: '', curso: '' },
+  carga: { texto: '', filas: [] },
+  timer: null, modalAbierto: false
+};
+
+/* ---------- Comunicación con Apps Script ---------- */
+function call(accion, datos) {
+  return new Promise((resolve, reject) => {
+    if (!(window.google && google.script && google.script.run)) {
+      reject(new Error('Esta página debe abrirse desde la aplicación web de Apps Script.'));
+      return;
+    }
+    google.script.run
+      .withSuccessHandler((r) => {
+        if (r && r.ok) return resolve(r.data);
+        const e = new Error(r ? r.error : 'El servidor no respondió.');
+        e.code = r && r.code;
+        reject(e);
+      })
+      .withFailureHandler(() => reject(new Error('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.')))
+      .api({ accion, token: S.token || '', datos: datos || {} });
+  });
+}
+
+function guardarSesion(r) {
+  Object.assign(S, { token: r.token, rol: r.rol, nombre: r.nombre, debeCambiar: !!r.debeCambiar });
+  store.set('se_token', r.token); store.set('se_rol', r.rol); store.set('se_nombre', r.nombre);
+  store.set('se_cambiar', r.debeCambiar ? '1' : null);
+}
+function borrarSesion() {
+  Object.assign(S, { token: null, rol: null, nombre: '', debeCambiar: false, est: null, panel: null, tab: 'resumen' });
+  ['se_token', 'se_rol', 'se_nombre', 'se_cambiar'].forEach((k) => store.set(k, null));
+}
+
+function manejarError(e, silencioso) {
+  if (e.code === 'SESION') { borrarSesion(); cerrarModal(); vistaLogin(); toast(e.message, 'err'); return; }
+  if (e.code === 'CAMBIAR') { S.debeCambiar = true; cerrarModal(); vistaCambio(true); return; }
+  if (!silencioso) toast(e.message, 'err');
+}
+
+/* ---------- Utilidades ---------- */
+function normRut(r) {
+  r = String(r || '').toUpperCase().replace(/[^0-9K]/g, '');
+  if (r.length < 2) return '';
+  const c = r.slice(0, -1).replace(/^0+/, '');
+  if (!c || /K/.test(c)) return '';
+  return c + '-' + r.slice(-1);
+}
+function rutValido(rut) {
+  const m = /^(\d{1,9})-([\dK])$/.exec(rut);
+  if (!m) return false;
+  let s = 0, mul = 2;
+  for (let i = m[1].length - 1; i >= 0; i--) { s += Number(m[1][i]) * mul; mul = mul === 7 ? 2 : mul + 1; }
+  const dv = 11 - (s % 11);
+  return (dv === 11 ? '0' : dv === 10 ? 'K' : String(dv)) === m[2];
+}
+function fmtRut(r) {
+  const n = normRut(r); if (!n) return String(r || '');
+  const [c, dv] = n.split('-');
+  return c.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+}
+function fmtFecha(ms) {
+  if (!ms) return '';
+  return new Date(Number(ms)).toLocaleString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', hour12: false }) + ' h';
+}
+function aInputFecha(ms) {
+  if (!ms) return '';
+  const d = new Date(Number(ms)), p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+/** "Pérez Soto, Ana María" → "Ana"; "Ana Pérez" → "Ana" */
+function primerNombre(n) {
+  n = String(n || '').trim();
+  const parte = n.includes(',') ? n.split(',')[1] : n;
+  return (parte.trim().split(/\s+/)[0]) || n;
+}
+function colorDe(id, familias) {
+  const i = (familias || []).findIndex((f) => f.id === id);
+  return COLORES[(i < 0 ? 0 : i) % COLORES.length];
+}
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function pararRefresco() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
+
+function ocupado(btn, on, texto) {
+  if (!btn) return;
+  if (on) { btn.dataset.txt = btn.innerHTML; btn.disabled = true; btn.innerHTML = `<span class="spin"></span>${esc(texto || 'Procesando…')}`; }
+  else { btn.disabled = false; if (btn.dataset.txt) btn.innerHTML = btn.dataset.txt; }
+}
+
+function toast(msg, tipo) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + (tipo || '');
+  t.textContent = msg;
+  $('#toast').appendChild(t);
+  setTimeout(() => t.remove(), tipo === 'err' ? 6000 : 3500);
+}
+
+function modal(html) {
+  const m = $('#modal');
+  m.innerHTML = `<div class="modal-back" data-act="cerrarModal"></div><div class="modal-card" role="dialog" aria-modal="true">${html}</div>`;
+  m.hidden = false; S.modalAbierto = true;
+  const f = m.querySelector('input:not([type=radio]):not([type=hidden]),button.btn-pri');
+  if (f) setTimeout(() => f.focus(), 30);
+}
+function cerrarModal() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; S.modalAbierto = false; }
+function confirmar(titulo, texto, { ok = 'Confirmar', peligro = false } = {}) {
+  return new Promise((res) => {
+    modal(`<h2>${esc(titulo)}</h2><p class="muted">${texto}</p>
+      <div class="acts"><button class="btn" data-act="cerrarModal">Cancelar</button>
+      <button class="btn ${peligro ? 'btn-danger solid' : 'btn-pri'}" id="mOk">${esc(ok)}</button></div>`);
+    $('#mOk').onclick = () => { cerrarModal(); res(true); };
+    $$('#modal [data-act=cerrarModal]').forEach((b) => b.addEventListener('click', () => res(false)));
+  });
+}
+
+function imprimir(html) {
+  $('#print-area').innerHTML = html;
+  document.body.classList.add('imprimiendo');
+  const limpiar = () => { document.body.classList.remove('imprimiendo'); $('#print-area').innerHTML = ''; };
+  window.addEventListener('afterprint', limpiar, { once: true });
+  setTimeout(() => { try { window.print(); } catch (e) { toast('Tu navegador no permitió imprimir.', 'err'); } setTimeout(limpiar, 1500); }, 60);
+}
+
+function descargarCSV(nombre, filas) {
+  const csv = '﻿' + filas.map((f) => f.map((v) => {
+    const s = String(v == null ? '' : v);
+    return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }).join(';')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+const marca = () => `<svg class="marca" viewBox="0 0 40 40" aria-hidden="true">
+  <rect x="3" y="5" width="34" height="8.5" rx="4.25" fill="${COLORES[0]}"/>
+  <rect x="3" y="15.75" width="25" height="8.5" rx="4.25" fill="${COLORES[1]}"/>
+  <rect x="3" y="26.5" width="30" height="8.5" rx="4.25" fill="${COLORES[2]}"/></svg>`;
+const icoCheck = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const cargandoHTML = (t) => `<div class="cargando"><div><div class="spin"></div>${esc(t || 'Cargando…')}</div></div>`;
+
+/* ============================================================
+ *  ACCESO
+ * ============================================================ */
+function vistaLogin() {
+  pararRefresco();
+  const est = S.loginRol === 'estudiante';
+  $('#app').innerHTML = `
+  <main class="login-wrap"><section class="login-card">
+    ${marca()}
+    <h1>Selector de Electivos</h1>
+    ${S.colegio ? `<p class="colegio">${esc(S.colegio)}</p>` : ''}
+    <div class="seg" role="tablist">
+      <button type="button" role="tab" data-act="rol" data-rol="estudiante" class="${est ? 'on' : ''}">Estudiante</button>
+      <button type="button" role="tab" data-act="rol" data-rol="utp" class="${est ? '' : 'on'}">UTP</button>
+    </div>
+    <form data-form="login" autocomplete="on" novalidate>
+      <label class="f"><span>${est ? 'RUT' : 'Usuario'}</span>
+        <input class="inp" name="usuario" autocomplete="username" autocapitalize="off" spellcheck="false"
+          placeholder="${est ? '12.345.678-9' : 'utp'}" ${est ? 'data-rut' : ''} required></label>
+      <label class="f"><span>Clave</span>
+        <div class="pw"><input class="inp" name="clave" type="password" autocomplete="current-password" required>
+        <button type="button" data-act="verClave">Ver</button></div></label>
+      <p class="form-err" id="err"></p>
+      <button class="btn btn-pri btn-block" type="submit">Entrar</button>
+    </form>
+    <p class="hint">${est ? 'Tu clave inicial te la entrega la UTP. La primera vez que entres crearás tu propia clave.' : 'Acceso para la Unidad Técnico Pedagógica.'}</p>
+  </section></main>`;
+  setTimeout(() => { const i = $('[name=usuario]'); if (i) i.focus(); }, 30);
+}
+
+function vistaCambio(forzado) {
+  pararRefresco();
+  $('#app').innerHTML = `
+  <main class="login-wrap"><section class="login-card">
+    ${marca()}
+    <h1>Crea tu clave</h1>
+    <p class="colegio">Hola ${esc(primerNombre(S.nombre))}, antes de seguir necesitas una clave personal que solo tú conozcas.</p>
+    <form data-form="clave" style="margin-top:22px" novalidate>
+      ${formClave(forzado)}
+      <button class="btn btn-pri btn-block" type="submit">Guardar clave</button>
+    </form>
+    <p class="hint"><button class="btn btn-ghost btn-sm" data-act="salir">Salir</button></p>
+  </section></main>`;
+}
+function formClave(forzado) {
+  return `${forzado ? '' : `<label class="f"><span>Clave actual</span><div class="pw"><input class="inp" name="actual" type="password" autocomplete="current-password"><button type="button" data-act="verClave">Ver</button></div></label>`}
+    <label class="f"><span>Nueva clave <small class="muted">(mínimo 6 caracteres)</small></span><div class="pw"><input class="inp" name="nueva" type="password" autocomplete="new-password"><button type="button" data-act="verClave">Ver</button></div></label>
+    <label class="f"><span>Repite la nueva clave</span><input class="inp" name="repetir" type="password" autocomplete="new-password"></label>
+    <input type="hidden" name="forzado" value="${forzado ? '1' : ''}">
+    <p class="form-err" id="errClave"></p>`;
+}
+
+function entrar() { S.rol === 'utp' ? abrirPanel() : abrirEstudiante(); }
+
+/* ============================================================
+ *  ESTUDIANTE
+ * ============================================================ */
+async function abrirEstudiante() {
+  $('#app').innerHTML = cargandoHTML();
+  try { S.est = await call('miEstado'); vistaEstudiante(); }
+  catch (e) { manejarError(e); if (S.token && e.code !== 'SESION' && e.code !== 'CAMBIAR') $('#app').innerHTML = errorHTML(e); }
+}
+function errorHTML(e) {
+  return `<div class="cargando"><div style="text-align:center;max-width:380px"><p style="margin-bottom:14px">${esc(e.message)}</p>
+    <button class="btn btn-pri" data-act="reintentar">Reintentar</button> <button class="btn btn-ghost" data-act="salir">Salir</button></div></div>`;
+}
+
+function topEstudiante(u) {
+  return `<header class="top"><div class="top-in">
+    <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(S.est.colegio || 'Inscripción de electivos')}</small></div></div>
+    <div class="top-user"><div class="quien">${esc(u.nombre)}<small>${esc(u.curso)}</small></div>
+      <button class="btn btn-ghost btn-sm" data-act="claveModal" title="Cambiar mi clave">Clave</button>
+      <button class="btn btn-ghost btn-sm" data-act="salir">Salir</button></div>
+  </div></header>`;
+}
+
+function vistaEstudiante() {
+  pararRefresco();
+  const { estudiante: u, familias, proceso: p } = S.est;
+  let cuerpo;
+  if (u.familia) {
+    cuerpo = comprobanteHTML(u, familias);
+  } else {
+    cuerpo = `<div class="saludo"><h1>Hola, ${esc(primerNombre(u.nombre))}</h1>
+      <p>Elige la familia de electivos que cursarás. Cada familia agrupa tres asignaturas.</p></div>
+      ${bannerProceso(p, familias)}
+      <div class="fams" id="fams">${familias.map((f) => tarjetaFamilia(f, familias, p)).join('')}</div>`;
+    S.timer = setInterval(refrescarEstudiante, 20000);
+  }
+  $('#app').innerHTML = topEstudiante(u) + `<main class="wrap">${cuerpo}</main>`;
+}
+
+async function refrescarEstudiante() {
+  if (S.modalAbierto || document.hidden) return;
+  try {
+    const d = await call('miEstado');
+    const antes = JSON.stringify(S.est);
+    S.est = d;
+    if (antes !== JSON.stringify(d)) vistaEstudiante();
+  } catch (e) { manejarError(e, true); }
+}
+
+function bannerProceso(p, familias) {
+  const cupos = [...new Set(familias.map((f) => f.cupo))];
+  const txtCupo = cupos.length === 1 ? `Cada familia tiene ${cupos[0]} cupos` : 'Cada familia tiene cupos limitados';
+  if (p.estado === 'abierto') {
+    return `<div class="banner ok"><div class="ico">✓</div><div><h3>La inscripción está abierta</h3>
+      <p>${txtCupo} y se bloquea cuando se completa.${p.cierre ? ' Cierra el ' + esc(fmtFecha(p.cierre)) + '.' : ''}</p></div></div>`;
+  }
+  if (p.estado === 'programado') {
+    return `<div class="banner warn"><div class="ico">⏱</div><div><h3>La inscripción todavía no comienza</h3>
+      <p>Abre el ${esc(fmtFecha(p.apertura))}. Mientras tanto puedes revisar las familias.</p></div></div>`;
+  }
+  return `<div class="banner off"><div class="ico">—</div><div><h3>La inscripción está cerrada</h3>
+    <p>Si no alcanzaste a inscribirte, conversa con la Unidad Técnico Pedagógica.</p></div></div>`;
+}
+
+function tarjetaFamilia(f, familias, p) {
+  const c = colorDe(f.id, familias);
+  const lleno = f.libres <= 0;
+  const pct = f.cupo ? Math.min(100, Math.round((f.inscritos / f.cupo) * 100)) : 100;
+  const tag = lleno ? '<span class="cupo-tag lleno">Sin cupos</span>'
+    : `<span class="cupo-tag ${f.libres <= 5 ? 'poco' : ''}">${f.libres === 1 ? 'Queda 1 cupo' : 'Quedan ' + f.libres + ' cupos'}</span>`;
+  const puede = p.abierto && !lleno;
+  return `<article class="fam ${lleno ? 'lleno' : ''}" style="--c:${c}"><div class="fam-body">
+    <div class="fam-head"><h3>${esc(f.nombre)}</h3>${tag}</div>
+    <ul class="elist">${f.electivos.map((e, i) => `<li><i>${i + 1}</i><span>${esc(e)}</span></li>`).join('')}</ul>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="cupo-txt"><span>${f.inscritos} inscritos</span><span>${f.cupo} cupos</span></div>
+    ${p.estado === 'abierto' || p.estado === 'programado'
+      ? `<button class="btn btn-pick" data-act="elegir" data-id="${esc(f.id)}" ${puede ? '' : 'disabled'}>${lleno ? 'Familia completa' : p.abierto ? 'Elegir ' + esc(f.nombre) : 'Disponible pronto'}</button>`
+      : ''}
+  </div></article>`;
+}
+
+function comprobanteHTML(u, familias, paraImprimir) {
+  const f = familias.find((x) => x.id === u.familia) || { nombre: u.familia, electivos: [] };
+  const c = colorDe(u.familia, familias);
+  return `<section class="comp" style="--c:${c}">
+    <div class="check">${icoCheck}</div>
+    <h1>Quedaste inscrito</h1>
+    <p class="muted">Tu elección quedó registrada.</p>
+    <div class="fam-name">${esc(f.nombre)}</div>
+    <ul class="elist">${f.electivos.map((e, i) => `<li><i>${i + 1}</i><span>${esc(e)}</span></li>`).join('')}</ul>
+    <dl><dt>Estudiante</dt><dd>${esc(u.nombre)}</dd><dt>RUT</dt><dd>${esc(fmtRut(u.rut))}</dd>
+      <dt>Curso</dt><dd>${esc(u.curso || '—')}</dd><dt>Fecha</dt><dd>${esc(u.fecha)}</dd></dl>
+    ${paraImprimir ? '' : `<p class="nota no-print">Si necesitas cambiar de familia, conversa con la Unidad Técnico Pedagógica.</p>
+    <button class="btn no-print" data-act="imprimirComp">Imprimir o guardar comprobante</button>`}
+  </section>`;
+}
+
+/* ============================================================
+ *  PANEL UTP
+ * ============================================================ */
+const TABS = [
+  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Cargar lista'], ['proceso', 'Proceso'], ['familias', 'Familias']
+];
+
+async function abrirPanel() {
+  $('#app').innerHTML = cargandoHTML();
+  try { S.panel = await call('panel'); vistaPanel(); }
+  catch (e) { manejarError(e); if (S.token && e.code !== 'SESION' && e.code !== 'CAMBIAR') $('#app').innerHTML = errorHTML(e); }
+}
+/** silencioso = refresco automático: en Estudiantes solo redibuja la tabla para no interrumpir la búsqueda. */
+async function recargarPanel(silencioso) {
+  try {
+    S.panel = await call('panel');
+    if (S.modalAbierto) return;
+    if (silencioso && S.tab === 'estudiantes') renderTabla();
+    else vistaPanel();
+  } catch (e) { manejarError(e, silencioso); }
+}
+
+function vistaPanel() {
+  pararRefresco();
+  const P = S.panel;
+  const tabs = TABS.map(([k, t]) => `<button data-act="tab" data-tab="${k}" class="${S.tab === k ? 'on' : ''}">${t}</button>`).join('');
+  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias }[S.tab]();
+  $('#app').innerHTML = `<header class="top top-panel"><div class="top-in">
+      <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(P.colegio || 'Panel UTP')}</small></div></div>
+      <nav class="tabs">${tabs}</nav>
+      <div class="top-user"><div class="quien">${esc(S.nombre)}<small>UTP</small></div>
+        <button class="btn btn-ghost btn-sm" data-act="claveModal">Clave</button>
+        <button class="btn btn-ghost btn-sm" data-act="salir">Salir</button></div>
+    </div></header><main class="wrap">${cuerpo}</main>`;
+  if (S.tab === 'estudiantes') renderTabla();
+  if (S.tab === 'cargar') { $('#txtCarga').value = S.carga.texto; renderPrevia(); }
+  if (S.tab === 'resumen' || S.tab === 'estudiantes') S.timer = setInterval(() => { if (!S.modalAbierto && !document.hidden) recargarPanel(true); }, 30000);
+}
+
+/* ---------- Resumen ---------- */
+function tabResumen() {
+  const P = S.panel, ests = P.estudiantes;
+  const inscritos = ests.filter((e) => e.familia).length;
+  const cupoTotal = P.familias.reduce((a, f) => a + f.cupo, 0);
+  const libres = P.familias.reduce((a, f) => a + f.libres, 0);
+  const p = P.proceso;
+  const det = p.estado === 'abierto' ? (p.cierre ? 'Cierra el ' + fmtFecha(p.cierre) : 'Sin cierre programado')
+    : p.estado === 'programado' ? 'Abre el ' + fmtFecha(p.apertura)
+    : p.estado === 'finalizado' ? 'Cerró el ' + fmtFecha(p.cierre) : 'Los estudiantes no pueden inscribirse';
+  return `
+  <div class="sec-head"><div><h2>Resumen</h2><p>Se actualiza solo cada 30 segundos.</p></div>
+    <button class="btn btn-sm" data-act="refrescar">Actualizar ahora</button></div>
+  <div class="card estado-row"><b>Inscripción</b><span class="pill ${p.estado}">${ESTADOS[p.estado]}</span>
+    <span class="det">${esc(det)}</span><button class="btn btn-sm" data-act="tab" data-tab="proceso">Configurar</button></div>
+  <div class="kpis">
+    <div class="card kpi"><small>Estudiantes cargados</small><b>${ests.length}</b></div>
+    <div class="card kpi"><small>Inscritos</small><b>${inscritos}</b></div>
+    <div class="card kpi"><small>Sin inscribir</small><b>${ests.length - inscritos}</b></div>
+    <div class="card kpi"><small>Cupos libres</small><b>${libres}<span class="muted" style="font-size:1rem;font-weight:600"> / ${cupoTotal}</span></b></div>
+  </div>
+  <div class="famcards">${P.familias.map((f) => {
+    const c = colorDe(f.id, P.familias), pct = f.cupo ? Math.min(100, Math.round((f.inscritos / f.cupo) * 100)) : 100;
+    return `<div class="card famcard" style="--c:${c}">
+      <h3>${esc(f.nombre)}${f.libres <= 0 ? '<span class="lleno-tag">Completa</span>' : ''}</h3>
+      <div class="big"><b>${f.inscritos}</b><span>de ${f.cupo} cupos</span></div>
+      <div class="bar" style="--c:${c}"><i style="width:${pct}%"></i></div>
+      <p class="el">${f.electivos.map(esc).join(' · ')}</p>
+      <div class="acts"><button class="btn btn-sm" data-act="verFam" data-id="${esc(f.id)}">Ver lista</button>
+        <button class="btn btn-sm" data-act="csvFam" data-id="${esc(f.id)}">Descargar CSV</button></div></div>`;
+  }).join('')}</div>
+  <div class="card pad"><h3 style="font-weight:800;margin-bottom:6px">Exportar</h3>
+    <p class="muted" style="margin-bottom:14px">Todas las familias en un solo archivo, ordenado por familia, curso y nombre.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-pri" data-act="csvFam" data-id="">Descargar todo (CSV)</button>
+      <button class="btn" data-act="exportarHoja" data-id="">Abrir en planilla de Google</button>
+      <button class="btn" data-act="csvFam" data-id="SIN">Sin inscribir (CSV)</button></div></div>`;
+}
+
+/* ---------- Estudiantes ---------- */
+function tabEstudiantes() {
+  const P = S.panel;
+  const cursos = [...new Set(P.estudiantes.map((e) => e.curso).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+  const F = S.filtro;
+  return `
+  <div class="sec-head"><div><h2>Estudiantes</h2><p>Busca, cambia de familia, restablece claves o imprime fichas de acceso.</p></div></div>
+  <div class="toolbar">
+    <input class="inp search" id="fq" data-filtro="q" placeholder="Buscar por nombre o RUT" value="${esc(F.q)}">
+    <select class="inp" id="ffam" data-filtro="fam">
+      <option value="">Todas las familias</option><option value="SIN" ${F.fam === 'SIN' ? 'selected' : ''}>Sin inscribir</option>
+      ${P.familias.map((f) => `<option value="${esc(f.id)}" ${F.fam === f.id ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('')}
+    </select>
+    <select class="inp" id="fcurso" data-filtro="curso"><option value="">Todos los cursos</option>
+      ${cursos.map((c) => `<option ${F.curso === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
+  </div>
+  <div class="toolbar">
+    <button class="btn btn-sm" data-act="fichas">Imprimir fichas de acceso</button>
+    <button class="btn btn-sm" data-act="csvLista">Descargar esta lista (CSV)</button>
+  </div>
+  <div class="card"><div class="tbl-wrap" id="tabla"></div></div>`;
+}
+
+function estudiantesFiltrados() {
+  const F = S.filtro, q = F.q.trim().toLowerCase(), qr = normRut(F.q) || F.q.replace(/[^0-9kK]/g, '').toUpperCase();
+  return S.panel.estudiantes.filter((e) => {
+    if (F.fam === 'SIN' ? e.familia : F.fam && e.familia !== F.fam) return false;
+    if (F.curso && e.curso !== F.curso) return false;
+    if (!q) return true;
+    return e.nombre.toLowerCase().includes(q) || (qr && e.rut.replace('-', '').includes(qr.replace('-', '')));
+  }).sort((a, b) => a.curso.localeCompare(b.curso, 'es', { numeric: true }) || a.nombre.localeCompare(b.nombre, 'es'));
+}
+
+function renderTabla() {
+  const P = S.panel, lista = estudiantesFiltrados(), fams = P.familias;
+  const nom = Object.fromEntries(fams.map((f) => [f.id, f.nombre]));
+  const el = $('#tabla'); if (!el) return;
+  if (!P.estudiantes.length) {
+    el.innerHTML = `<div class="vacio">Todavía no hay estudiantes cargados.<br><br><button class="btn btn-pri" data-act="tab" data-tab="cargar">Cargar lista</button></div>`;
+    return;
+  }
+  const filas = lista.slice(0, 500).map((e) => `<tr>
+    <td class="mono" style="white-space:nowrap">${esc(fmtRut(e.rut))}</td>
+    <td><b>${esc(e.nombre)}</b></td><td>${esc(e.curso)}</td>
+    <td>${e.familia ? `<span class="chip" style="--c:${colorDe(e.familia, fams)}">${esc(nom[e.familia] || e.familia)}</span>` : '<span class="chip none">Sin inscribir</span>'}</td>
+    <td>${e.claveInicial ? `<code title="Clave inicial (aún no la cambia)">${esc(e.claveInicial)}</code>` : '<span class="muted">Personal</span>'}</td>
+    <td class="acc">
+      <button class="btn btn-sm" data-act="asignar" data-rut="${esc(e.rut)}">Familia</button>
+      <button class="btn btn-sm btn-ghost" data-act="resetClave" data-rut="${esc(e.rut)}">Nueva clave</button>
+      <button class="btn btn-sm btn-ghost btn-danger" data-act="eliminarEst" data-rut="${esc(e.rut)}" title="Eliminar estudiante">Eliminar</button>
+    </td></tr>`).join('');
+  el.innerHTML = lista.length ? `<table class="tbl"><thead><tr><th>RUT</th><th>Nombre</th><th>Curso</th><th>Familia</th><th>Clave</th><th></th></tr></thead>
+    <tbody>${filas}</tbody></table>
+    <div class="contador">Mostrando ${Math.min(lista.length, 500)} de ${lista.length} estudiantes${lista.length > 500 ? ' (usa el buscador para acotar)' : ''}</div>`
+    : '<div class="vacio">Ningún estudiante coincide con el filtro.</div>';
+}
+
+/* ---------- Cargar lista ---------- */
+function tabCargar() {
+  return `
+  <div class="sec-head"><div><h2>Cargar lista de estudiantes</h2>
+    <p>Los estudiantes nuevos reciben una clave inicial. Si un RUT ya existe se actualiza su nombre y curso, sin tocar su clave ni su familia.</p></div></div>
+  <div class="grid2">
+    <div class="card pad">
+      <label class="f"><span>Pega aquí desde Excel o Google Sheets</span>
+        <textarea class="inp" id="txtCarga" rows="12" spellcheck="false" placeholder="RUT&#9;Nombre&#9;Curso&#10;12.345.678-5&#9;Pérez Soto, Ana&#9;3°A&#10;20.111.222-3&#9;Rojas Díaz, Benjamín&#9;3°B"></textarea></label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <label class="btn btn-sm">Subir archivo CSV<input type="file" id="archivoCsv" accept=".csv,.txt,text/csv" hidden></label>
+        <button class="btn btn-sm btn-ghost" data-act="limpiarCarga">Limpiar</button>
+      </div>
+      <p class="hint" style="margin-top:14px">Columnas en este orden: <b>RUT</b>, <b>Nombre</b>, <b>Curso</b>. Si el nombre viene en varias columnas (apellidos y nombres), se juntan solas. La fila de títulos se ignora.</p>
+    </div>
+    <div class="card pad" id="previa"></div>
+  </div>`;
+}
+
+function parsearCarga(texto) {
+  const filas = [];
+  texto.split(/\r?\n/).forEach((linea, i) => {
+    if (!linea.trim()) return;
+    const sep = linea.includes('\t') ? '\t' : linea.includes(';') ? ';' : ',';
+    const c = linea.split(sep).map((x) => x.trim().replace(/^"(.*)"$/, '$1').trim());
+    while (c.length && c[c.length - 1] === '') c.pop();
+    if (!filas.length && /rut/i.test(c[0] || '') && !normRut(c[0])) return; // títulos
+    let rut = c[0] || '', nombre = '', curso = '';
+    if (c.length === 2) nombre = c[1];
+    else if (c.length >= 3) { nombre = c.slice(1, -1).join(' '); curso = c[c.length - 1]; }
+    filas.push({ rut, nombre: nombre.replace(/\s+/g, ' ').trim(), curso });
+  });
+  return filas;
+}
+
+function renderPrevia() {
+  const el = $('#previa'); if (!el) return;
+  const filas = S.carga.filas;
+  if (!filas.length) {
+    el.innerHTML = `<h3 style="font-weight:800;margin-bottom:6px">Vista previa</h3><p class="muted">Pega la lista a la izquierda y aquí verás cómo quedará antes de guardarla.</p>`;
+    return;
+  }
+  const existentes = Object.fromEntries(S.panel.estudiantes.map((e) => [e.rut, e]));
+  const vistos = {};
+  let nuevos = 0, act = 0, igual = 0, errs = 0;
+  const filasHtml = filas.map((f) => {
+    const r = normRut(f.rut);
+    let est;
+    if (!r || !rutValido(r)) est = '<span class="err-t">RUT inválido</span>';
+    else if (!f.nombre) est = '<span class="err-t">Falta nombre</span>';
+    else if (vistos[r]) est = '<span class="err-t">Repetido</span>';
+    else {
+      vistos[r] = 1;
+      const ex = existentes[r];
+      if (!ex) { est = '<span class="ok-t">Nuevo</span>'; nuevos++; }
+      else if (ex.nombre !== f.nombre || ex.curso !== f.curso) { est = '<span class="warn-t">Actualiza</span>'; act++; }
+      else { est = '<span class="muted">Sin cambios</span>'; igual++; }
+    }
+    if (est.includes('err-t')) errs++;
+    return `<tr><td class="mono" style="white-space:nowrap">${esc(r ? fmtRut(r) : f.rut)}</td><td>${esc(f.nombre)}</td><td>${esc(f.curso)}</td><td>${est}</td></tr>`;
+  });
+  el.innerHTML = `<h3 style="font-weight:800">Vista previa</h3>
+    <div class="resumen-carga"><span><b class="ok-t">${nuevos}</b>nuevos</span><span><b class="warn-t">${act}</b>actualizan</span>
+      <span><b>${igual}</b>sin cambios</span><span><b class="err-t">${errs}</b>con error</span></div>
+    <div class="tbl-wrap" style="max-height:340px;overflow:auto;border:1px solid var(--line2);border-radius:10px">
+      <table class="tbl"><thead><tr><th>RUT</th><th>Nombre</th><th>Curso</th><th>Estado</th></tr></thead><tbody>${filasHtml.join('')}</tbody></table></div>
+    ${errs ? '<p class="hint" style="margin-top:10px">Las filas con error no se cargan. Corrígelas en la lista y vuelve a pegarla.</p>' : ''}
+    <button class="btn btn-pri btn-block" style="margin-top:14px" data-act="importar" ${nuevos + act ? '' : 'disabled'}>
+      ${nuevos + act ? `Guardar ${nuevos + act} estudiante${nuevos + act === 1 ? '' : 's'}` : 'No hay cambios para guardar'}</button>`;
+}
+
+/* ---------- Proceso ---------- */
+function tabProceso() {
+  const P = S.panel, p = P.proceso;
+  return `<div class="wrap-narrow">
+  <div class="sec-head"><div><h2>Proceso de inscripción</h2><p>Controla cuándo pueden inscribirse los estudiantes.</p></div>
+    <span class="pill ${p.estado}">${ESTADOS[p.estado]}</span></div>
+  <form class="card pad" data-form="proceso" novalidate>
+    <label class="switch"><input type="checkbox" name="abierto" ${p.manual ? 'checked' : ''}><span class="sw"></span>
+      <span><b>Inscripción habilitada</b><small>Si está apagada nadie puede inscribirse, aunque haya fechas programadas.</small></span></label>
+    <div class="row2">
+      <label class="f"><span>Apertura programada <small class="muted">(opcional)</small></span>
+        <input class="inp" type="datetime-local" name="apertura" value="${aInputFecha(p.apertura)}"></label>
+      <label class="f"><span>Cierre programado <small class="muted">(opcional)</small></span>
+        <input class="inp" type="datetime-local" name="cierre" value="${aInputFecha(p.cierre)}"></label>
+    </div>
+    <p class="hint" style="margin:-4px 0 18px">Cada familia se bloquea sola cuando llega a su cupo, sin importar estas fechas.</p>
+    <label class="f"><span>Nombre del colegio <small class="muted">(aparece en la pantalla de entrada y en las fichas)</small></span>
+      <input class="inp" name="colegio" maxlength="120" value="${esc(P.colegio)}"></label>
+    <label class="f"><span>Enlace para estudiantes <small class="muted">(se imprime en las fichas de acceso)</small></span>
+      <input class="inp" name="enlace" placeholder="https://jalexisps.github.io/selector-electivos/" value="${esc(P.enlace)}"></label>
+    <p class="form-err" id="errProceso"></p>
+    <button class="btn btn-pri" type="submit">Guardar cambios</button>
+  </form></div>`;
+}
+
+/* ---------- Familias ---------- */
+function tabFamilias() {
+  const P = S.panel;
+  return `<div class="wrap-narrow">
+  <div class="sec-head"><div><h2>Familias de electivos</h2><p>Edita nombres, asignaturas y cupos. El cupo no puede quedar bajo los inscritos actuales.</p></div>
+    <button class="btn btn-sm" data-act="agregarFam">Agregar familia</button></div>
+  ${P.familias.map((f) => `<form class="card famedit" style="--c:${colorDe(f.id, P.familias)}" data-form="familia" data-id="${esc(f.id)}" novalidate>
+    <div class="row3">
+      <label class="f"><span>Nombre</span><input class="inp" name="nombre" maxlength="60" value="${esc(f.nombre)}"></label>
+      <label class="f"><span>Cupo <small class="muted">(${f.inscritos} inscritos)</small></span><input class="inp" name="cupo" type="number" min="${Math.max(1, f.inscritos)}" max="500" value="${f.cupo}"></label>
+    </div>
+    <label class="f"><span>Electivos <small class="muted">(uno por línea)</small></span>
+      <textarea class="inp" name="electivos" rows="3" style="font-family:var(--font);min-height:96px">${esc(f.electivos.join('\n'))}</textarea></label>
+    <div class="acts"><button class="btn btn-sm btn-ghost btn-danger" type="button" data-act="eliminarFam" data-id="${esc(f.id)}" ${f.inscritos ? 'disabled title="Tiene estudiantes inscritos"' : ''}>Eliminar familia</button>
+      <button class="btn btn-pri btn-sm" type="submit">Guardar</button></div>
+  </form>`).join('')}</div>`;
+}
+
+/* ---------- Exportar e imprimir ---------- */
+function filasCSV(lista) {
+  const fams = S.panel.familias, porId = Object.fromEntries(fams.map((f) => [f.id, f]));
+  const orden = Object.fromEntries(fams.map((f, i) => [f.id, i]));
+  const ord = lista.slice().sort((a, b) => (a.familia ? orden[a.familia] : 999) - (b.familia ? orden[b.familia] : 999)
+    || a.curso.localeCompare(b.curso, 'es', { numeric: true }) || a.nombre.localeCompare(b.nombre, 'es'));
+  return [['Familia', 'Electivos', 'RUT', 'Nombre', 'Curso', 'Fecha inscripción', 'Inscrito por', 'Clave inicial pendiente']].concat(
+    ord.map((e) => {
+      const f = porId[e.familia];
+      return [f ? f.nombre : 'Sin inscribir', f ? f.electivos.join(' / ') : '', fmtRut(e.rut), e.nombre, e.curso, e.fecha, e.por, e.claveInicial];
+    }));
+}
+function nombreArchivo(base) {
+  const d = new Date(), p = (n) => String(n).padStart(2, '0');
+  return `${base}_${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.csv`;
+}
+function fichasHTML(lista) {
+  const P = S.panel;
+  return `<div class="fichas">${lista.map((e) => `<div class="ficha">
+    <div class="ft">${marca()}<b>Selector de Electivos</b><small>${esc(P.colegio)}</small></div>
+    <div class="fn">${esc(e.nombre)}</div><div>${esc(e.curso)}</div>
+    <dl><dt>RUT</dt><dd>${esc(fmtRut(e.rut))}</dd><dt>Clave inicial</dt><dd class="cl">${esc(e.claveInicial)}</dd></dl>
+    <p>${P.enlace ? 'Entra en: <b>' + esc(P.enlace) + '</b><br>' : ''}Elige “Estudiante”, escribe tu RUT y esta clave. La primera vez deberás crear tu propia clave.</p>
+  </div>`).join('')}</div>`;
+}
+
+/* ============================================================
+ *  ACCIONES (clics)
+ * ============================================================ */
+const ACT = {
+  rol(b) { S.loginRol = b.dataset.rol; vistaLogin(); },
+  verClave(b) { const i = b.parentElement.querySelector('input'); const v = i.type === 'password'; i.type = v ? 'text' : 'password'; b.textContent = v ? 'Ocultar' : 'Ver'; },
+  cerrarModal() { cerrarModal(); },
+  salir() { if (S.token) call('logout').catch(() => {}); borrarSesion(); cerrarModal(); vistaLogin(); },
+  reintentar() { entrar(); },
+  claveModal() {
+    modal(`<h2>Cambiar mi clave</h2><form data-form="clave" novalidate>${formClave(false)}
+      <div class="acts"><button type="button" class="btn" data-act="cerrarModal">Cancelar</button><button class="btn btn-pri" type="submit">Guardar</button></div></form>`);
+  },
+
+  /* Estudiante */
+  elegir(b) {
+    const f = S.est.familias.find((x) => x.id === b.dataset.id); if (!f) return;
+    const c = colorDe(f.id, S.est.familias);
+    modal(`<h2>¿Confirmas ${esc(f.nombre)}?</h2>
+      <ul class="elist" style="--c:${c};margin:16px 0">${f.electivos.map((e, i) => `<li><i>${i + 1}</i><span>${esc(e)}</span></li>`).join('')}</ul>
+      <p class="muted">Tu elección es <b>definitiva</b>. Solo la UTP puede cambiarla después.</p>
+      <div class="acts"><button class="btn" data-act="cerrarModal">Volver</button>
+      <button class="btn btn-pri" data-act="inscribir" data-id="${esc(f.id)}" style="background:${c};border-color:${c}">Confirmar inscripción</button></div>`);
+  },
+  async inscribir(b) {
+    ocupado(b, true, 'Inscribiendo…');
+    try {
+      S.est = await call('inscribir', { familia: b.dataset.id });
+      cerrarModal(); vistaEstudiante(); window.scrollTo(0, 0);
+    } catch (e) {
+      cerrarModal(); manejarError(e);
+      if (e.code === 'LLENO' || e.code === 'YA' || e.code === 'CERRADO') { S.modalAbierto = false; refrescarEstudiante(); }
+    }
+  },
+  imprimirComp() { imprimir(comprobanteHTML(S.est.estudiante, S.est.familias, true)); },
+
+  /* UTP */
+  tab(b) { S.tab = b.dataset.tab; vistaPanel(); window.scrollTo(0, 0); },
+  async refrescar(b) { ocupado(b, true, 'Actualizando…'); await recargarPanel(); ocupado(b, false); },
+  verFam(b) { S.filtro = { q: '', fam: b.dataset.id, curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
+  csvFam(b) {
+    const id = b.dataset.id, P = S.panel;
+    const lista = P.estudiantes.filter((e) => (id === 'SIN' ? !e.familia : id ? e.familia === id : true));
+    const f = P.familias.find((x) => x.id === id);
+    descargarCSV(nombreArchivo(f ? f.nombre.replace(/\s+/g, '_') : id === 'SIN' ? 'Sin_inscribir' : 'Inscripciones'), filasCSV(lista));
+  },
+  csvLista() { descargarCSV(nombreArchivo('Estudiantes'), filasCSV(estudiantesFiltrados())); },
+  async exportarHoja(b) {
+    ocupado(b, true, 'Preparando…');
+    try {
+      const r = await call('exportarHoja', { familia: b.dataset.id || '' });
+      modal(`<h2>Exportación lista</h2><p class="muted">Se copiaron ${r.filas} filas a la hoja <b>Exportación</b> de la planilla.</p>
+        <div class="acts"><button class="btn" data-act="cerrarModal">Cerrar</button><a class="btn btn-pri" href="${esc(r.url)}" target="_blank" rel="noopener">Abrir planilla</a></div>`);
+    } catch (e) { manejarError(e); }
+    ocupado(b, false);
+  },
+  fichas() {
+    const lista = estudiantesFiltrados().filter((e) => e.claveInicial);
+    if (!lista.length) { toast('Ningún estudiante de esta lista tiene clave inicial pendiente: todos ya crearon su clave.'); return; }
+    imprimir(fichasHTML(lista));
+  },
+  asignar(b) {
+    const P = S.panel, e = P.estudiantes.find((x) => x.rut === b.dataset.rut); if (!e) return;
+    const opts = P.familias.map((f) => {
+      const actual = e.familia === f.id, dis = !actual && f.libres <= 0;
+      return `<label class="opt ${dis ? 'dis' : ''}"><input type="radio" name="fam" value="${esc(f.id)}" ${actual ? 'checked' : ''} ${dis ? 'disabled' : ''}>
+        <span><b>${esc(f.nombre)}</b><small>${actual ? 'Familia actual' : f.libres <= 0 ? 'Sin cupos' : f.libres + ' cupos libres'} · ${f.electivos.map(esc).join(', ')}</small></span></label>`;
+    }).join('');
+    modal(`<h2>Familia de ${esc(primerNombre(e.nombre))}</h2><p class="muted">${esc(e.nombre)} · ${esc(fmtRut(e.rut))} · ${esc(e.curso)}</p>
+      <form data-form="asignar" data-rut="${esc(e.rut)}"><div class="opts">${opts}
+        <label class="opt"><input type="radio" name="fam" value="" ${e.familia ? '' : 'checked'}><span><b>Sin familia</b><small>${e.familia ? 'Quita la inscripción y libera el cupo' : 'Estado actual'}</small></span></label></div>
+        <div class="acts"><button type="button" class="btn" data-act="cerrarModal">Cancelar</button><button class="btn btn-pri" type="submit">Guardar</button></div></form>`);
+  },
+  async resetClave(b) {
+    const e = S.panel.estudiantes.find((x) => x.rut === b.dataset.rut); if (!e) return;
+    if (!(await confirmar('¿Generar nueva clave?', `${esc(e.nombre)} recibirá una clave inicial nueva y deberá crear la suya al entrar. Su clave actual deja de funcionar.`, { ok: 'Generar clave' }))) return;
+    try {
+      const r = await call('restablecerClave', { rut: e.rut });
+      e.claveInicial = r.clave;
+      modal(`<h2>Nueva clave inicial</h2><p class="muted">${esc(e.nombre)} · ${esc(fmtRut(e.rut))}</p>
+        <div class="clave-grande">${esc(r.clave)}</div><p class="hint">Entrégasela al estudiante. Al entrar deberá crear su propia clave.</p>
+        <div class="acts"><button class="btn" data-act="fichaUna" data-rut="${esc(e.rut)}">Imprimir ficha</button><button class="btn btn-pri" data-act="cerrarModal">Listo</button></div>`);
+      if (S.tab === 'estudiantes') renderTabla();
+    } catch (err) { manejarError(err); }
+  },
+  fichaUna(b) { const e = S.panel.estudiantes.find((x) => x.rut === b.dataset.rut); cerrarModal(); if (e) imprimir(fichasHTML([e])); },
+  async eliminarEst(b) {
+    const e = S.panel.estudiantes.find((x) => x.rut === b.dataset.rut); if (!e) return;
+    if (!(await confirmar('¿Eliminar estudiante?', `Se borrará a <b>${esc(e.nombre)}</b> (${esc(fmtRut(e.rut))}) de la lista${e.familia ? ' y se liberará su cupo' : ''}. Esto no se puede deshacer.`, { ok: 'Eliminar', peligro: true }))) return;
+    try { await call('eliminarEstudiante', { rut: e.rut }); toast('Estudiante eliminado.', 'ok'); await recargarPanel(); }
+    catch (err) { manejarError(err); }
+  },
+  limpiarCarga() { S.carga = { texto: '', filas: [] }; $('#txtCarga').value = ''; renderPrevia(); },
+  async importar(b) {
+    const filas = S.carga.filas;
+    ocupado(b, true, 'Guardando…');
+    try {
+      const r = await call('importar', { filas });
+      S.carga = { texto: '', filas: [] };
+      S.panel = await call('panel');
+      vistaPanel();
+      modal(`<h2>Lista cargada</h2>
+        <div class="resumen-carga"><span><b class="ok-t">${r.nuevos}</b>nuevos</span><span><b class="warn-t">${r.actualizados}</b>actualizados</span>
+        <span><b>${r.sinCambios}</b>sin cambios</span><span><b class="err-t">${r.errores.length}</b>con error</span></div>
+        ${r.errores.length ? `<p class="hint">No se cargaron: ${r.errores.slice(0, 8).map((x) => `línea ${x.linea} (${esc(x.motivo)})`).join(', ')}${r.errores.length > 8 ? '…' : ''}</p>` : ''}
+        <p class="muted" style="margin-top:12px">Siguiente paso: imprime las fichas de acceso con la clave inicial de cada estudiante.</p>
+        <div class="acts"><button class="btn" data-act="cerrarModal">Cerrar</button><button class="btn btn-pri" data-act="irFichas">Ir a Estudiantes</button></div>`);
+    } catch (e) { manejarError(e); ocupado(b, false); }
+  },
+  irFichas() { cerrarModal(); S.filtro = { q: '', fam: '', curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
+  async agregarFam(b) {
+    ocupado(b, true, 'Agregando…');
+    try { await call('agregarFamilia'); await recargarPanel(); toast('Familia agregada. Completa sus datos y guarda.', 'ok'); }
+    catch (e) { manejarError(e); ocupado(b, false); }
+  },
+  async eliminarFam(b) {
+    const f = S.panel.familias.find((x) => x.id === b.dataset.id); if (!f) return;
+    if (!(await confirmar('¿Eliminar familia?', `Se eliminará <b>${esc(f.nombre)}</b>. Los estudiantes ya no podrán elegirla.`, { ok: 'Eliminar', peligro: true }))) return;
+    try { await call('eliminarFamilia', { id: f.id }); toast('Familia eliminada.', 'ok'); await recargarPanel(); }
+    catch (e) { manejarError(e); }
+  }
+};
+
+/* ============================================================
+ *  FORMULARIOS
+ * ============================================================ */
+const FORMS = {
+  async login(f) {
+    const d = Object.fromEntries(new FormData(f)), err = $('#err'), btn = f.querySelector('[type=submit]');
+    err.textContent = '';
+    if (S.loginRol === 'estudiante') {
+      const r = normRut(d.usuario);
+      if (!r || !rutValido(r)) { err.textContent = 'Revisa tu RUT: el dígito verificador no coincide.'; return; }
+    }
+    if (!d.clave) { err.textContent = 'Escribe tu clave.'; return; }
+    ocupado(btn, true, 'Entrando…');
+    try {
+      const r = await call('login', { rol: S.loginRol, usuario: d.usuario, clave: d.clave });
+      guardarSesion(r);
+      r.debeCambiar ? vistaCambio(true) : entrar();
+    } catch (e) { err.textContent = e.message; ocupado(btn, false); }
+  },
+  async clave(f) {
+    const d = Object.fromEntries(new FormData(f)), err = $('#errClave'), btn = f.querySelector('[type=submit]');
+    err.textContent = '';
+    if ((d.nueva || '').length < 6) { err.textContent = 'La nueva clave debe tener al menos 6 caracteres.'; return; }
+    if (d.nueva !== d.repetir) { err.textContent = 'Las claves no coinciden.'; return; }
+    ocupado(btn, true, 'Guardando…');
+    try {
+      await call('cambiarClave', { actual: d.actual || '', nueva: d.nueva });
+      S.debeCambiar = false; store.set('se_cambiar', null);
+      cerrarModal(); toast('Clave guardada.', 'ok');
+      if (d.forzado) entrar();
+      else ocupado(btn, false);
+    } catch (e) {
+      if (e.code === 'SESION') return manejarError(e);
+      err.textContent = e.message; ocupado(btn, false);
+    }
+  },
+  async proceso(f) {
+    const d = Object.fromEntries(new FormData(f)), err = $('#errProceso'), btn = f.querySelector('[type=submit]');
+    err.textContent = '';
+    const ms = (v) => (v ? new Date(v).getTime() : 0);
+    ocupado(btn, true, 'Guardando…');
+    try {
+      await call('guardarProceso', { abierto: !!d.abierto, apertura: ms(d.apertura), cierre: ms(d.cierre), colegio: d.colegio, enlace: d.enlace });
+      S.panel = await call('panel'); vistaPanel(); toast('Cambios guardados.', 'ok');
+    } catch (e) { if (e.code === 'SESION') return manejarError(e); err.textContent = e.message; ocupado(btn, false); }
+  },
+  async familia(f) {
+    const d = Object.fromEntries(new FormData(f)), btn = f.querySelector('[type=submit]');
+    ocupado(btn, true, 'Guardando…');
+    try {
+      await call('guardarFamilia', { id: f.dataset.id, nombre: d.nombre, cupo: d.cupo, electivos: d.electivos.split('\n') });
+      toast('Familia guardada.', 'ok'); await recargarPanel();
+    } catch (e) { manejarError(e); ocupado(btn, false); }
+  },
+  async asignar(f) {
+    const fam = (new FormData(f)).get('fam') || '', btn = f.querySelector('[type=submit]');
+    ocupado(btn, true, 'Guardando…');
+    try {
+      await call('asignar', { rut: f.dataset.rut, familia: fam });
+      cerrarModal(); toast(fam ? 'Familia asignada.' : 'Inscripción quitada.', 'ok'); await recargarPanel();
+    } catch (e) { manejarError(e); ocupado(btn, false); }
+  }
+};
+
+/* ============================================================
+ *  EVENTOS
+ * ============================================================ */
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act]');
+  if (!b || b.disabled) return;
+  const fn = ACT[b.dataset.act];
+  if (fn) { e.preventDefault(); fn(b, e); }
+});
+document.addEventListener('submit', (e) => {
+  const f = e.target.closest('form[data-form]');
+  if (!f) return;
+  e.preventDefault();
+  FORMS[f.dataset.form](f);
+});
+const filtrar = debounce(() => renderTabla(), 120);
+const previa = debounce(() => { S.carga.filas = parsearCarga(S.carga.texto); renderPrevia(); }, 200);
+document.addEventListener('input', (e) => {
+  const t = e.target;
+  if (t.dataset.filtro) { S.filtro[t.dataset.filtro] = t.value; filtrar(); }
+  if (t.id === 'txtCarga') { S.carga.texto = t.value; previa(); }
+});
+document.addEventListener('change', (e) => {
+  const t = e.target;
+  // Solo selects: en el buscador "change" llega al perder el foco y redibujar ahí anularía el clic en la tabla.
+  if (t.dataset.filtro && t.tagName === 'SELECT') { S.filtro[t.dataset.filtro] = t.value; renderTabla(); }
+  if (t.id === 'archivoCsv' && t.files[0]) {
+    const archivo = t.files[0];
+    const leer = (enc) => new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsText(archivo, enc); });
+    leer('utf-8').then((txt) => (txt.includes('�') ? leer('windows-1252') : txt)).then((txt) => {
+      S.carga.texto = txt.replace(/^﻿/, ''); $('#txtCarga').value = S.carga.texto;
+      S.carga.filas = parsearCarga(S.carga.texto); renderPrevia(); t.value = '';
+    });
+  }
+});
+document.addEventListener('focusout', (e) => {
+  const t = e.target;
+  if (t.hasAttribute && t.hasAttribute('data-rut') && normRut(t.value)) t.value = fmtRut(t.value);
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.modalAbierto) cerrarModal(); });
+
+/* ============================================================
+ *  INICIO
+ * ============================================================ */
+(async function iniciar() {
+  try { const p = await call('publico'); S.colegio = p.colegio; } catch (e) {}
+  if (!S.token) return vistaLogin();
+  if (S.debeCambiar) return vistaCambio(true);
+  entrar();
+})();
+</script>
+</body>
+</html>
