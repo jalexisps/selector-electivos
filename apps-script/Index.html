@@ -9,8 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F4F1EA; --card:#FFFFFF; --ink:#1A2132; --muted:#5D6577; --soft:#8A90A0; --line:#E2DDD2; --line2:#EEEAE2;
-  --pri:#2442C4; --pri-ink:#fff; --pri-soft:#E8ECFB;
+  --bg:#EEF0F1; --card:#FFFFFF; --ink:#1D2327; --muted:#596169; --soft:#8B9298; --line:#D9DDE0; --line2:#E9ECEE;
+  --gris:#6B7278; --gris-claro:#E3E6E8;
+  --pri:#067D3E; --pri-ink:#fff; --sec:#EAEA17; --sec-ink:#1D2327;
+  --pri-soft:color-mix(in srgb,var(--pri) 11%,#fff); --pri-hover:color-mix(in srgb,var(--pri) 82%,#000);
   --ok:#17845A; --ok-soft:#E3F4EC; --warn:#B86E00; --warn-soft:#FBF0DD; --err:#C0353F; --err-soft:#FBE7E8;
   --r:14px; --r-sm:10px;
   --sh:0 1px 2px rgba(26,33,50,.06),0 6px 20px -8px rgba(26,33,50,.12);
@@ -28,11 +30,11 @@ p{margin:0}
 
 /* ---------- Botones ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45em;border:1px solid transparent;border-radius:var(--r-sm);padding:.7em 1.15em;font-weight:700;cursor:pointer;background:#fff;border-color:var(--line);transition:transform .08s,background .15s,border-color .15s,box-shadow .15s;white-space:nowrap;text-decoration:none}
-.btn:hover{border-color:#cfc8ba}
+.btn:hover{border-color:#BFC5CA}
 .btn:active{transform:translateY(1px)}
 .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
 .btn-pri{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
-.btn-pri:hover{background:#1c37a8;border-color:#1c37a8}
+.btn-pri:hover{background:var(--pri-hover);border-color:var(--pri-hover)}
 .btn-danger{color:var(--err)}
 .btn-danger.solid{background:var(--err);color:#fff;border-color:var(--err)}
 .btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
@@ -57,6 +59,11 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 
 /* ---------- Marca ---------- */
 .marca{width:36px;height:36px;flex:none}
+img.marca{object-fit:contain;width:auto;max-width:72px}
+.logos-login{display:flex;align-items:center;gap:14px;margin-bottom:16px;min-height:46px}
+.logos-login img{height:96px;max-width:150px;object-fit:contain;transition:transform .25s ease}
+.logos-login img:hover{transform:scale(1.06) rotate(-1deg)}
+.banda{height:5px;background:linear-gradient(90deg,var(--pri) 0 60%,var(--sec) 60% 100%)}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .brand b{display:block;font-weight:800;font-size:1rem;letter-spacing:-.01em}
 .brand small{display:block;color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
@@ -64,9 +71,10 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 /* ---------- Login ---------- */
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:28px 16px;
   background:
-    radial-gradient(1200px 500px at 110% -10%,rgba(36,66,196,.10),transparent 60%),
-    radial-gradient(900px 500px at -20% 110%,rgba(14,124,123,.10),transparent 60%),var(--bg)}
-.login-card{width:100%;max-width:410px;background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:30px 26px 24px;border:1px solid var(--line2)}
+    radial-gradient(1200px 500px at 110% -10%,color-mix(in srgb,var(--pri) 14%,transparent),transparent 60%),
+    radial-gradient(900px 500px at -20% 110%,color-mix(in srgb,var(--sec) 14%,transparent),transparent 60%),var(--bg)}
+.login-card{width:100%;max-width:410px;background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:30px 26px 24px;border:1px solid var(--line2);position:relative;overflow:hidden}
+.login-card::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--pri) 0 60%,var(--sec) 60% 100%)}
 .login-card .marca{width:46px;height:46px;margin-bottom:14px}
 .login-card h1{font-size:1.65rem;font-weight:800}
 .login-card .colegio{color:var(--muted);margin-top:4px;font-weight:500}
@@ -76,7 +84,8 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 .login-card .hint{margin-top:16px;text-align:center}
 
 /* ---------- Barra superior ---------- */
-.top{position:sticky;top:0;z-index:20;background:rgba(244,241,234,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.top{position:sticky;top:0;z-index:20;background:rgba(238,240,241,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.top::before{content:"";display:block;height:4px;background:linear-gradient(90deg,var(--pri) 0 60%,var(--sec) 60% 100%)}
 .top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:10px 18px;flex-wrap:wrap}
 .top-user{margin-left:auto;display:flex;align-items:center;gap:4px}
 .top-user .quien{font-weight:600;font-size:.92rem;margin-right:6px;text-align:right;line-height:1.2}
@@ -86,7 +95,8 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 .tabs button{border:0;background:none;padding:.65em .9em;font-weight:700;color:var(--muted);cursor:pointer;border-radius:9px;white-space:nowrap;position:relative}
 .tabs button:hover{color:var(--ink);background:rgba(26,33,50,.05)}
 .tabs button.on{color:var(--pri)}
-.tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-11px;height:3px;border-radius:3px;background:var(--pri)}
+.tabs button::after{content:"";position:absolute;left:50%;right:50%;bottom:-11px;height:3px;border-radius:3px;background:var(--pri);transition:left .2s ease,right .2s ease,opacity .2s;opacity:0}
+.tabs button.on::after{left:12px;right:12px;opacity:1}
 @media(min-width:900px){.tabs{order:0;width:auto;margin:0 0 0 18px}}
 @media(max-width:1380px){.top-panel .quien{display:none}}
 @media(max-width:560px){.brand>div{display:none}.top-in{flex-wrap:nowrap}.top-panel .top-in{flex-wrap:wrap}.top-user .quien{font-size:.86rem}}
@@ -106,13 +116,13 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 .banner p{margin-top:2px;color:var(--muted)}
 .banner.ok{background:var(--ok-soft);border-color:#bfe4d1}.banner.ok .ico{background:var(--ok)}
 .banner.warn{background:var(--warn-soft);border-color:#f0d7ae}.banner.warn .ico{background:var(--warn)}
-.banner.off{background:#ECE9E2;border-color:var(--line)}.banner.off .ico{background:var(--soft)}
+.banner.off{background:var(--gris-claro);border-color:var(--line)}.banner.off .ico{background:var(--soft)}
 
 .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:.25em .7em;font-weight:700;font-size:.82rem}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .pill.abierto{background:var(--ok-soft);color:var(--ok)}
 .pill.programado{background:var(--warn-soft);color:var(--warn)}
-.pill.cerrado,.pill.finalizado{background:#E9E6DF;color:var(--muted)}
+.pill.cerrado,.pill.finalizado{background:var(--gris-claro);color:var(--muted)}
 
 /* ---------- Familias (estudiante) ---------- */
 .saludo{margin:6px 0 18px}
@@ -126,7 +136,7 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 .fam-head h3{font-size:1.25rem;font-weight:800;color:var(--c)}
 .cupo-tag{font-weight:700;font-size:.8rem;border-radius:999px;padding:.25em .65em;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);white-space:nowrap}
 .cupo-tag.poco{background:var(--warn-soft);color:var(--warn)}
-.cupo-tag.lleno{background:#E9E6DF;color:var(--muted)}
+.cupo-tag.lleno{background:var(--gris-claro);color:var(--muted)}
 .elist{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:8px;flex:1}
 .elist li{display:flex;gap:10px;align-items:flex-start;font-weight:600}
 .elist li i{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:.78rem;font-weight:800;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);margin-top:-1px}
@@ -176,14 +186,14 @@ textarea.inp{resize:vertical;min-height:120px;font-family:var(--mono);font-size:
 .toolbar .sp{flex:1}
 .tbl-wrap{overflow-x:auto}
 table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
-.tbl th{text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);background:#FBFAF7;position:sticky;top:0}
+.tbl th{text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);background:#F6F7F8;position:sticky;top:0}
 .tbl td{padding:10px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:0}
-.tbl tr:hover td{background:#FBFAF7}
+.tbl tr:hover td{background:#F6F7F8}
 .tbl .acc{white-space:nowrap;text-align:right}
 .tbl code{font-family:var(--mono);font-weight:700;background:var(--pri-soft);color:var(--pri);padding:2px 7px;border-radius:6px;letter-spacing:.06em}
 .chip{--c:#2442C4;display:inline-block;font-weight:700;font-size:.82rem;border-radius:999px;padding:.2em .7em;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c);white-space:nowrap}
-.chip.none{--c:#8A90A0;background:#EEEBE4}
+.chip.none{--c:#6B7278;background:var(--gris-claro)}
 .contador{color:var(--muted);font-size:.88rem;padding:10px 14px;border-top:1px solid var(--line2)}
 .vacio{padding:40px 20px;text-align:center;color:var(--muted)}
 .ok-t{color:var(--ok);font-weight:700}.err-t{color:var(--err);font-weight:700}.warn-t{color:var(--warn);font-weight:700}
@@ -195,7 +205,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
 
 .switch{display:flex;align-items:center;gap:14px;padding:16px;border:1.5px solid var(--line);border-radius:var(--r-sm);cursor:pointer;margin-bottom:18px;background:#fff}
 .switch input{position:absolute;opacity:0;pointer-events:none}
-.switch .sw{flex:none;width:52px;height:30px;border-radius:99px;background:#D6D1C6;position:relative;transition:background .2s}
+.switch .sw{flex:none;width:52px;height:30px;border-radius:99px;background:#C9CED2;position:relative;transition:background .2s}
 .switch .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
 .switch input:checked+.sw{background:var(--ok)}
 .switch input:checked+.sw::after{transform:translateX(22px)}
@@ -233,6 +243,46 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
 .cargando{min-height:70vh;display:grid;place-items:center;color:var(--muted);font-weight:600}
 .cargando .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:gira .8s linear infinite;margin:0 auto 12px}
 
+/* ---------- Efectos al pasar el mouse ---------- */
+.card,.fam,.famcard,.kpi,.comp,.opt,.chip,.tbl td{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .15s ease,color .15s ease}
+.btn{transition:transform .12s ease,background .15s,border-color .15s,box-shadow .18s ease,color .15s}
+@media (hover:hover){
+  .btn:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 6px 14px -6px rgba(26,33,50,.28)}
+  .btn-pri:not(:disabled):hover{box-shadow:0 8px 18px -6px color-mix(in srgb,var(--pri) 65%,transparent)}
+  .btn-ghost:not(:disabled):hover{transform:none;box-shadow:none}
+  .fam:not(.lleno):hover{transform:translateY(-4px);box-shadow:0 2px 4px rgba(26,33,50,.06),0 18px 36px -14px color-mix(in srgb,var(--c) 45%,rgba(26,33,50,.3));border-color:color-mix(in srgb,var(--c) 35%,#fff)}
+  .fam:not(.lleno):hover .elist li i{background:var(--c);color:#fff}
+  .fam .btn-pick:not(:disabled):hover{box-shadow:0 8px 18px -6px color-mix(in srgb,var(--c) 70%,transparent)}
+  .famcard:hover,.kpi:hover,.famedit:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(26,33,50,.06),0 16px 32px -14px rgba(26,33,50,.28)}
+  .tabs button:not(.on):hover::after{left:22px;right:22px;opacity:.35}
+  .seg button:not(.on):hover{color:var(--ink);background:rgba(255,255,255,.55)}
+  .tbl tbody tr:hover td{background:var(--pri-soft)}
+  .tbl tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--pri)}
+  .opt:not(.dis):hover{border-color:var(--pri);transform:translateX(2px)}
+  .switch:hover{border-color:var(--pri)}
+  .chip:hover{filter:brightness(.96)}
+  .inp:hover:not(:focus){border-color:#BFC5CA}
+  .swatch:hover{transform:scale(1.12)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* ---------- Apariencia ---------- */
+.logos-edit{display:grid;gap:14px;grid-template-columns:1fr;margin:10px 0 22px}
+@media(min-width:600px){.logos-edit{grid-template-columns:1fr 1fr}}
+.logo-slot{border:1.5px dashed var(--line);border-radius:14px;padding:14px;display:flex;gap:14px;align-items:center}
+.logo-slot .vista{width:92px;height:92px;flex:none;border-radius:12px;background:#F6F7F8;display:grid;place-items:center;overflow:hidden;color:var(--soft);font-size:.8rem;text-align:center}
+.logo-slot .vista img{max-width:100%;max-height:100%;object-fit:contain}
+.logo-slot b{display:block;margin-bottom:8px}
+.logo-slot .bts{display:flex;gap:6px;flex-wrap:wrap}
+.colores{display:grid;gap:14px;grid-template-columns:1fr;margin:10px 0}
+@media(min-width:600px){.colores{grid-template-columns:1fr 1fr}}
+.color-f{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.color-f input[type=color]{width:46px;height:46px;border:0;padding:0;background:none;cursor:pointer;border-radius:10px}
+.color-f .inp{width:120px;font-family:var(--mono);text-transform:uppercase}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 4px}
+.swatch{width:34px;height:34px;border-radius:10px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;transition:transform .15s}
+.muestra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px;border-radius:12px;background:var(--bg);margin:16px 0 18px}
+
 /* ---------- Impresión ---------- */
 #print-area{display:none}
 @media print{
@@ -242,7 +292,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
   .fichas{display:grid;grid-template-columns:1fr 1fr;gap:0}
   .ficha{border:1px dashed #999;padding:14px 16px;break-inside:avoid;font-size:12px}
   .ficha .ft{display:flex;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding-bottom:6px;margin-bottom:8px}
-  .ficha .ft svg{width:20px;height:20px}
+  .ficha .ft svg,.ficha .ft img{width:auto;height:24px;max-width:60px}
   .ficha .ft small{color:#666;margin-left:auto;text-align:right}
   .ficha .fn{font-size:15px;font-weight:800}
   .ficha dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0}
@@ -264,7 +314,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
 /* ============================================================
  *  SELECTOR DE ELECTIVOS — Interfaz
  * ============================================================ */
-const COLORES = ['#0E7C7B', '#D1495B', '#5B4BC4', '#D98200', '#2E7D32', '#1565C0', '#8E3B9E', '#6D4C41'];
+// Familias: verde y dorado del liceo, gris pizarra, y otros tonos si se agregan más familias.
+const COLORES = ['#067D3E', '#9C7F00', '#4F5B66', '#1F6FA8', '#B5482F', '#7A4BA8', '#2E8C8C', '#8A5A2B'];
 const ESTADOS = { abierto: 'Abierta', cerrado: 'Cerrada', programado: 'Programada', finalizado: 'Finalizada' };
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -278,7 +329,7 @@ const store = {
 const S = {
   token: store.get('se_token'), rol: store.get('se_rol'), nombre: store.get('se_nombre') || '',
   debeCambiar: store.get('se_cambiar') === '1',
-  colegio: '', loginRol: 'estudiante',
+  colegio: '', loginRol: 'estudiante', tema: { logos: [] }, ap: null,
   est: null, panel: null, tab: 'resumen',
   filtro: { q: '', fam: '', curso: '' },
   carga: { texto: '', filas: [] },
@@ -361,6 +412,21 @@ function colorDe(id, familias) {
   return COLORES[(i < 0 ? 0 : i) % COLORES.length];
 }
 function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function luminancia(hex) {
+  const n = parseInt(String(hex).slice(1), 16);
+  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+const tinta = (hex) => (luminancia(hex) > 0.45 ? '#1A2132' : '#FFFFFF');
+/** Aplica colores institucionales a toda la interfaz. */
+function aplicarTema(t) {
+  t = t || {};
+  S.tema = Object.assign({ logos: [] }, t, { logos: t.logos || [t.logo1, t.logo2].filter(Boolean) });
+  const st = document.documentElement.style;
+  const fijar = (k, v) => (v ? st.setProperty(k, v) : st.removeProperty(k));
+  fijar('--pri', t.primario); fijar('--pri-ink', t.primario ? tinta(t.primario) : '');
+  fijar('--sec', t.secundario); fijar('--sec-ink', t.secundario ? tinta(t.secundario) : '');
+}
 function pararRefresco() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
 
 function ocupado(btn, on, texto) {
@@ -415,7 +481,9 @@ function descargarCSV(nombre, filas) {
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 
-const marca = () => `<svg class="marca" viewBox="0 0 40 40" aria-hidden="true">
+const logoPrincipal = () => (S.tema && S.tema.logos && S.tema.logos[0]) || '';
+const marca = () => logoPrincipal() ? `<img class="marca" src="${esc(logoPrincipal())}" alt="">` : marcaBarras();
+const marcaBarras = () => `<svg class="marca" viewBox="0 0 40 40" aria-hidden="true">
   <rect x="3" y="5" width="34" height="8.5" rx="4.25" fill="${COLORES[0]}"/>
   <rect x="3" y="15.75" width="25" height="8.5" rx="4.25" fill="${COLORES[1]}"/>
   <rect x="3" y="26.5" width="30" height="8.5" rx="4.25" fill="${COLORES[2]}"/></svg>`;
@@ -430,7 +498,7 @@ function vistaLogin() {
   const est = S.loginRol === 'estudiante';
   $('#app').innerHTML = `
   <main class="login-wrap"><section class="login-card">
-    ${marca()}
+    ${S.tema.logos.length ? `<div class="logos-login">${S.tema.logos.map((l) => `<img src="${esc(l)}" alt="">`).join('')}</div>` : `<div class="logos-login">${marcaBarras()}</div>`}
     <h1>Selector de Electivos</h1>
     ${S.colegio ? `<p class="colegio">${esc(S.colegio)}</p>` : ''}
     <div class="seg" role="tablist">
@@ -442,12 +510,12 @@ function vistaLogin() {
         <input class="inp" name="usuario" autocomplete="username" autocapitalize="off" spellcheck="false"
           placeholder="${est ? '12.345.678-9' : 'utp'}" ${est ? 'data-rut' : ''} required></label>
       <label class="f"><span>Clave</span>
-        <div class="pw"><input class="inp" name="clave" type="password" autocomplete="current-password" required>
+        <div class="pw"><input class="inp" name="clave" type="password" autocomplete="current-password" ${est ? 'placeholder="Ej: 6785"' : ''} required>
         <button type="button" data-act="verClave">Ver</button></div></label>
       <p class="form-err" id="err"></p>
       <button class="btn btn-pri btn-block" type="submit">Entrar</button>
     </form>
-    <p class="hint">${est ? 'Tu clave inicial te la entrega la UTP. La primera vez que entres crearás tu propia clave.' : 'Acceso para la Unidad Técnico Pedagógica.'}</p>
+    <p class="hint">${est ? 'Tu clave son los <b>últimos 4 dígitos de tu RUT</b>, contando el dígito verificador.<br>Ejemplo: 12.345.<b>678-5</b> → <b>6785</b>' : 'Acceso para la Unidad Técnico Pedagógica.'}</p>
   </section></main>`;
   setTimeout(() => { const i = $('[name=usuario]'); if (i) i.focus(); }, 30);
 }
@@ -456,7 +524,7 @@ function vistaCambio(forzado) {
   pararRefresco();
   $('#app').innerHTML = `
   <main class="login-wrap"><section class="login-card">
-    ${marca()}
+    <div class="logos-login">${S.tema.logos.length ? S.tema.logos.map((l) => `<img src="${esc(l)}" alt="">`).join('') : marcaBarras()}</div>
     <h1>Crea tu clave</h1>
     <p class="colegio">Hola ${esc(primerNombre(S.nombre))}, antes de seguir necesitas una clave personal que solo tú conozcas.</p>
     <form data-form="clave" style="margin-top:22px" novalidate>
@@ -561,6 +629,7 @@ function comprobanteHTML(u, familias, paraImprimir) {
   const f = familias.find((x) => x.id === u.familia) || { nombre: u.familia, electivos: [] };
   const c = colorDe(u.familia, familias);
   return `<section class="comp" style="--c:${c}">
+    ${logoPrincipal() ? `<img src="${esc(logoPrincipal())}" alt="" style="height:54px;max-width:160px;object-fit:contain;margin-bottom:14px">` : ''}
     <div class="check">${icoCheck}</div>
     <h1>Quedaste inscrito</h1>
     <p class="muted">Tu elección quedó registrada.</p>
@@ -577,12 +646,12 @@ function comprobanteHTML(u, familias, paraImprimir) {
  *  PANEL UTP
  * ============================================================ */
 const TABS = [
-  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Cargar lista'], ['proceso', 'Proceso'], ['familias', 'Familias']
+  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Cargar lista'], ['proceso', 'Proceso'], ['familias', 'Familias'], ['apariencia', 'Apariencia']
 ];
 
 async function abrirPanel() {
   $('#app').innerHTML = cargandoHTML();
-  try { S.panel = await call('panel'); vistaPanel(); }
+  try { S.panel = await call('panel'); aplicarTema(S.panel.tema); vistaPanel(); }
   catch (e) { manejarError(e); if (S.token && e.code !== 'SESION' && e.code !== 'CAMBIAR') $('#app').innerHTML = errorHTML(e); }
 }
 /** silencioso = refresco automático: en Estudiantes solo redibuja la tabla para no interrumpir la búsqueda. */
@@ -599,7 +668,7 @@ function vistaPanel() {
   pararRefresco();
   const P = S.panel;
   const tabs = TABS.map(([k, t]) => `<button data-act="tab" data-tab="${k}" class="${S.tab === k ? 'on' : ''}">${t}</button>`).join('');
-  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias }[S.tab]();
+  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias, apariencia: tabApariencia }[S.tab]();
   $('#app').innerHTML = `<header class="top top-panel"><div class="top-in">
       <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(P.colegio || 'Panel UTP')}</small></div></div>
       <nav class="tabs">${tabs}</nav>
@@ -696,10 +765,10 @@ function renderTabla() {
     <td class="mono" style="white-space:nowrap">${esc(fmtRut(e.rut))}</td>
     <td><b>${esc(e.nombre)}</b></td><td>${esc(e.curso)}</td>
     <td>${e.familia ? `<span class="chip" style="--c:${colorDe(e.familia, fams)}">${esc(nom[e.familia] || e.familia)}</span>` : '<span class="chip none">Sin inscribir</span>'}</td>
-    <td>${e.claveInicial ? `<code title="Clave inicial (aún no la cambia)">${esc(e.claveInicial)}</code>` : '<span class="muted">Personal</span>'}</td>
+    <td>${e.claveInicial ? `<code title="Últimos 4 dígitos del RUT">${esc(e.claveInicial)}</code>` : '<span class="muted" title="El estudiante creó su propia clave">Personal</span>'}</td>
     <td class="acc">
       <button class="btn btn-sm" data-act="asignar" data-rut="${esc(e.rut)}">Familia</button>
-      <button class="btn btn-sm btn-ghost" data-act="resetClave" data-rut="${esc(e.rut)}">Nueva clave</button>
+      <button class="btn btn-sm btn-ghost" data-act="resetClave" data-rut="${esc(e.rut)}" ${e.claveInicial ? 'disabled title="Ya usa los 4 dígitos de su RUT"' : ''}>Restablecer clave</button>
       <button class="btn btn-sm btn-ghost btn-danger" data-act="eliminarEst" data-rut="${esc(e.rut)}" title="Eliminar estudiante">Eliminar</button>
     </td></tr>`).join('');
   el.innerHTML = lista.length ? `<table class="tbl"><thead><tr><th>RUT</th><th>Nombre</th><th>Curso</th><th>Familia</th><th>Clave</th><th></th></tr></thead>
@@ -712,7 +781,7 @@ function renderTabla() {
 function tabCargar() {
   return `
   <div class="sec-head"><div><h2>Cargar lista de estudiantes</h2>
-    <p>Los estudiantes nuevos reciben una clave inicial. Si un RUT ya existe se actualiza su nombre y curso, sin tocar su clave ni su familia.</p></div></div>
+    <p>Cada estudiante entra con su RUT y, como clave, los últimos 4 dígitos de su RUT. Si un RUT ya existe se actualiza su nombre y curso, sin tocar su familia.</p></div></div>
   <div class="grid2">
     <div class="card pad">
       <label class="f"><span>Pega aquí desde Excel o Google Sheets</span>
@@ -822,6 +891,94 @@ function tabFamilias() {
   </form>`).join('')}</div>`;
 }
 
+/* ---------- Apariencia ---------- */
+function tabApariencia() {
+  const A = S.ap || (S.ap = Object.assign({ primario: '', secundario: '', logo1: '', logo2: '', sugeridos: [] }, S.panel.tema));
+  const slot = (i, titulo, ayuda) => {
+    const l = A['logo' + i];
+    return `<div class="logo-slot"><div class="vista">${l ? `<img src="${esc(l)}" alt="">` : 'Sin logo'}</div>
+      <div><b>${titulo}</b><p class="hint" style="margin:-4px 0 10px">${ayuda}</p><div class="bts">
+        <label class="btn btn-sm">${l ? 'Cambiar' : 'Subir imagen'}<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif" data-logo="${i}" hidden></label>
+        ${l ? `<button class="btn btn-sm btn-ghost btn-danger" data-act="quitarLogo" data-i="${i}">Quitar</button>` : ''}</div></div></div>`;
+  };
+  const colorF = (k, titulo) => {
+    const v = A[k] || (k === 'primario' ? '#067D3E' : '#EAEA17');
+    return `<div class="color-f"><input type="color" data-color="${k}" value="${esc(v)}" aria-label="${titulo}">
+      <div><b>${titulo}</b><br><input class="inp" data-colortxt="${k}" value="${esc(A[k] || '')}" placeholder="${esc(v)}" maxlength="7"></div></div>`;
+  };
+  return `<div class="wrap-narrow">
+  <div class="sec-head"><div><h2>Apariencia</h2><p>Logos y colores del colegio. Se ven en la entrada, la barra superior, el comprobante y las fichas.</p></div></div>
+  <div class="card pad">
+    <h3 style="font-weight:800">Logos</h3>
+    <div class="logos-edit">${slot(1, 'Logo principal', 'Insignia del colegio.')}${slot(2, 'Segundo logo', 'Opcional: sostenedor, SLEP o programa.')}</div>
+    <h3 style="font-weight:800">Colores institucionales</h3>
+    <div class="colores">${colorF('primario', 'Color principal')}${colorF('secundario', 'Color secundario')}</div>
+    ${A.sugeridos && A.sugeridos.length ? `<p class="hint">Colores encontrados en el logo. Clic: color principal · Shift + clic: secundario.</p>
+      <div class="swatches">${A.sugeridos.map((c) => `<button class="swatch" style="background:${c}" title="${c}" data-act="usarColor" data-c="${c}"></button>`).join('')}</div>`
+      : A.logo1 ? '<button class="btn btn-sm" data-act="colorLogo" style="margin-top:4px">Sugerir colores desde el logo</button>' : ''}
+    <div class="muestra"><span class="muted" style="font-weight:600">Vista previa:</span>
+      <button class="btn btn-pri btn-sm" type="button">Botón principal</button>
+      <span class="pill abierto">Abierta</span>
+      <span class="chip" style="background:var(--sec);color:var(--sec-ink)">Color secundario</span></div>
+    <p class="form-err" id="errAp"></p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between">
+      <button class="btn btn-ghost" data-act="aparienciaOriginal">Volver a los colores del liceo</button>
+      <button class="btn btn-pri" data-act="guardarApariencia">Guardar apariencia</button></div>
+  </div></div>`;
+}
+
+/** Reduce la imagen (máx. 320 px) para guardarla dentro de la planilla. */
+function procesarLogo(archivo) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(archivo), img = new Image();
+    img.onload = () => {
+      let max = 320;
+      for (let i = 0; i < 6; i++) {
+        const k = Math.min(1, max / Math.max(img.naturalWidth || 300, img.naturalHeight || 300));
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round((img.naturalWidth || 300) * k)); c.height = Math.max(1, Math.round((img.naturalHeight || 300) * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        let d = c.toDataURL('image/webp', 0.9);
+        if (!d.startsWith('data:image/webp')) d = c.toDataURL('image/png');
+        if (d.length < 45000) { URL.revokeObjectURL(url); return res(d); }
+        max = Math.round(max * 0.75);
+      }
+      rej(new Error('La imagen es demasiado pesada.'));
+    };
+    img.onerror = () => rej(new Error('No se pudo leer la imagen.'));
+    img.src = url;
+  });
+}
+
+/** Colores más presentes del logo (ignora fondo blanco, negro y transparencias). */
+function coloresDeImagen(src) {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 80 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+      const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height);
+      const d = x.getImageData(0, 0, c.width, c.height).data, cubos = {};
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i + 1], b = d[i + 2], a = d[i + 3], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        if (a < 200 || (mn > 222) || mx < 28 || (mx - mn < 14 && mx > 190)) continue;
+        const key = (r >> 4) + ',' + (g >> 4) + ',' + (b >> 4);
+        const e = cubos[key] || (cubos[key] = { n: 0, r: 0, g: 0, b: 0 });
+        e.n++; e.r += r; e.g += g; e.b += b;
+      }
+      const hex = (v) => Math.round(v).toString(16).padStart(2, '0');
+      const lista = Object.values(cubos).sort((a, b) => b.n - a.n).map((e) => '#' + hex(e.r / e.n) + hex(e.g / e.n) + hex(e.b / e.n));
+      const dist = (a, b) => { const p = (h, i) => parseInt(h.substr(1 + i * 2, 2), 16); return Math.hypot(p(a, 0) - p(b, 0), p(a, 1) - p(b, 1), p(a, 2) - p(b, 2)); };
+      const out = [];
+      for (const h of lista) { if (out.every((o) => dist(o, h) > 70)) out.push(h.toUpperCase()); if (out.length >= 6) break; }
+      res(out);
+    };
+    img.onerror = () => res([]);
+    img.src = src;
+  });
+}
+function vistaPreviaTema() { aplicarTema(S.ap); }
+
 /* ---------- Exportar e imprimir ---------- */
 function filasCSV(lista) {
   const fams = S.panel.familias, porId = Object.fromEntries(fams.map((f) => [f.id, f]));
@@ -843,8 +1000,8 @@ function fichasHTML(lista) {
   return `<div class="fichas">${lista.map((e) => `<div class="ficha">
     <div class="ft">${marca()}<b>Selector de Electivos</b><small>${esc(P.colegio)}</small></div>
     <div class="fn">${esc(e.nombre)}</div><div>${esc(e.curso)}</div>
-    <dl><dt>RUT</dt><dd>${esc(fmtRut(e.rut))}</dd><dt>Clave inicial</dt><dd class="cl">${esc(e.claveInicial)}</dd></dl>
-    <p>${P.enlace ? 'Entra en: <b>' + esc(P.enlace) + '</b><br>' : ''}Elige “Estudiante”, escribe tu RUT y esta clave. La primera vez deberás crear tu propia clave.</p>
+    <dl><dt>RUT</dt><dd>${esc(fmtRut(e.rut))}</dd><dt>Clave</dt><dd class="cl">${esc(e.claveInicial)}</dd></dl>
+    <p>${P.enlace ? 'Entra en: <b>' + esc(P.enlace) + '</b><br>' : ''}Elige “Estudiante”, escribe tu RUT y esta clave (los últimos 4 dígitos de tu RUT).</p>
   </div>`).join('')}</div>`;
 }
 
@@ -885,7 +1042,11 @@ const ACT = {
   imprimirComp() { imprimir(comprobanteHTML(S.est.estudiante, S.est.familias, true)); },
 
   /* UTP */
-  tab(b) { S.tab = b.dataset.tab; vistaPanel(); window.scrollTo(0, 0); },
+  tab(b) {
+    if (S.tab === 'apariencia' && b.dataset.tab !== 'apariencia') aplicarTema(S.panel.tema); // descarta la vista previa sin guardar
+    if (b.dataset.tab === 'apariencia') S.ap = Object.assign({}, { primario: '', secundario: '', logo1: '', logo2: '' }, S.panel.tema, { sugeridos: [] });
+    S.tab = b.dataset.tab; vistaPanel(); window.scrollTo(0, 0);
+  },
   async refrescar(b) { ocupado(b, true, 'Actualizando…'); await recargarPanel(); ocupado(b, false); },
   verFam(b) { S.filtro = { q: '', fam: b.dataset.id, curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
   csvFam(b) {
@@ -906,7 +1067,7 @@ const ACT = {
   },
   fichas() {
     const lista = estudiantesFiltrados().filter((e) => e.claveInicial);
-    if (!lista.length) { toast('Ningún estudiante de esta lista tiene clave inicial pendiente: todos ya crearon su clave.'); return; }
+    if (!lista.length) { toast('Todos los estudiantes de esta lista ya crearon una clave personal.'); return; }
     imprimir(fichasHTML(lista));
   },
   asignar(b) {
@@ -923,12 +1084,12 @@ const ACT = {
   },
   async resetClave(b) {
     const e = S.panel.estudiantes.find((x) => x.rut === b.dataset.rut); if (!e) return;
-    if (!(await confirmar('¿Generar nueva clave?', `${esc(e.nombre)} recibirá una clave inicial nueva y deberá crear la suya al entrar. Su clave actual deja de funcionar.`, { ok: 'Generar clave' }))) return;
+    if (!(await confirmar('¿Restablecer clave?', `La clave de ${esc(e.nombre)} volverá a ser los últimos 4 dígitos de su RUT. Si había creado una clave personal, deja de funcionar.`, { ok: 'Restablecer' }))) return;
     try {
       const r = await call('restablecerClave', { rut: e.rut });
       e.claveInicial = r.clave;
-      modal(`<h2>Nueva clave inicial</h2><p class="muted">${esc(e.nombre)} · ${esc(fmtRut(e.rut))}</p>
-        <div class="clave-grande">${esc(r.clave)}</div><p class="hint">Entrégasela al estudiante. Al entrar deberá crear su propia clave.</p>
+      modal(`<h2>Clave restablecida</h2><p class="muted">${esc(e.nombre)} · ${esc(fmtRut(e.rut))}</p>
+        <div class="clave-grande">${esc(r.clave)}</div><p class="hint">Son los últimos 4 dígitos de su RUT.</p>
         <div class="acts"><button class="btn" data-act="fichaUna" data-rut="${esc(e.rut)}">Imprimir ficha</button><button class="btn btn-pri" data-act="cerrarModal">Listo</button></div>`);
       if (S.tab === 'estudiantes') renderTabla();
     } catch (err) { manejarError(err); }
@@ -953,8 +1114,24 @@ const ACT = {
         <div class="resumen-carga"><span><b class="ok-t">${r.nuevos}</b>nuevos</span><span><b class="warn-t">${r.actualizados}</b>actualizados</span>
         <span><b>${r.sinCambios}</b>sin cambios</span><span><b class="err-t">${r.errores.length}</b>con error</span></div>
         ${r.errores.length ? `<p class="hint">No se cargaron: ${r.errores.slice(0, 8).map((x) => `línea ${x.linea} (${esc(x.motivo)})`).join(', ')}${r.errores.length > 8 ? '…' : ''}</p>` : ''}
-        <p class="muted" style="margin-top:12px">Siguiente paso: imprime las fichas de acceso con la clave inicial de cada estudiante.</p>
+        <p class="muted" style="margin-top:12px">Ya pueden entrar con su RUT y, como clave, los últimos 4 dígitos de su RUT. Si quieres, imprime fichas de acceso desde Estudiantes.</p>
         <div class="acts"><button class="btn" data-act="cerrarModal">Cerrar</button><button class="btn btn-pri" data-act="irFichas">Ir a Estudiantes</button></div>`);
+    } catch (e) { manejarError(e); ocupado(b, false); }
+  },
+  quitarLogo(b) { S.ap['logo' + b.dataset.i] = ''; if (b.dataset.i === '1') S.ap.sugeridos = []; vistaPreviaTema(); vistaPanel(); },
+  async colorLogo(b) {
+    ocupado(b, true, 'Analizando…');
+    S.ap.sugeridos = await coloresDeImagen(S.ap.logo1);
+    if (!S.ap.sugeridos.length) toast('No encontré colores claros en el logo. Elígelos a mano.');
+    vistaPanel();
+  },
+  usarColor(b, e) { S.ap[e.shiftKey ? 'secundario' : 'primario'] = b.dataset.c; vistaPreviaTema(); vistaPanel(); },
+  aparienciaOriginal() { const L = S.panel.tema.liceo || {}; S.ap.primario = L.primario || ''; S.ap.secundario = L.secundario || ''; vistaPreviaTema(); vistaPanel(); },
+  async guardarApariencia(b) {
+    ocupado(b, true, 'Guardando…');
+    try {
+      const t = await call('guardarApariencia', { primario: S.ap.primario, secundario: S.ap.secundario, logo1: S.ap.logo1, logo2: S.ap.logo2 });
+      S.panel.tema = t; aplicarTema(t); toast('Apariencia guardada. Ya la ven todos.', 'ok'); vistaPanel();
     } catch (e) { manejarError(e); ocupado(b, false); }
   },
   irFichas() { cerrarModal(); S.filtro = { q: '', fam: '', curso: '' }; S.tab = 'estudiantes'; vistaPanel(); },
@@ -1056,11 +1233,28 @@ document.addEventListener('input', (e) => {
   const t = e.target;
   if (t.dataset.filtro) { S.filtro[t.dataset.filtro] = t.value; filtrar(); }
   if (t.id === 'txtCarga') { S.carga.texto = t.value; previa(); }
+  if (t.dataset.color) { S.ap[t.dataset.color] = t.value.toUpperCase(); const tx = $(`[data-colortxt=${t.dataset.color}]`); if (tx) tx.value = t.value.toUpperCase(); vistaPreviaTema(); }
+  if (t.dataset.colortxt) {
+    let v = t.value.trim(); if (v && v[0] !== '#') v = '#' + v;
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) { S.ap[t.dataset.colortxt] = v.toUpperCase(); const c = $(`[data-color=${t.dataset.colortxt}]`); if (c) c.value = v; vistaPreviaTema(); }
+    else if (!v) { S.ap[t.dataset.colortxt] = ''; vistaPreviaTema(); }
+  }
 });
 document.addEventListener('change', (e) => {
   const t = e.target;
   // Solo selects: en el buscador "change" llega al perder el foco y redibujar ahí anularía el clic en la tabla.
   if (t.dataset.filtro && t.tagName === 'SELECT') { S.filtro[t.dataset.filtro] = t.value; renderTabla(); }
+  if (t.dataset.logo && t.files[0]) {
+    const i = t.dataset.logo;
+    procesarLogo(t.files[0]).then(async (d) => {
+      S.ap['logo' + i] = d;
+      if (i === '1') {
+        S.ap.sugeridos = await coloresDeImagen(d);
+        if (S.ap.sugeridos.length && !S.ap.primario) { S.ap.primario = S.ap.sugeridos[0]; S.ap.secundario = S.ap.secundario || S.ap.sugeridos[1] || ''; }
+      }
+      vistaPreviaTema(); vistaPanel();
+    }).catch((e) => { const el = $('#errAp'); if (el) el.textContent = e.message; });
+  }
   if (t.id === 'archivoCsv' && t.files[0]) {
     const archivo = t.files[0];
     const leer = (enc) => new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsText(archivo, enc); });
@@ -1080,7 +1274,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.modalA
  *  INICIO
  * ============================================================ */
 (async function iniciar() {
-  try { const p = await call('publico'); S.colegio = p.colegio; } catch (e) {}
+  try { const p = await call('publico'); S.colegio = p.colegio; aplicarTema(p.tema); } catch (e) {}
   if (!S.token) return vistaLogin();
   if (S.debeCambiar) return vistaCambio(true);
   entrar();

@@ -15,7 +15,7 @@ const mock = crearMock({
   log: (m) => logs.push(m)
 });
 const ctx = vm.createContext(Object.assign({ console }, mock.globals));
-vm.runInContext(fs.readFileSync(path.join(__dirname, '../apps-script/Codigo.gs'), 'utf8'), ctx, { filename: 'Codigo.gs' });
+['Codigo.gs', 'Logo.gs'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(__dirname, '../apps-script', f), 'utf8'), ctx, { filename: f }));
 const api = (accion, datos, token) => JSON.parse(JSON.stringify(ctx.api({ accion, datos, token })));
 
 function dv(n) { let s = 0, m = 2; String(n).split('').reverse().forEach((d) => { s += +d * m; m = m === 7 ? 2 : m + 1; }); const r = 11 - (s % 11); return r === 11 ? '0' : r === 10 ? 'K' : String(r); }
@@ -28,6 +28,9 @@ ok(ctx.rutValido_(ctx.normRut_('12.345.678-5')), '12.345.678-5 válido');
 ok(!ctx.rutValido_('12345678-9'), '12345678-9 inválido');
 ok(ctx.normRut_('7.654.321-k') === '7654321-K', 'normaliza K');
 ok(ctx.rutValido_(rut(100123456)), 'RUT provisorio 9 dígitos');
+ok(ctx.claveRut_('12.345.678-5') === '6785', 'clave = últimos 4 con DV');
+ok(ctx.claveRut_('7654321-k') === '321K', 'clave con K');
+ok(ctx.claveRut_('123-4') === '1234', 'ejemplo 123-4 → 1234');
 
 seccion('Instalación');
 mock.fijarUsuarioActivo('');
@@ -41,6 +44,7 @@ const claveUtp = fila('UTP', (r) => r.Usuario === 'utp').ClaveInicial;
 ok(/^[A-Z2-9]{6}$/.test(claveUtp), 'clave UTP generada: ' + claveUtp);
 ok(logs.some((l) => l.includes(claveUtp)), 'clave UTP mostrada al dueño');
 ctx.instalar();
+ok(/Nahuelbuta/.test(api('publico', {}).data.colegio), 'nombre del liceo por defecto');
 ok(mock.hojas.Familias.getLastRow() === 4 && mock.hojas.UTP.getLastRow() === 2 && mock.hojas.Config.getLastRow() === 6, 'reinstalar no duplica');
 
 seccion('Acceso UTP');
@@ -76,12 +80,18 @@ seccion('Proceso');
 const est = (i) => fila('Estudiantes', (x) => x.RUT === rut(20000000 + i * 137));
 function entrarEstudiante(i) {
   const e = est(i);
-  const l = api('login', { rol: 'estudiante', usuario: e.RUT, clave: e.ClaveInicial || 'clave-' + i });
+  const l = api('login', { rol: 'estudiante', usuario: e.RUT, clave: ctx.claveRut_(e.RUT).toLowerCase() });
   if (!l.ok) throw new Error('login estudiante ' + i + ': ' + l.error);
-  if (l.data.debeCambiar) { const c = api('cambiarClave', { nueva: 'clave-' + i }, l.data.token); if (!c.ok) throw new Error(c.error); }
+  if (l.data.debeCambiar) throw new Error('estudiante no debería tener que cambiar clave');
   return l.data.token;
 }
+ok(fila('Estudiantes', (x) => x.RUT === rut(20000000 + 5 * 137)).ClaveInicial === ctx.claveRut_(rut(20000000 + 5 * 137)), 'clave inicial guardada = 4 dígitos');
+ok(!api('login', { rol: 'estudiante', usuario: rut(20000000 + 6 * 137), clave: '0000' }).ok, 'clave de 4 dígitos equivocada rechazada');
 let t0 = entrarEstudiante(0);
+r = api('cambiarClave', { actual: ctx.claveRut_(rut(20000000)), nueva: 'mi-clave-propia' }, t0);
+ok(r.ok, 'estudiante puede cambiar su clave voluntariamente');
+ok(!api('login', { rol: 'estudiante', usuario: rut(20000000), clave: ctx.claveRut_(rut(20000000)) }).ok, 'tras cambiarla, los 4 dígitos ya no sirven');
+t0 = api('login', { rol: 'estudiante', usuario: rut(20000000), clave: 'mi-clave-propia' }).data.token;
 r = api('miEstado', {}, t0);
 ok(r.ok && r.data.proceso.estado === 'cerrado' && r.data.familias.length === 3, 'estado inicial cerrado');
 ok(api('inscribir', { familia: 'F1' }, t0).code === 'CERRADO', 'no inscribe con proceso cerrado');
@@ -113,7 +123,7 @@ seccion('Panel UTP');
 r = api('panel', {}, tUtp);
 ok(r.ok && r.data.estudiantes.length === 91 && r.data.colegio === 'Liceo de Prueba', 'panel con estudiantes');
 ok(r.data.estudiantes.find((e) => e.rut === rut(20000000)).claveInicial === '', 'no expone clave de quien ya la cambió');
-ok(r.data.estudiantes.find((e) => e.rut === rut(20000000 + 50 * 137)).claveInicial.length === 6, 'muestra clave inicial pendiente');
+ok(r.data.estudiantes.find((e) => e.rut === rut(20000000 + 50 * 137)).claveInicial.length === 4, 'muestra clave de 4 dígitos');
 ok(api('asignar', { rut: rut(20000000 + 30 * 137), familia: 'F2' }, tUtp).code === 'LLENO', 'UTP respeta el cupo');
 ok(api('asignar', { rut: rut(20000000 + 3 * 137), familia: '' }, tUtp).ok, 'UTP libera un cupo');
 ok(api('asignar', { rut: rut(20000000 + 30 * 137), familia: 'F2' }, tUtp).ok, 'UTP asigna el cupo liberado');
@@ -126,10 +136,23 @@ ok(r.ok && r.data.id === 'F4', 'agrega F4');
 ok(api('eliminarFamilia', { id: 'F2' }, tUtp).ok === false, 'no elimina familia con inscritos');
 ok(api('eliminarFamilia', { id: 'F4' }, tUtp).ok, 'elimina F4 vacía');
 r = api('restablecerClave', { rut: rut(20000000) }, tUtp);
-ok(r.ok && r.data.clave.length === 6, 'restablece clave');
+ok(r.ok && r.data.clave === ctx.claveRut_(rut(20000000)), 'restablece a los 4 dígitos del RUT');
 r = api('login', { rol: 'estudiante', usuario: rut(20000000), clave: r.data.clave });
-ok(r.ok && r.data.debeCambiar, 'entra con clave restablecida');
-ok(api('miEstado', {}, r.data.token).code === 'CAMBIAR', 'debe cambiarla antes de seguir');
+ok(r.ok && !r.data.debeCambiar && api('miEstado', {}, r.data.token).ok, 'entra con clave restablecida');
+
+seccion('Apariencia');
+r = api('publico', {}).data;
+ok(r.tema.logos.length === 1 && r.tema.logos[0].startsWith('data:image/webp;base64,'), 'logo del liceo por defecto');
+ok(r.tema.primario === '#067D3E' && r.tema.secundario === '#EAEA17', 'colores del liceo por defecto');
+ok(r.colegio === 'Liceo de Prueba', 'nombre configurado por la UTP manda');
+ok(!api('guardarApariencia', { primario: 'rojo' }, tUtp).ok, 'color inválido rechazado');
+ok(!api('guardarApariencia', { logo1: 'data:image/svg+xml;base64,PHN2Zz4=' }, tUtp).ok, 'SVG rechazado');
+ok(!api('guardarApariencia', { logo1: 'data:image/png;base64,' + 'A'.repeat(50000) }, tUtp).ok, 'logo pesado rechazado');
+ok(api('guardarApariencia', { primario: '#8a1c2b' }, t25).code === 'SESION', 'estudiante no cambia apariencia');
+r = api('guardarApariencia', { primario: '#8a1c2b', secundario: '#f2b705', logo1: 'data:image/png;base64,iVBORw0KGgo=', logo2: '' }, tUtp);
+ok(r.ok && r.data.primario === '#8A1C2B' && r.data.logos.length === 1, 'guarda apariencia');
+ok(api('publico', {}).data.tema.secundario === '#F2B705', 'apariencia pública');
+ok(api('guardarApariencia', { primario: '#067D3E', secundario: '#EAEA17', logo1: '', logo2: '' }, tUtp).ok && api('publico', {}).data.tema.logos.length === 0, 'quitar logo queda sin logo');
 r = api('exportarHoja', { familia: '' }, tUtp);
 ok(r.ok && r.data.filas === 91 && mock.hojas['Exportación'].getLastRow() === 92, 'exporta a planilla');
 ok(mock.hojas['Exportación'].data[1][0] === 'Familia 1', 'exportación ordenada por familia');

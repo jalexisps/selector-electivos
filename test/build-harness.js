@@ -4,7 +4,7 @@ const path = require('path');
 const base = path.join(__dirname, '..');
 const index = fs.readFileSync(path.join(base, 'apps-script/Index.html'), 'utf8');
 const mock = fs.readFileSync(path.join(__dirname, 'mock-gas.js'), 'utf8');
-const codigo = fs.readFileSync(path.join(base, 'apps-script/Codigo.gs'), 'utf8');
+const codigo = fs.readFileSync(path.join(base, 'apps-script/Codigo.gs'), 'utf8') + '\n' + fs.readFileSync(path.join(base, 'apps-script/Logo.gs'), 'utf8');
 
 const seed = `
 (function(){
@@ -22,13 +22,13 @@ const seed = `
   const filas=[];
   for(let i=0;i<72;i++){ const n=21000000+i*7919; filas.push({rut:n+'-'+dv(n), nombre: ap[i%20]+' '+ap[(i*7+3)%20]+', '+nombres[(i*3)%20], curso: ['3°A','3°B','3°C'][i%3]}); }
   api({accion:'importar', token:tu, datos:{filas}});
-  api({accion:'guardarProceso', token:tu, datos:{abierto:true, cierre: Date.now()+3*864e5, colegio:'Liceo Bicentenario San Esteban', enlace:'https://jalexisps.github.io/selector-electivos/'}});
+  api({accion:'guardarProceso', token:tu, datos:{abierto:true, cierre: Date.now()+3*864e5, enlace:'https://jalexisps.github.io/selector-electivos/'}});
   const plan = [['F2',25],['F1',21],['F3',9]]; let k=1;
   plan.forEach(([f,n])=>{ for(let j=0;j<n;j++,k++){ const fr=filas[k]; const row=__M.hojas.Estudiantes.data.find(x=>x[0]===fr.rut);
-    const l=api({accion:'login', datos:{rol:'estudiante', usuario:fr.rut, clave:row[3]}}); api({accion:'cambiarClave', token:l.data.token, datos:{nueva:'clave123'}});
+    const l=api({accion:'login', datos:{rol:'estudiante', usuario:fr.rut, clave:claveRut_(fr.rut)}});
     api({accion:'inscribir', token:l.data.token, datos:{familia:f}}); } });
   const libre = filas[0], fila0 = __M.hojas.Estudiantes.data.find(x=>x[0]===libre.rut);
-  window.__seed = { rut: libre.rut, clave: fila0[3], utp: 'utp12345' };
+  window.__seed = { rut: libre.rut, clave: claveRut_(libre.rut), utp: 'utp12345' };
   function runner(ok, fail){ return {
     withSuccessHandler(fn){ return runner(fn, fail); }, withFailureHandler(fn){ return runner(ok, fn); },
     api(req){ setTimeout(()=>{ try{ const res = api(JSON.parse(JSON.stringify(req))); ok && ok(JSON.parse(JSON.stringify(res))); }catch(e){ console.error(e); fail && fail(e); } }, 120); } }; }

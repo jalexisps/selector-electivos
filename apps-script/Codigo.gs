@@ -41,6 +41,13 @@ var CONFIG_INICIAL = [
   ['cierre', '']
 ];
 
+// Identidad del liceo: se usa mientras la UTP no guarde otra en Apariencia.
+var LICEO = {
+  nombre: 'Liceo Polivalente Nahuelbuta · Contulmo',
+  primario: '#067D3E',   // verde
+  secundario: '#EAEA17'  // amarillo
+};
+
 var FAMILIAS_INICIALES = [
   ['F1', 'Familia 1', 'Ciencias de la salud; Creación y composición musical; Comprensión histórica del presente', '25'],
   ['F2', 'Familia 2', 'Probabilidades y estadística descriptiva e inferencial; Estética; Física', '25'],
@@ -138,7 +145,8 @@ var ACCIONES = {
   guardarFamilia: accGuardarFamilia_,
   agregarFamilia: accAgregarFamilia_,
   eliminarFamilia: accEliminarFamilia_,
-  exportarHoja: accExportarHoja_
+  exportarHoja: accExportarHoja_,
+  guardarApariencia: accGuardarApariencia_
 };
 
 function api(req) {
@@ -160,7 +168,21 @@ function api(req) {
 /* ---------- Acceso ---------- */
 
 function accPublico_() {
-  return { colegio: config_().colegio || '' };
+  var cfg = config_();
+  return { colegio: cfg.colegio || LICEO.nombre, tema: tema_(cfg) };
+}
+
+function tema_(cfg) {
+  var v = function (k, def) { return cfg[k] === undefined ? def : cfg[k]; };
+  var logo1 = v('logo1', typeof LOGO_LICEO === 'string' ? LOGO_LICEO : ''), logo2 = v('logo2', '');
+  return {
+    primario: v('colorPrimario', LICEO.primario),
+    secundario: v('colorSecundario', LICEO.secundario),
+    logo1: logo1,
+    logo2: logo2,
+    logos: [logo1, logo2].filter(String),
+    liceo: { primario: LICEO.primario, secundario: LICEO.secundario }
+  };
 }
 
 function accLogin_(d) {
@@ -182,6 +204,9 @@ function accLogin_(d) {
   if (u) {
     if (u.ClaveHash) {
       ok = hash_(clave, String(u.Sal)) === String(u.ClaveHash);
+    } else if (rol === 'estudiante') {
+      // Clave de estudiante: últimos 4 dígitos del RUT, contando el dígito verificador
+      ok = clave.trim().toUpperCase() === claveRut_(u.RUT);
     } else if (u.ClaveInicial) {
       ok = clave.trim().toUpperCase() === String(u.ClaveInicial).trim().toUpperCase();
       debeCambiar = ok;
@@ -215,10 +240,11 @@ function accCambiarClave_(d, token) {
     if (!s.debeCambiar) {
       var okActual = u.ClaveHash
         ? hash_(actual, String(u.Sal)) === String(u.ClaveHash)
-        : actual.trim().toUpperCase() === String(u.ClaveInicial).trim().toUpperCase();
+        : actual.trim().toUpperCase() === (s.rol === 'estudiante' ? claveRut_(u.RUT) : String(u.ClaveInicial).trim().toUpperCase());
       if (!okActual) throw falla_('La clave actual no es correcta.');
     }
-    if (u.ClaveInicial && nueva.trim().toUpperCase() === String(u.ClaveInicial).trim().toUpperCase()) {
+    var inicial = s.rol === 'estudiante' ? claveRut_(u.RUT) : String(u.ClaveInicial || '').trim().toUpperCase();
+    if (inicial && nueva.trim().toUpperCase() === inicial) {
       throw falla_('La nueva clave tiene que ser distinta a la clave inicial.');
     }
     u.Sal = Utilities.getUuid();
@@ -273,7 +299,7 @@ function estadoEstudiante_(s, t) {
     },
     familias: familiasConConteo_(t),
     proceso: proceso_(cfg),
-    colegio: cfg.colegio || ''
+    colegio: cfg.colegio || LICEO.nombre
   };
 }
 
@@ -286,8 +312,9 @@ function accPanel_(d, token) {
   return {
     familias: familiasConConteo_(t),
     proceso: proceso_(cfg),
-    colegio: cfg.colegio || '',
+    colegio: cfg.colegio || LICEO.nombre,
     enlace: cfg.enlace || '',
+    tema: tema_(cfg),
     estudiantes: t.filas.filter(function (f) { return String(f.RUT).trim(); }).map(function (f) {
       return {
         rut: normRut_(f.RUT) || String(f.RUT),
@@ -296,7 +323,7 @@ function accPanel_(d, token) {
         familia: String(f.Familia || ''),
         fecha: String(f.FechaInscripcion || ''),
         por: String(f.InscritoPor || ''),
-        claveInicial: f.ClaveHash ? '' : String(f.ClaveInicial || '')
+        claveInicial: f.ClaveHash ? '' : claveRut_(f.RUT)
       };
     })
   };
@@ -349,7 +376,7 @@ function accImportar_(d, token) {
           actualizados++;
         } else sinCambios++;
       } else {
-        nuevos.push({ RUT: rut, Nombre: nombre, Curso: curso, ClaveInicial: generarClave_() });
+        nuevos.push({ RUT: rut, Nombre: nombre, Curso: curso, ClaveInicial: claveRut_(rut) });
       }
     });
     if (actualizados) escribirTodo_(t);
@@ -391,7 +418,7 @@ function accRestablecerClave_(d, token) {
     var t = leer_('Estudiantes');
     var u = buscar_(t, 'RUT', normRut_(d.rut), normRut_);
     if (!u) throw falla_('No encontré a ese estudiante.');
-    u.ClaveInicial = generarClave_();
+    u.ClaveInicial = claveRut_(u.RUT);
     u.ClaveHash = ''; u.Sal = '';
     escribirFila_(t, u);
     registrar_(actor_(s), 'Restablecer clave', normRut_(u.RUT));
@@ -491,6 +518,28 @@ function accExportarHoja_(d, token) {
   return { url: ss.getUrl() + '#gid=' + sh.getSheetId(), filas: filas.length };
 }
 
+function accGuardarApariencia_(d, token) {
+  var s = sesion_(token, 'utp');
+  var color = function (c) {
+    c = String(c || '').trim();
+    if (c && !/^#[0-9a-fA-F]{6}$/.test(c)) throw falla_('Color inválido: ' + c);
+    return c.toUpperCase();
+  };
+  var logo = function (l) {
+    l = String(l || '');
+    if (l && !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(l)) throw falla_('El logo debe ser una imagen PNG, JPG o WEBP.');
+    if (l.length > 48000) throw falla_('El logo es demasiado pesado. Usa una imagen más pequeña.');
+    return l;
+  };
+  var cambios = { colorPrimario: color(d.primario), colorSecundario: color(d.secundario), logo1: logo(d.logo1), logo2: logo(d.logo2) };
+  return conLock_(function () {
+    guardarConfig_(cambios);
+    registrar_(actor_(s), 'Cambiar apariencia', 'colores ' + cambios.colorPrimario + ' ' + cambios.colorSecundario +
+      ', logos: ' + [cambios.logo1, cambios.logo2].filter(String).length);
+    return tema_(config_());
+  });
+}
+
 /* ------------------------------------------------------------
  *  Reglas del proceso
  * ------------------------------------------------------------ */
@@ -574,6 +623,11 @@ function generarClave_() {
   var out = '';
   for (var i = 0; i < 6; i++) out += abc.charAt(parseInt(hex.substr(i * 2, 2), 16) % abc.length);
   return out;
+}
+
+/** Clave de estudiante: últimos 4 caracteres del RUT sin puntos ni guion (incluye el dígito verificador). */
+function claveRut_(rut) {
+  return normRut_(rut).replace('-', '').slice(-4);
 }
 
 function normUsuario_(u) {
