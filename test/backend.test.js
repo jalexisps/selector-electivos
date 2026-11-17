@@ -276,6 +276,40 @@ function nuevoSistema() {
   ok(m.hojas.Estudiantes.data[0].includes('Nivel') && m.hojas.Familias.data[0].includes('Nivel'), 'agrega la columna Nivel sola');
   ok(P.estudiantes[0].nivel === '2° Medio' && P.familias.every((f) => f.nivel === ''), 'datos antiguos siguen funcionando');
 }
+{
+  seccion('Textos editables');
+  const { m, c, call, tk } = nuevoSistema();
+  const def = (k) => c.TEXTOS.find((t) => t.clave === k).def;
+  let pub = call('publico', {}).data;
+  ok(pub.textos['est.saludo'] === 'Hola, {nombre}' && pub.textos['login.aviso'] === '', 'textos originales sin configurar');
+  const P = call('panel', {}, tk).data;
+  ok(P.catalogoTextos.length === c.TEXTOS.length && P.textos['comp.titulo'] === 'Quedaste inscrito', 'el panel trae catálogo y textos');
+  ok(new Set(c.TEXTOS.map((t) => t.clave)).size === c.TEXTOS.length, 'claves de textos únicas');
+  let x = call('guardarTextos', { textos: { 'comp.titulo': 'Quedaste inscrito/a', 'login.aviso': '  La inscripción abre el **lunes**.\r\n\r\n\r\n\rTrae tu RUT.  ', 'est.saludo': '¡Hola,\n{nombre}!' } }, tk);
+  ok(x.ok && x.data['comp.titulo'] === 'Quedaste inscrito/a', 'guarda un texto');
+  ok(x.data['login.aviso'] === 'La inscripción abre el **lunes**.\n\nTrae tu RUT.', 'limpia espacios y saltos de más');
+  ok(x.data['est.saludo'] === '¡Hola, {nombre}!', 'campo de una línea queda en una línea');
+  pub = call('publico', {}).data;
+  ok(pub.textos['login.aviso'].startsWith('La inscripción') && pub.textos['comp.titulo'] === 'Quedaste inscrito/a', 'la pantalla de entrada recibe los textos');
+  call('importar', { filas: [{ rut: rut(17000001), nombre: 'Ana', curso: '2° Medio Ayun' }] }, tk);
+  const te = call('login', { rol: 'estudiante', usuario: rut(17000001), clave: c.claveRut_(rut(17000001)) }).data.token;
+  ok(call('miEstado', {}, te).data.textos['comp.titulo'] === 'Quedaste inscrito/a', 'el estudiante recibe los textos');
+  ok(call('guardarTextos', { textos: { 'comp.titulo': 'x' } }, te).code === 'SESION', 'un estudiante no puede cambiar textos');
+  ok(!call('guardarTextos', { textos: { 'otro.texto': 'x' } }, tk).ok, 'rechaza claves desconocidas');
+  ok(!call('guardarTextos', { textos: { 'comp.subtitulo': 'a'.repeat(c.TEXTO_MAX + 1) } }, tk).ok, 'rechaza textos demasiado largos');
+  ok(!call('guardarTextos', { textos: {} }, tk).ok, 'rechaza envío vacío');
+  x = call('guardarTextos', { textos: { 'comp.subtitulo': '=IMPORTXML("x")' } }, tk);
+  ok(x.ok && !x.data['comp.subtitulo'].startsWith('='), 'evita fórmulas');
+  x = call('guardarTextos', { textos: { 'comp.titulo': '', 'comp.nota': '', 'login.aviso': '' } }, tk);
+  ok(x.data['comp.titulo'] === def('comp.titulo'), 'vacío en texto obligatorio vuelve al original');
+  ok(x.data['comp.nota'] === '', 'texto opcional puede quedar vacío');
+  ok(x.data['login.aviso'] === '', 'aviso vacío no se muestra');
+  const claves = () => m.hojas.Config.data.map((r) => r[0]).filter((k) => String(k).startsWith('texto.'));
+  ok(!claves().includes('texto.comp.titulo') && !claves().includes('texto.login.aviso') && claves().includes('texto.comp.nota'), 'lo restaurado se quita de Config');
+  x = call('guardarTextos', { textos: { 'comp.nota': def('comp.nota'), 'est.saludo': def('est.saludo'), 'comp.subtitulo': def('comp.subtitulo') } }, tk);
+  ok(x.ok && claves().length === 0 && call('panel', {}, tk).data.colegio, 'restaurar todo deja Config limpia y el resto intacto');
+  ok(call('admin', {}, tk).data.ultimos.some((l) => l.accion === 'Editar textos'), 'queda en el historial');
+}
 function fila2(m, h, o) { return m.hojas[h].data.slice(1).map((r) => Object.fromEntries(m.hojas[h].data[0].map((k, i) => [k, r[i]]))).find(o); }
 
 seccion('Interfaz');

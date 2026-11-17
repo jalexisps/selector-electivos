@@ -1,4 +1,4 @@
-# Selector de Electivos · v1.3 — Instalación
+# Selector de Electivos · v1.4 — Instalación
 
 Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el programa). La página para los estudiantes se publica en GitHub Pages. No necesita servidor ni pagar nada.
 
@@ -45,6 +45,7 @@ Funciona con una planilla de Google Sheets (la base de datos) y Apps Script (el 
 - **Clave de estudiantes**: los **últimos 4 dígitos del RUT, contando el dígito verificador** (12.345.678-5 → `6785`; si termina en K, la K va incluida: 7.654.321-K → `321K`). Si un estudiante quiere, puede cambiarla por una propia desde el botón «Clave»; la UTP la devuelve a los 4 dígitos con «Restablecer clave».
 - **UTP**: la primera vez debe crear su propia clave.
 - **Apariencia**: logo y colores del liceo (verde, amarillo y gris) vienen puestos. Se cambian en el panel → **Apariencia** (se pueden subir dos logos y elegir colores; sugiere colores a partir del logo).
+- **Textos**: los mensajes que ven los estudiantes (saludo, avisos, estado de la inscripción, comprobante y fichas) se cambian en el panel → **Textos**, con vista previa. Se guardan en la hoja Config (claves `texto.…`), así que se mantienen al publicar versiones nuevas del código.
 - **Cupos.** Cada familia tiene 25 cupos (se cambia en **Familias**). Al inscribirse el estudiante número 25, la familia se bloquea sola. Las inscripciones se procesan de a una, así que nunca se pasa del cupo aunque varios elijan al mismo tiempo.
 - **Elección definitiva.** El estudiante no puede cambiarse. La UTP puede reasignarlo o quitarle la inscripción (libera el cupo) desde **Estudiantes → Familia**.
 - **Claves olvidadas.** En **Estudiantes → Restablecer clave** vuelve a ser los 4 dígitos del RUT.

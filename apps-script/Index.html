@@ -103,7 +103,7 @@ img.marca{object-fit:contain;width:auto;max-width:72px}
 .tabs button:hover{color:#fff;background:rgba(255,255,255,.24)}
 .tabs button.on{background:#fff;color:var(--pri-osc)}
 .tabs{gap:5px}
-@media(min-width:1280px){.top-panel .top-in{flex-wrap:nowrap;gap:10px}.top-panel .tabs{flex:1;min-width:0;margin-left:6px;gap:4px}.top-panel .tabs button{padding:.45em .72em;font-size:.92rem}.top-panel .brand small{max-width:150px}}
+@media(min-width:1280px){.top-panel .top-in{flex-wrap:nowrap;gap:10px;max-width:1400px}.top-panel .tabs{flex:1;min-width:0;margin-left:6px;gap:4px}.top-panel .tabs button{padding:.45em .62em;font-size:.9rem}.top-panel .brand small{max-width:150px}}
 @media(max-width:1279px){.top-panel .tabs{order:3;width:100%;margin:0 -4px}}
 @media(min-width:900px){.tabs{order:0;width:auto;margin:0 0 0 18px}}
 .quien-est .nom{display:block;font-size:1.12rem;font-weight:900;letter-spacing:-.01em;line-height:1.1}
@@ -348,6 +348,42 @@ table.reg{width:100%;border-collapse:collapse;font-size:.93rem;min-width:760px}
 .log-wrap .tbl td{padding:7px 10px}
 .escribir{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;text-align:center;margin-top:14px}
 
+/* ---------- Avisos editables ---------- */
+.banner.info{background:var(--pri-soft);border-color:color-mix(in srgb,var(--pri) 22%,#fff)}.banner.info .ico{background:var(--pri)}
+.banner.info p{color:var(--ink);margin-top:5px}
+.aviso-login{margin:16px 0 0;padding:11px 14px;border-radius:12px;font-weight:600;font-size:.93rem;line-height:1.4;
+  background:color-mix(in srgb,var(--sec) 20%,#fff);border:1px solid color-mix(in srgb,var(--sec) 60%,var(--line));border-left:5px solid var(--pri)}
+
+/* ---------- Textos ---------- */
+.tx-ayuda{display:grid;gap:6px;font-size:.92rem;color:var(--muted);margin-bottom:18px}
+.tx-ayuda b{color:var(--ink)}
+.tx-ayuda code,.tx-var{font-family:var(--mono);font-size:.82rem;font-weight:700;background:var(--pri-soft);color:var(--pri);border-radius:6px;padding:1px 6px}
+.tx-grupo{margin-bottom:18px}
+.tx-grupo>h3{font-weight:800;font-size:1.1rem;padding:16px 20px 4px}
+.tx-item{padding:16px 20px;border-top:1px solid var(--line2)}
+.tx-grupo>h3+.tx-item{border-top:0}
+.tx-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.tx-cab b{display:block}
+.tx-cab small{display:block;color:var(--muted);font-size:.86rem;margin-top:2px}
+.tx-tag{font-size:.75rem;font-weight:800;border-radius:6px;padding:.2em .55em;white-space:nowrap}
+.tx-tag.pend{background:var(--warn-soft);color:var(--warn)}
+.tx-tag.mod{background:var(--pri-soft);color:var(--pri)}
+.tx-tag.orig{color:var(--soft)}
+textarea.inp.tx-area{font-family:var(--font);font-size:.95rem;min-height:64px;line-height:1.45}
+.tx-pie{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tx-pie .sp{flex:1}
+.tx-vars{color:var(--muted);font-size:.85rem;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tx-var{border:1px solid color-mix(in srgb,var(--pri) 25%,#fff);cursor:pointer;padding:3px 8px}
+.tx-var:hover{background:var(--pri);color:var(--pri-ink)}
+.tx-prev{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:.93rem;line-height:1.45}
+.tx-prev>small{display:block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);margin-bottom:3px}
+.tx-barra{position:sticky;bottom:14px;z-index:5;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;margin-top:6px;
+  background:var(--ink);color:#fff;border-radius:14px;box-shadow:0 12px 30px -8px rgba(0,0,0,.35)}
+.tx-barra .sp{flex:1}
+.tx-barra .btn-ghost{color:rgba(255,255,255,.85)}
+.tx-barra .btn-ghost:hover{background:rgba(255,255,255,.15);color:#fff}
+.tx-barra.limpia{background:var(--card);color:var(--muted);box-shadow:var(--sh);border:1px solid var(--line2)}
+
 /* ---------- Impresión ---------- */
 #print-area{display:none}
 @media print{
@@ -406,6 +442,7 @@ const S = {
   est: null, panel: null, tab: 'resumen',
   filtro: { q: '', fam: '', curso: '', nivel: '' },
   carga: { filas: [], nivelTodos: '' }, sel: new Set(), admin: null, adminNivel: '',
+  textos: {}, txEd: null,
   timer: null, modalAbierto: false
 };
 
@@ -434,7 +471,7 @@ function guardarSesion(r) {
   store.set('se_cambiar', r.debeCambiar ? '1' : null);
 }
 function borrarSesion() {
-  Object.assign(S, { token: null, rol: null, nombre: '', debeCambiar: false, est: null, panel: null, tab: 'resumen' });
+  Object.assign(S, { token: null, rol: null, nombre: '', debeCambiar: false, est: null, panel: null, tab: 'resumen', txEd: null });
   ['se_token', 'se_rol', 'se_nombre', 'se_cambiar'].forEach((k) => store.set(k, null));
 }
 
@@ -691,6 +728,29 @@ function aplicarTema(t) {
   fijar('--pri', t.primario); fijar('--pri-ink', t.primario ? tinta(t.primario) : '');
   fijar('--sec', t.secundario); fijar('--sec-ink', t.secundario ? tinta(t.secundario) : '');
 }
+/* ---------- Textos editables (pestaña Textos) ---------- */
+/** Texto vigente: el del panel o del estudiante si ya cargó, si no el de la pantalla de entrada. */
+function tx(clave) {
+  const src = (S.panel && S.panel.textos) || (S.est && S.est.textos) || S.textos || {};
+  return src[clave] == null ? '' : String(src[clave]);
+}
+/** Texto editable → HTML: **negrita**, saltos de línea y {datos}. Una línea que usa un dato vacío no se muestra. */
+function fmtTx(plantilla, vars) {
+  vars = vars || {};
+  const vacio = (k) => Object.prototype.hasOwnProperty.call(vars, k) && !String(vars[k] == null ? '' : vars[k]).trim();
+  return String(plantilla || '').split('\n')
+    .filter((l) => !(l.match(/\{\w+\}/g) || []).some((m) => vacio(m.slice(1, -1))))
+    .map((l) => esc(l).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/\{(\w+)\}/g, (m, k) => (Object.prototype.hasOwnProperty.call(vars, k) ? esc(vars[k]) : m)))
+    .join('<br>');
+}
+const T = (clave, vars) => fmtTx(tx(clave), vars);
+/** Versión sin formato (para títulos de la pestaña del navegador). */
+const txPlano = (clave) => tx(clave).replace(/\*\*/g, '').replace(/\s*\n\s*/g, ' ');
+const tituloApp = () => T('app.titulo') || 'Selector de Electivos';
+/** Datos del estudiante que se pueden usar en sus textos. */
+const varsEst = (u) => ({ nombre: primerNombre(u.nombre), nivel: u.nivel || 'tu nivel' });
+
 function pararRefresco() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
 
 function ocupado(btn, on, texto) {
@@ -759,8 +819,9 @@ function vistaLogin() {
   $('#app').innerHTML = `
   <main class="login-wrap"><section class="login-card">
     ${S.tema.logos.length ? `<div class="logos-login">${S.tema.logos.map((l) => `<img src="${esc(l)}" alt="">`).join('')}</div>` : `<div class="logos-login">${marcaBarras()}</div>`}
-    <h1>Selector de Electivos</h1>
+    <h1>${tituloApp()}</h1>
     ${S.colegio ? `<p class="colegio">${esc(S.colegio)}</p>` : ''}
+    ${tx('login.aviso') ? `<div class="aviso-login">${T('login.aviso')}</div>` : ''}
     <div class="seg" role="tablist">
       <button type="button" role="tab" data-act="rol" data-rol="estudiante" class="${est ? 'on' : ''}">Estudiante</button>
       <button type="button" role="tab" data-act="rol" data-rol="utp" class="${est ? '' : 'on'}">UTP</button>
@@ -775,7 +836,7 @@ function vistaLogin() {
       <p class="form-err" id="err"></p>
       <button class="btn btn-pri btn-block" type="submit">Entrar</button>
     </form>
-    <p class="hint">${est ? 'Tu clave son los <b>últimos 4 dígitos de tu RUT</b>, contando el dígito verificador.<br>Ejemplo: 12.345.<b>678-5</b> → <b>6785</b>' : 'Acceso para la Unidad Técnico Pedagógica.'}</p>
+    <p class="hint">${T(est ? 'login.ayudaEstudiante' : 'login.ayudaUtp')}</p>
   </section></main>`;
   setTimeout(() => { const i = $('[name=usuario]'); if (i) i.focus(); }, 30);
 }
@@ -819,7 +880,7 @@ function errorHTML(e) {
 
 function topEstudiante(u) {
   return `<header class="top top-est"><div class="top-in">
-    <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(S.est.colegio || 'Inscripción de electivos')}</small></div></div>
+    <div class="brand">${marca()}<div><b>${tituloApp()}</b><small>${esc(S.est.colegio || 'Inscripción de electivos')}</small></div></div>
     <div class="top-user"><div class="quien quien-est">${(({ nombres, apellidos }) => `<b class="nom">${esc(nombres)}</b>${apellidos ? `<span class="ape">${esc(apellidos)}</span>` : ''}`)(partesNombre(u.nombre))}<small>${esc(u.curso)}</small></div>
       <button class="btn btn-ghost btn-sm" data-act="claveModal" title="Cambiar mi clave">Clave</button>
       <button class="btn btn-ghost btn-sm" data-act="salir">Salir</button></div>
@@ -829,15 +890,18 @@ function topEstudiante(u) {
 function vistaEstudiante() {
   pararRefresco();
   const { estudiante: u, familias, proceso: p } = S.est;
+  const v = varsEst(u);
+  const aviso = tx('est.aviso') ? `<div class="banner info"><div class="ico">i</div><div><p>${T('est.aviso', v)}</p></div></div>` : '';
   let cuerpo;
   if (u.familia) {
-    cuerpo = comprobanteHTML(u, familias);
+    cuerpo = (aviso ? `<div style="max-width:560px;margin:0 auto 16px">${aviso}</div>` : '') + comprobanteHTML(u, familias);
   } else {
-    cuerpo = `<div class="saludo"><h1>Hola, ${esc(primerNombre(u.nombre))}</h1>
-      <p>Elige la familia de electivos que cursarás${u.nivel ? ' en <b>' + esc(u.nivel) + '</b>' : ''}. Cada familia agrupa tres asignaturas.</p></div>
+    cuerpo = `<div class="saludo"><h1>${T('est.saludo', v)}</h1>
+      <p>${T('est.instruccion', v)}</p></div>
+      ${aviso}
       ${bannerProceso(p, familias)}
       ${familias.length ? `<div class="fams" id="fams">${familias.map((f) => tarjetaFamilia(f, familias, p)).join('')}</div>`
-        : `<div class="card vacio">Todavía no hay familias de electivos para ${u.nivel ? esc(u.nivel) : 'tu nivel'}.<br>Consulta con la Unidad Técnico Pedagógica.</div>`}`;
+        : `<div class="card vacio">${T('est.sinFamilias', v)}</div>`}`;
     S.timer = setInterval(refrescarEstudiante, 20000);
   }
   $('#app').innerHTML = topEstudiante(u) + `<main class="wrap">${cuerpo}</main>`;
@@ -854,18 +918,29 @@ async function refrescarEstudiante() {
 }
 
 function bannerProceso(p, familias) {
+  return bannerProcesoHTML(p.estado, varsProceso(p, familias));
+}
+/** Datos que se pueden usar en los textos del estado de la inscripción. */
+function varsProceso(p, familias) {
   const cupos = [...new Set(familias.map((f) => f.cupo))];
-  const txtCupo = cupos.length === 1 ? `Cada familia tiene ${cupos[0]} cupos` : 'Cada familia tiene cupos limitados';
-  if (p.estado === 'abierto') {
-    return `<div class="banner ok"><div class="ico">✓</div><div><h3>La inscripción está abierta</h3>
-      <p>${txtCupo} y se bloquea cuando se completa.${p.cierre ? ' Cierra el ' + esc(fmtFecha(p.cierre)) + '.' : ''}</p></div></div>`;
+  return {
+    cupos: cupos.length === 1 ? (cupos[0] === 1 ? '1 cupo' : cupos[0] + ' cupos') : 'cupos limitados',
+    cierre: p.cierre ? fmtFecha(p.cierre) : '',
+    apertura: p.apertura ? fmtFecha(p.apertura) : ''
+  };
+}
+function bannerProcesoHTML(estado, v) {
+  if (estado === 'abierto') {
+    const cierre = v.cierre ? T('proc.abiertoCierre', v) : '';
+    return `<div class="banner ok"><div class="ico">✓</div><div><h3>${T('proc.abiertoTitulo')}</h3>
+      <p>${T('proc.abiertoTexto', v)}${cierre ? ' ' + cierre : ''}</p></div></div>`;
   }
-  if (p.estado === 'programado') {
-    return `<div class="banner warn"><div class="ico">⏱</div><div><h3>La inscripción todavía no comienza</h3>
-      <p>Abre el ${esc(fmtFecha(p.apertura))}. Mientras tanto puedes revisar las familias.</p></div></div>`;
+  if (estado === 'programado') {
+    return `<div class="banner warn"><div class="ico">⏱</div><div><h3>${T('proc.programadoTitulo')}</h3>
+      <p>${T('proc.programadoTexto', v)}</p></div></div>`;
   }
-  return `<div class="banner off"><div class="ico">—</div><div><h3>La inscripción está cerrada</h3>
-    <p>Si no alcanzaste a inscribirte, conversa con la Unidad Técnico Pedagógica.</p></div></div>`;
+  return `<div class="banner off"><div class="ico">—</div><div><h3>${T('proc.cerradoTitulo')}</h3>
+    <p>${T('proc.cerradoTexto', v)}</p></div></div>`;
 }
 
 function tarjetaFamilia(f, familias, p) {
@@ -889,16 +964,18 @@ function tarjetaFamilia(f, familias, p) {
 function comprobanteHTML(u, familias, paraImprimir) {
   const f = familias.find((x) => x.id === u.familia) || { nombre: u.familia, electivos: [] };
   const c = colorDe(u.familia, familias);
+  const v = { nombre: primerNombre(u.nombre), familia: f.nombre };
+  const nota = T('comp.nota', v);
   return `<section class="comp" style="--c:${c}">
     ${logoPrincipal() ? `<img src="${esc(logoPrincipal())}" alt="" style="height:54px;max-width:160px;object-fit:contain;margin-bottom:14px">` : ''}
     <div class="check">${icoCheck}</div>
-    <h1>Quedaste inscrito</h1>
-    <p class="muted">Tu elección quedó registrada.</p>
+    <h1>${T('comp.titulo', v)}</h1>
+    <p class="muted">${T('comp.subtitulo', v)}</p>
     <div class="fam-name">${esc(f.nombre)}</div>
     <ul class="elist">${f.electivos.map((e, i) => `<li><i>${i + 1}</i><span>${esc(e)}</span></li>`).join('')}</ul>
     <dl><dt>Estudiante</dt><dd>${esc(u.nombre)}</dd><dt>RUT</dt><dd>${esc(fmtRut(u.rut))}</dd>
       <dt>Curso</dt><dd>${esc(u.curso || '—')}</dd><dt>Fecha</dt><dd>${esc(u.fecha)}</dd></dl>
-    ${paraImprimir ? '' : `<p class="nota no-print">Si necesitas cambiar de familia, conversa con la Unidad Técnico Pedagógica.</p>
+    ${paraImprimir ? '' : `${nota ? `<p class="nota no-print">${nota}</p>` : ''}
     <button class="btn no-print" data-act="imprimirComp">Imprimir o guardar comprobante</button>`}
   </section>`;
 }
@@ -907,7 +984,7 @@ function comprobanteHTML(u, familias, paraImprimir) {
  *  PANEL UTP
  * ============================================================ */
 const TABS = [
-  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Registrar alumnos'], ['proceso', 'Proceso'], ['familias', 'Familias'], ['apariencia', 'Apariencia'], ['admin', 'Administración']
+  ['resumen', 'Resumen'], ['estudiantes', 'Estudiantes'], ['cargar', 'Registrar alumnos'], ['proceso', 'Proceso'], ['familias', 'Familias'], ['apariencia', 'Apariencia'], ['textos', 'Textos'], ['admin', 'Administración']
 ];
 
 async function abrirPanel() {
@@ -929,14 +1006,15 @@ function vistaPanel() {
   pararRefresco();
   const P = S.panel;
   const tabs = TABS.map(([k, t]) => `<button data-act="tab" data-tab="${k}" class="${S.tab === k ? 'on' : ''}">${t}</button>`).join('');
-  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias, apariencia: tabApariencia, admin: tabAdmin }[S.tab]();
+  const cuerpo = { resumen: tabResumen, estudiantes: tabEstudiantes, cargar: tabCargar, proceso: tabProceso, familias: tabFamilias, apariencia: tabApariencia, textos: tabTextos, admin: tabAdmin }[S.tab]();
   $('#app').innerHTML = `<header class="top top-panel"><div class="top-in">
-      <div class="brand">${marca()}<div><b>Selector de Electivos</b><small>${esc(P.colegio || 'Panel UTP')}</small></div></div>
+      <div class="brand">${marca()}<div><b>${tituloApp()}</b><small>${esc(P.colegio || 'Panel UTP')}</small></div></div>
       <nav class="tabs">${tabs}</nav>
       <div class="top-user"><div class="quien">${esc(S.nombre)}<small>UTP</small></div>
         <button class="btn btn-ghost btn-sm" data-act="claveModal" title="Cambiar la clave de ${esc(S.nombre)}">Clave</button>
         <button class="btn btn-ghost btn-sm" data-act="salir" title="Salir (${esc(S.nombre)})">Salir</button></div>
     </div></header><main class="wrap">${cuerpo}</main>`;
+  const tabOn = $('.tabs .on'); if (tabOn && tabOn.scrollIntoView) tabOn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   if (S.tab === 'estudiantes') renderTabla();
   if (S.tab === 'cargar') actualizarEstados();
   if (S.tab === 'admin' && !S.admin) cargarAdmin();
@@ -1358,6 +1436,78 @@ function coloresDeImagen(src) {
 }
 function vistaPreviaTema() { aplicarTema(S.ap); }
 
+/* ---------- Textos ---------- */
+const catalogoTx = () => (S.panel && S.panel.catalogoTextos) || [];
+/** Datos de ejemplo para la vista previa. */
+function muestraTx() {
+  const P = S.panel, fams = P.familias.filter((f) => f.nivel === '3° Medio');
+  return {
+    nombre: 'Gabriela', nivel: '3° Medio', familia: (fams[0] || P.familias[0] || { nombre: 'Familia 1' }).nombre,
+    cupos: varsProceso({}, fams.length ? fams : P.familias).cupos || '25 cupos',
+    cierre: fmtFecha(P.proceso.cierre || Date.now() + 3 * 864e5), apertura: fmtFecha(P.proceso.apertura || Date.now() + 864e5),
+    enlace: P.enlace || 'jalexisps.github.io/selector-electivos'
+  };
+}
+const txPendientes = () => catalogoTx().filter((t) => S.txEd[t.clave] !== S.panel.textos[t.clave]);
+function txEstadoHTML(t) {
+  if (S.txEd[t.clave] !== S.panel.textos[t.clave]) return '<span class="tx-tag pend">Sin guardar</span>';
+  return S.panel.textos[t.clave] !== t.def ? '<span class="tx-tag mod">Personalizado</span>' : '<span class="tx-tag orig">Original</span>';
+}
+function txPreviaHTML(t) {
+  const v = S.txEd[t.clave];
+  if (!v.trim() && !t.opcional) return `<small>Vista previa · vacío: se usará el original</small>${fmtTx(t.def, muestraTx())}`;
+  const h = fmtTx(v, muestraTx());
+  return '<small>Vista previa</small>' + (h || '<i class="muted">No se mostrará</i>');
+}
+function txBarraHTML() {
+  const n = txPendientes().length;
+  return n ? `<span><b>${n} texto${n === 1 ? '' : 's'} sin guardar</b></span><span class="sp"></span>
+      <button class="btn btn-sm btn-ghost" data-act="txDescartar">Descartar</button>
+      <button class="btn btn-pri" data-act="txGuardar">Guardar textos</button>`
+    : '<span>Todos los cambios están guardados.</span>';
+}
+function tabTextos() {
+  if (!S.txEd) S.txEd = Object.assign({}, S.panel.textos);
+  const cat = catalogoTx(), B = S.txEd;
+  if (!cat.length) return '<div class="card vacio">Esta versión del servidor no tiene textos editables. Actualiza la implementación de Apps Script.</div>';
+  const item = (t) => {
+    const v = B[t.clave], ph = t.opcional ? 'Vacío: no se muestra' : 'Vacío: se usa el original';
+    const campo = t.linea
+      ? `<input class="inp" data-texto="${esc(t.clave)}" value="${esc(v)}" maxlength="800" placeholder="${ph}" aria-label="${esc(t.titulo)}">`
+      : `<textarea class="inp tx-area" data-texto="${esc(t.clave)}" rows="${Math.min(6, Math.max(2, v.split('\n').length))}" maxlength="800" placeholder="${ph}" aria-label="${esc(t.titulo)}">${esc(v)}</textarea>`;
+    const vars = (t.vars || []).map((n) => `<button type="button" class="tx-var" data-act="txVar" data-k="${esc(t.clave)}" data-v="${esc(n)}" title="Insertar el dato «${esc(n)}»">{${esc(n)}}</button>`).join('');
+    return `<div class="tx-item" data-item="${esc(t.clave)}">
+      <div class="tx-cab"><div><b>${esc(t.titulo)}</b>${t.ayuda ? `<small>${esc(t.ayuda)}</small>` : ''}</div><span class="tx-estado">${txEstadoHTML(t)}</span></div>
+      ${campo}
+      <div class="tx-pie">${vars ? `<span class="tx-vars">Insertar dato: ${vars}</span>` : ''}<span class="sp"></span>
+        <button class="btn btn-sm btn-ghost" data-act="txOriginal" data-k="${esc(t.clave)}" ${v === t.def ? 'hidden' : ''}>Restaurar original</button></div>
+      <div class="tx-prev">${txPreviaHTML(t)}</div>
+    </div>`;
+  };
+  const grupos = [...new Set(cat.map((t) => t.grupo))];
+  return `<div class="wrap-narrow">
+  <div class="sec-head"><div><h2>Textos</h2><p>Cambia los mensajes que ven los estudiantes sin tocar el código. Lo que guardes aquí se mantiene al actualizar el sistema a una versión nueva.</p></div>
+    <button class="btn btn-sm" data-act="txTodosOriginal">Restaurar todos</button></div>
+  <div class="card pad tx-ayuda">
+    <span><b>Negrita:</b> escribe la palabra entre dos asteriscos: <code>**definitiva**</code> se ve como <b>definitiva</b>.</span>
+    <span><b>Datos automáticos:</b> los botones como <code>{nombre}</code> o <code>{nivel}</code> insertan un dato que el sistema completa para cada estudiante. Si un dato está vacío, la línea que lo usa no se muestra.</span>
+    <span><b>Saltos de línea:</b> presiona Enter. Los cambios se ven al instante en la vista previa y llegan a los estudiantes al guardar.</span>
+  </div>
+  ${grupos.map((g) => `<section class="card tx-grupo"><h3>${esc(g)}</h3>${cat.filter((t) => t.grupo === g).map(item).join('')}</section>`).join('')}
+  <div class="tx-barra ${txPendientes().length ? '' : 'limpia'}" id="txBarra">${txBarraHTML()}</div>
+  </div>`;
+}
+/** Refresca estado, vista previa y barra de un texto sin redibujar (para no perder el cursor). */
+function actualizarTexto(clave) {
+  const t = catalogoTx().find((x) => x.clave === clave), el = $(`[data-item="${clave}"]`);
+  if (!t || !el) return;
+  el.querySelector('.tx-estado').innerHTML = txEstadoHTML(t);
+  el.querySelector('.tx-prev').innerHTML = txPreviaHTML(t);
+  el.querySelector('[data-act=txOriginal]').hidden = S.txEd[clave] === t.def;
+  const b = $('#txBarra');
+  if (b) { b.innerHTML = txBarraHTML(); b.classList.toggle('limpia', !txPendientes().length); }
+}
+
 /* ---------- Administración ---------- */
 async function cargarAdmin() {
   try { S.admin = await call('admin'); if (S.tab === 'admin' && !S.modalAbierto) vistaPanel(); }
@@ -1449,10 +1599,10 @@ function nombreArchivo(base) {
 function fichasHTML(lista) {
   const P = S.panel;
   return `<div class="fichas">${lista.map((e) => `<div class="ficha">
-    <div class="ft">${marca()}<b>Selector de Electivos</b><small>${esc(P.colegio)}</small></div>
+    <div class="ft">${marca()}<b>${tituloApp()}</b><small>${esc(P.colegio)}</small></div>
     <div class="fn">${esc(e.nombre)}</div><div>${esc(e.curso)}</div>
     <dl><dt>RUT</dt><dd>${esc(fmtRut(e.rut))}</dd><dt>Clave</dt><dd class="cl">${esc(e.claveInicial)}</dd></dl>
-    <p>${P.enlace ? 'Entra en: <b>' + esc(P.enlace) + '</b><br>' : ''}Elige “Estudiante”, escribe tu RUT y esta clave (los últimos 4 dígitos de tu RUT).</p>
+    <p>${T('ficha.instrucciones', { enlace: P.enlace || '' })}</p>
   </div>`).join('')}</div>`;
 }
 
@@ -1497,7 +1647,7 @@ const ACT = {
     const c = colorDe(f.id, S.est.familias);
     modal(`<h2>¿Confirmas ${esc(f.nombre)}?</h2>
       <ul class="elist" style="--c:${c};margin:16px 0">${f.electivos.map((e, i) => `<li><i>${i + 1}</i><span>${esc(e)}</span></li>`).join('')}</ul>
-      <p class="muted">Tu elección es <b>definitiva</b>. Solo la UTP puede cambiarla después.</p>
+      <p class="muted">${T('est.confirmar', { familia: f.nombre })}</p>
       <div class="acts"><button class="btn" data-act="cerrarModal">Volver</button>
       <button class="btn btn-pri" data-act="inscribir" data-id="${esc(f.id)}" style="background:${c};border-color:${c}">Confirmar inscripción</button></div>`);
   },
@@ -1514,7 +1664,10 @@ const ACT = {
   imprimirComp() { imprimir(comprobanteHTML(S.est.estudiante, S.est.familias, true)); },
 
   /* UTP */
-  tab(b) {
+  async tab(b) {
+    if (S.tab === 'textos' && b.dataset.tab !== 'textos' && txPendientes().length &&
+      !(await confirmar('¿Salir sin guardar?', 'Hay textos modificados que todavía no guardas. Si sales, se pierden esos cambios.', { ok: 'Salir sin guardar', peligro: true }))) return;
+    if (b.dataset.tab === 'textos') S.txEd = Object.assign({}, S.panel.textos);
     if (S.tab === 'apariencia' && b.dataset.tab !== 'apariencia') aplicarTema(S.panel.tema); // descarta la vista previa sin guardar
     if (b.dataset.tab === 'apariencia') S.ap = Object.assign({}, { primario: '', secundario: '', logo1: '', logo2: '' }, S.panel.tema, { sugeridos: [] });
     if (b.dataset.tab === 'admin') S.admin = null;
@@ -1642,6 +1795,32 @@ const ACT = {
     try {
       const t = await call('guardarApariencia', { primario: S.ap.primario, secundario: S.ap.secundario, logo1: S.ap.logo1, logo2: S.ap.logo2 });
       S.panel.tema = t; aplicarTema(t); toast('Apariencia guardada. Ya la ven todos.', 'ok'); vistaPanel();
+    } catch (e) { manejarError(e); ocupado(b, false); }
+  },
+  txVar(b) {
+    const k = b.dataset.k, campo = $(`[data-texto="${k}"]`); if (!campo) return;
+    const ins = '{' + b.dataset.v + '}', i = campo.selectionStart == null ? campo.value.length : campo.selectionStart, j = campo.selectionEnd == null ? i : campo.selectionEnd;
+    campo.value = campo.value.slice(0, i) + ins + campo.value.slice(j);
+    campo.focus(); campo.setSelectionRange(i + ins.length, i + ins.length);
+    S.txEd[k] = campo.value; actualizarTexto(k);
+  },
+  txOriginal(b) {
+    const k = b.dataset.k, t = catalogoTx().find((x) => x.clave === k), campo = $(`[data-texto="${k}"]`); if (!t) return;
+    S.txEd[k] = t.def; if (campo) campo.value = t.def; actualizarTexto(k);
+  },
+  async txTodosOriginal() {
+    if (!(await confirmar('¿Restaurar todos los textos?', 'Todos los textos vuelven a su versión original. Se aplica cuando presiones <b>Guardar textos</b>.', { ok: 'Restaurar todos' }))) return;
+    catalogoTx().forEach((t) => { S.txEd[t.clave] = t.def; }); vistaPanel();
+  },
+  txDescartar() { S.txEd = Object.assign({}, S.panel.textos); vistaPanel(); },
+  async txGuardar(b) {
+    const cambios = Object.fromEntries(txPendientes().map((t) => [t.clave, S.txEd[t.clave]]));
+    if (!Object.keys(cambios).length) return;
+    ocupado(b, true, 'Guardando…');
+    try {
+      const r = await call('guardarTextos', { textos: cambios });
+      S.panel.textos = r; S.textos = r; S.txEd = Object.assign({}, r);
+      toast('Textos guardados. Ya los ven los estudiantes.', 'ok'); vistaPanel();
     } catch (e) { manejarError(e); ocupado(b, false); }
   },
   selTodos() { estudiantesFiltrados().forEach((e) => S.sel.add(e.rut)); renderTabla(); },
@@ -1806,6 +1985,7 @@ function celda(t) {
 document.addEventListener('input', (e) => {
   const t = e.target;
   if (t.dataset.filtro) { S.filtro[t.dataset.filtro] = t.value; filtrar(); }
+  if (t.dataset.texto && S.txEd) { S.txEd[t.dataset.texto] = t.value; actualizarTexto(t.dataset.texto); }
   const c = celda(t);
   if (c && c.f && t.tagName === 'INPUT') {
     fijarCampo(c.f, c.campo, t.value);
@@ -1886,7 +2066,8 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.modalA
  *  INICIO
  * ============================================================ */
 (async function iniciar() {
-  try { const p = await call('publico'); S.colegio = p.colegio; aplicarTema(p.tema); } catch (e) {}
+  try { const p = await call('publico'); S.colegio = p.colegio; S.textos = p.textos || {}; aplicarTema(p.tema); } catch (e) {}
+  if (txPlano('app.titulo')) document.title = txPlano('app.titulo');
   if (!S.token) return vistaLogin();
   if (S.debeCambiar) return vistaCambio(true);
   entrar();

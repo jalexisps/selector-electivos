@@ -58,6 +58,71 @@ var FAMILIAS_INICIALES = [
   ['F3', 'Familia 3', 'Ciencias de la salud; Comprensión histórica del presente; Probabilidades y estadística descriptiva e inferencial', '25']
 ];
 
+/**
+ * Textos que la UTP puede cambiar desde la pestaña "Textos" sin tocar el código.
+ * Se guardan en la hoja Config con la clave "texto.<clave>"; si están vacíos se usa el original.
+ *   **palabras** → negrita · {variable} → dato que pone el sistema · Enter → salto de línea
+ *   linea: true    → campo de una sola línea
+ *   opcional: true → puede quedar vacío (y entonces no se muestra)
+ */
+var TEXTOS = [
+  { clave: 'app.titulo', grupo: 'General', titulo: 'Nombre del sistema', linea: true,
+    ayuda: 'Aparece en la pantalla de entrada, la barra superior y las fichas de acceso.',
+    def: 'Selector de Electivos' },
+
+  { clave: 'login.aviso', grupo: 'Pantalla de entrada', titulo: 'Aviso en la entrada', opcional: true,
+    ayuda: 'Opcional. Un recuadro destacado sobre el formulario (por ejemplo, las fechas del proceso). Déjalo vacío para no mostrarlo.',
+    def: '' },
+  { clave: 'login.ayudaEstudiante', grupo: 'Pantalla de entrada', titulo: 'Ayuda para estudiantes',
+    ayuda: 'Debajo del botón Entrar, cuando está elegido "Estudiante".',
+    def: 'Tu clave son los **últimos 4 dígitos de tu RUT**, contando el dígito verificador.\nEjemplo: 12.345.**678-5** → **6785**' },
+  { clave: 'login.ayudaUtp', grupo: 'Pantalla de entrada', titulo: 'Ayuda para la UTP',
+    ayuda: 'Debajo del botón Entrar, cuando está elegido "UTP".',
+    def: 'Acceso para la Unidad Técnico Pedagógica.' },
+
+  { clave: 'est.saludo', grupo: 'Página del estudiante', titulo: 'Saludo', linea: true, vars: ['nombre'],
+    def: 'Hola, {nombre}' },
+  { clave: 'est.instruccion', grupo: 'Página del estudiante', titulo: 'Instrucción bajo el saludo', vars: ['nombre', 'nivel'],
+    def: 'Elige la familia de electivos que cursarás en **{nivel}**. Cada familia agrupa tres asignaturas.' },
+  { clave: 'est.aviso', grupo: 'Página del estudiante', titulo: 'Aviso para estudiantes', opcional: true, vars: ['nombre', 'nivel'],
+    ayuda: 'Opcional. Un recuadro destacado sobre las familias (por ejemplo, una charla o un plazo). Déjalo vacío para no mostrarlo.',
+    def: '' },
+  { clave: 'est.sinFamilias', grupo: 'Página del estudiante', titulo: 'Cuando su nivel no tiene familias', vars: ['nivel'],
+    def: 'Todavía no hay familias de electivos para {nivel}.\nConsulta con la Unidad Técnico Pedagógica.' },
+  { clave: 'est.confirmar', grupo: 'Página del estudiante', titulo: 'Advertencia al confirmar la elección', vars: ['familia'],
+    ayuda: 'En la ventana que aparece al presionar "Elegir".',
+    def: 'Tu elección es **definitiva**. Solo la UTP puede cambiarla después.' },
+
+  { clave: 'proc.abiertoTitulo', grupo: 'Estado de la inscripción', titulo: 'Abierta · título', linea: true,
+    def: 'La inscripción está abierta' },
+  { clave: 'proc.abiertoTexto', grupo: 'Estado de la inscripción', titulo: 'Abierta · texto', vars: ['cupos'],
+    ayuda: '{cupos} se reemplaza por "25 cupos" (o "cupos limitados" si las familias tienen cupos distintos).',
+    def: 'Cada familia tiene {cupos} y se bloquea cuando se completa.' },
+  { clave: 'proc.abiertoCierre', grupo: 'Estado de la inscripción', titulo: 'Abierta · fecha de cierre', opcional: true, vars: ['cierre'],
+    ayuda: 'Se agrega al texto anterior solo cuando hay un cierre programado.',
+    def: 'Cierra el {cierre}.' },
+  { clave: 'proc.programadoTitulo', grupo: 'Estado de la inscripción', titulo: 'Programada · título', linea: true,
+    def: 'La inscripción todavía no comienza' },
+  { clave: 'proc.programadoTexto', grupo: 'Estado de la inscripción', titulo: 'Programada · texto', vars: ['apertura'],
+    def: 'Abre el {apertura}. Mientras tanto puedes revisar las familias.' },
+  { clave: 'proc.cerradoTitulo', grupo: 'Estado de la inscripción', titulo: 'Cerrada · título', linea: true,
+    def: 'La inscripción está cerrada' },
+  { clave: 'proc.cerradoTexto', grupo: 'Estado de la inscripción', titulo: 'Cerrada · texto',
+    def: 'Si no alcanzaste a inscribirte, conversa con la Unidad Técnico Pedagógica.' },
+
+  { clave: 'comp.titulo', grupo: 'Comprobante de inscripción', titulo: 'Título', linea: true, vars: ['nombre', 'familia'],
+    def: 'Quedaste inscrito' },
+  { clave: 'comp.subtitulo', grupo: 'Comprobante de inscripción', titulo: 'Subtítulo', vars: ['nombre', 'familia'],
+    def: 'Tu elección quedó registrada.' },
+  { clave: 'comp.nota', grupo: 'Comprobante de inscripción', titulo: 'Nota final', opcional: true, vars: ['nombre', 'familia'],
+    def: 'Si necesitas cambiar de familia, conversa con la Unidad Técnico Pedagógica.' },
+
+  { clave: 'ficha.instrucciones', grupo: 'Fichas de acceso (impresas)', titulo: 'Instrucciones', vars: ['enlace'],
+    ayuda: 'Al pie de cada ficha. {enlace} es el enlace para estudiantes configurado en Proceso.',
+    def: 'Entra en: **{enlace}**\nElige “Estudiante”, escribe tu RUT y esta clave (los últimos 4 dígitos de tu RUT).' }
+];
+var TEXTO_MAX = 800;
+
 /* ------------------------------------------------------------
  *  Entrada web y menú de la planilla
  * ------------------------------------------------------------ */
@@ -152,6 +217,7 @@ var ACCIONES = {
   exportarHoja: accExportarHoja_,
   masivo: accMasivo_,
   guardarApariencia: accGuardarApariencia_,
+  guardarTextos: accGuardarTextos_,
   // Administración
   admin: accAdmin_,
   historial: accHistorial_,
@@ -178,7 +244,17 @@ function api(req) {
 
 function accPublico_() {
   var cfg = config_();
-  return { colegio: cfg.colegio || LICEO.nombre, tema: tema_(cfg) };
+  return { colegio: cfg.colegio || LICEO.nombre, tema: tema_(cfg), textos: textos_(cfg) };
+}
+
+/** Textos vigentes: los que guardó la UTP o, si no hay, los originales. */
+function textos_(cfg) {
+  var o = {};
+  TEXTOS.forEach(function (t) {
+    var v = cfg['texto.' + t.clave];
+    o[t.clave] = v === undefined || (v === '' && !t.opcional) ? t.def : v;
+  });
+  return o;
 }
 
 function tema_(cfg) {
@@ -311,7 +387,8 @@ function estadoEstudiante_(s, t) {
     // Solo las familias de su nivel (y la suya, si la UTP lo dejó en otra)
     familias: familiasConConteo_(t).filter(function (f) { return familiaParaNivel_(f, nivel) || f.id === propia; }),
     proceso: proceso_(cfg),
-    colegio: cfg.colegio || LICEO.nombre
+    colegio: cfg.colegio || LICEO.nombre,
+    textos: textos_(cfg)
   };
 }
 
@@ -327,6 +404,8 @@ function accPanel_(d, token) {
     colegio: cfg.colegio || LICEO.nombre,
     enlace: cfg.enlace || '',
     tema: tema_(cfg),
+    textos: textos_(cfg),
+    catalogoTextos: TEXTOS,
     niveles: NIVELES.slice(),
     estudiantes: t.filas.filter(function (f) { return String(f.RUT).trim(); }).map(function (f) {
       return {
@@ -625,6 +704,42 @@ function accGuardarApariencia_(d, token) {
   });
 }
 
+/**
+ * Guarda los textos editables. d.textos = { clave: texto }; solo se aceptan claves del catálogo.
+ * Un texto igual al original (o vacío, si no es opcional) vuelve a seguir al original.
+ */
+function accGuardarTextos_(d, token) {
+  var s = sesion_(token, 'utp');
+  var entrada = d.textos && typeof d.textos === 'object' ? d.textos : {};
+  var porClave = {};
+  TEXTOS.forEach(function (t) { porClave[t.clave] = t; });
+  var claves = Object.keys(entrada);
+  if (!claves.length) throw falla_('No hay textos para guardar.');
+  var guardar = {}, quitar = [], nombres = [];
+  claves.forEach(function (k) {
+    var t = porClave[k];
+    if (!t) throw falla_('Texto desconocido: ' + k);
+    var v = String(entrada[k] == null ? '' : entrada[k])
+      .replace(/\r\n?/g, '\n')
+      .replace(/[\u0000-\u0009\u000B-\u001F\u007F]/g, '')
+      .split('\n').map(function (l) { return l.replace(/\s+$/, ''); }).join('\n')
+      .replace(/^\s+|\s+$/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/^[=+@]+/, '');
+    if (t.linea) v = v.replace(/\s*\n\s*/g, ' ');
+    if (v.length > TEXTO_MAX) throw falla_('«' + t.titulo + '» es demasiado largo (máximo ' + TEXTO_MAX + ' caracteres).');
+    if (v === t.def || (!v && !t.opcional) || (!v && !t.def)) quitar.push('texto.' + k);
+    else guardar['texto.' + k] = v;
+    nombres.push(t.titulo);
+  });
+  return conLock_(function () {
+    if (Object.keys(guardar).length) guardarConfig_(guardar);
+    if (quitar.length) borrarConfig_(quitar);
+    registrar_(actor_(s), 'Editar textos', nombres.join(', '));
+    return textos_(config_());
+  });
+}
+
 /* ---------- Administración ---------- */
 
 /** Resumen para el panel de administración: tamaño del historial y sus últimos movimientos. */
@@ -919,6 +1034,16 @@ function guardarConfig_(cambios) {
     else nuevos.push({ Clave: k, Valor: cambios[k] });
   });
   agregarFilas_(t, nuevos);
+}
+
+/** Quita filas de Config (así esas claves vuelven a su valor original). */
+function borrarConfig_(claves) {
+  var t = leer_('Config');
+  var quedan = t.filas.filter(function (f) { return String(f.Clave).trim() && claves.indexOf(String(f.Clave).trim()) < 0; });
+  var total = t.filas.length;
+  if (quedan.length === total) return;
+  if (quedan.length) t.sh.getRange(2, 1, quedan.length, t.enc.length).setValues(quedan.map(function (o) { return filaComoArreglo_(t, o); }));
+  t.sh.getRange(2 + quedan.length, 1, total - quedan.length, t.enc.length).clearContent();
 }
 
 function prepararHoja_(ss, nombre, columnas) {
