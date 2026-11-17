@@ -285,6 +285,9 @@ function nuevoSistema() {
   const P = call('panel', {}, tk).data;
   ok(P.catalogoTextos.length === c.TEXTOS.length && P.textos['comp.titulo'] === 'Quedaste inscrito', 'el panel trae catálogo y textos');
   ok(new Set(c.TEXTOS.map((t) => t.clave)).size === c.TEXTOS.length, 'claves de textos únicas');
+  ok(c.TEXTOS.every((t) => ['general', 'login', 'est', 'ficha'].includes(t.alcance)), 'cada texto dice quién lo ve');
+  ok(def('est.instruccion').includes('{nivelSiguiente}'), 'la instrucción usa el nivel siguiente');
+  ok(c.TEXTOS.every((t) => (t.def.match(/\{\w+\}/g) || []).every((m) => (t.vars || []).includes(m.slice(1, -1)))), 'los textos originales solo usan datos que ofrecen');
   let x = call('guardarTextos', { textos: { 'comp.titulo': 'Quedaste inscrito/a', 'login.aviso': '  La inscripción abre el **lunes**.\r\n\r\n\r\n\rTrae tu RUT.  ', 'est.saludo': '¡Hola,\n{nombre}!' } }, tk);
   ok(x.ok && x.data['comp.titulo'] === 'Quedaste inscrito/a', 'guarda un texto');
   ok(x.data['login.aviso'] === 'La inscripción abre el **lunes**.\n\nTrae tu RUT.', 'limpia espacios y saltos de más');

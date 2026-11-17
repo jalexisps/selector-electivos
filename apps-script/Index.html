@@ -369,13 +369,17 @@ table.reg{width:100%;border-collapse:collapse;font-size:.93rem;min-width:760px}
 .tx-tag.pend{background:var(--warn-soft);color:var(--warn)}
 .tx-tag.mod{background:var(--pri-soft);color:var(--pri)}
 .tx-tag.orig{color:var(--soft)}
+.tx-alc{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:.78rem;font-weight:700;border-radius:999px;padding:.2em .7em;background:var(--gris-claro);color:var(--gris)}
+.tx-alc::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.tx-alc.est{background:color-mix(in srgb,var(--sec) 22%,#fff);color:#6B5D00}
 textarea.inp.tx-area{font-family:var(--font);font-size:.95rem;min-height:64px;line-height:1.45}
 .tx-pie{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
 .tx-pie .sp{flex:1}
 .tx-vars{color:var(--muted);font-size:.85rem;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .tx-var{border:1px solid color-mix(in srgb,var(--pri) 25%,#fff);cursor:pointer;padding:3px 8px}
 .tx-var:hover{background:var(--pri);color:var(--pri-ink)}
-.tx-prev{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:.93rem;line-height:1.45}
+.tx-prevs{display:grid;gap:8px;margin-top:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.tx-prev{padding:10px 12px;border-radius:10px;background:var(--bg);font-size:.93rem;line-height:1.45}
 .tx-prev>small{display:block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);margin-bottom:3px}
 .tx-barra{position:sticky;bottom:14px;z-index:5;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;margin-top:6px;
   background:var(--ink);color:#fff;border-radius:14px;box-shadow:0 12px 30px -8px rgba(0,0,0,.35)}
@@ -749,7 +753,9 @@ const T = (clave, vars) => fmtTx(tx(clave), vars);
 const txPlano = (clave) => tx(clave).replace(/\*\*/g, '').replace(/\s*\n\s*/g, ' ');
 const tituloApp = () => T('app.titulo') || 'Selector de Electivos';
 /** Datos del estudiante que se pueden usar en sus textos. */
-const varsEst = (u) => ({ nombre: primerNombre(u.nombre), nivel: u.nivel || 'tu nivel' });
+/** "2° Medio" → "3° Medio": el nivel en que se cursan los electivos que se eligen ahora. */
+function nivelSiguiente(n) { const k = numeroNivel(n); return k ? (Number(k) + 1) + '° Medio' : ''; }
+const varsEst = (u) => ({ nombre: primerNombre(u.nombre), nivel: u.nivel || 'tu nivel', nivelSiguiente: nivelSiguiente(u.nivel) || 'tu próximo nivel' });
 
 function pararRefresco() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
 
@@ -964,7 +970,7 @@ function tarjetaFamilia(f, familias, p) {
 function comprobanteHTML(u, familias, paraImprimir) {
   const f = familias.find((x) => x.id === u.familia) || { nombre: u.familia, electivos: [] };
   const c = colorDe(u.familia, familias);
-  const v = { nombre: primerNombre(u.nombre), familia: f.nombre };
+  const v = Object.assign(varsEst(u), { familia: f.nombre });
   const nota = T('comp.nota', v);
   return `<section class="comp" style="--c:${c}">
     ${logoPrincipal() ? `<img src="${esc(logoPrincipal())}" alt="" style="height:54px;max-width:160px;object-fit:contain;margin-bottom:14px">` : ''}
@@ -1438,26 +1444,52 @@ function vistaPreviaTema() { aplicarTema(S.ap); }
 
 /* ---------- Textos ---------- */
 const catalogoTx = () => (S.panel && S.panel.catalogoTextos) || [];
-/** Datos de ejemplo para la vista previa. */
-function muestraTx() {
-  const P = S.panel, fams = P.familias.filter((f) => f.nivel === '3° Medio');
+/** Datos de ejemplo para la vista previa (de un estudiante del nivel indicado). */
+function muestraTx(nivel) {
+  const P = S.panel, fams = P.familias.filter((f) => familiaParaNivel(f, nivel));
+  const nombres = ['Benjamín', 'Gabriela', 'Josefa', 'Tomás'];
   return {
-    nombre: 'Gabriela', nivel: '3° Medio', familia: (fams[0] || P.familias[0] || { nombre: 'Familia 1' }).nombre,
+    nombre: nombres[Math.max(0, niveles().indexOf(nivel)) % nombres.length], nivel: nivel || 'tu nivel', nivelSiguiente: nivelSiguiente(nivel) || 'tu próximo nivel',
+    familia: (fams[0] || P.familias[0] || { nombre: 'Familia 1' }).nombre,
     cupos: varsProceso({}, fams.length ? fams : P.familias).cupos || '25 cupos',
     cierre: fmtFecha(P.proceso.cierre || Date.now() + 3 * 864e5), apertura: fmtFecha(P.proceso.apertura || Date.now() + 864e5),
     enlace: P.enlace || 'jalexisps.github.io/selector-electivos'
   };
 }
+/** Explicación de cada dato automático (aparece al pasar el mouse por su botón). */
+const VAR_TX = {
+  nombre: 'Primer nombre del estudiante',
+  nivel: 'Curso actual del estudiante (ej. 2° Medio)',
+  nivelSiguiente: 'Nivel en que cursará los electivos: 2° Medio → 3° Medio, 3° Medio → 4° Medio',
+  familia: 'Nombre de la familia elegida',
+  cupos: '"25 cupos", o "cupos limitados" si las familias tienen cupos distintos',
+  cierre: 'Fecha y hora del cierre programado',
+  apertura: 'Fecha y hora de la apertura programada',
+  enlace: 'Enlace para estudiantes (pestaña Proceso)'
+};
 const txPendientes = () => catalogoTx().filter((t) => S.txEd[t.clave] !== S.panel.textos[t.clave]);
 function txEstadoHTML(t) {
   if (S.txEd[t.clave] !== S.panel.textos[t.clave]) return '<span class="tx-tag pend">Sin guardar</span>';
   return S.panel.textos[t.clave] !== t.def ? '<span class="tx-tag mod">Personalizado</span>' : '<span class="tx-tag orig">Original</span>';
 }
+/** Quién ve cada texto. */
+function alcanceTx(t) {
+  const nv = niveles().join(' y ');
+  return {
+    general: ['Lo ven todos: estudiantes de ' + nv + ' y la UTP', ''],
+    login: ['Pantalla de entrada: la ven todos, antes de saber el nivel', ''],
+    est: ['Mismo texto para ' + nv + ': cada uno lo ve con sus datos', 'est'],
+    ficha: ['Fichas impresas: todos los niveles', '']
+  }[t.alcance] || ['Lo ven todos', ''];
+}
+/** Vista previa: una por nivel en los textos del estudiante, así se ve que el texto es el mismo para todos. */
 function txPreviaHTML(t) {
-  const v = S.txEd[t.clave];
-  if (!v.trim() && !t.opcional) return `<small>Vista previa · vacío: se usará el original</small>${fmtTx(t.def, muestraTx())}`;
-  const h = fmtTx(v, muestraTx());
-  return '<small>Vista previa</small>' + (h || '<i class="muted">No se mostrará</i>');
+  const v = S.txEd[t.clave], vacio = !v.trim() && !t.opcional, plantilla = vacio ? t.def : v;
+  const caja = (titulo, nivel) => {
+    const h = fmtTx(plantilla, muestraTx(nivel));
+    return `<div class="tx-prev"><small>${titulo}${vacio ? ' · vacío: se usa el original' : ''}</small>${h || '<i class="muted">No se mostrará</i>'}</div>`;
+  };
+  return t.alcance === 'est' ? niveles().map((n) => caja('Lo verá un estudiante de ' + n, n)).join('') : caja('Vista previa', '');
 }
 function txBarraHTML() {
   const n = txPendientes().length;
@@ -1475,13 +1507,13 @@ function tabTextos() {
     const campo = t.linea
       ? `<input class="inp" data-texto="${esc(t.clave)}" value="${esc(v)}" maxlength="800" placeholder="${ph}" aria-label="${esc(t.titulo)}">`
       : `<textarea class="inp tx-area" data-texto="${esc(t.clave)}" rows="${Math.min(6, Math.max(2, v.split('\n').length))}" maxlength="800" placeholder="${ph}" aria-label="${esc(t.titulo)}">${esc(v)}</textarea>`;
-    const vars = (t.vars || []).map((n) => `<button type="button" class="tx-var" data-act="txVar" data-k="${esc(t.clave)}" data-v="${esc(n)}" title="Insertar el dato «${esc(n)}»">{${esc(n)}}</button>`).join('');
+    const vars = (t.vars || []).map((n) => `<button type="button" class="tx-var" data-act="txVar" data-k="${esc(t.clave)}" data-v="${esc(n)}" title="${esc(VAR_TX[n] || 'Insertar el dato «' + n + '»')}">{${esc(n)}}</button>`).join('');
     return `<div class="tx-item" data-item="${esc(t.clave)}">
-      <div class="tx-cab"><div><b>${esc(t.titulo)}</b>${t.ayuda ? `<small>${esc(t.ayuda)}</small>` : ''}</div><span class="tx-estado">${txEstadoHTML(t)}</span></div>
+      <div class="tx-cab"><div><b>${esc(t.titulo)}</b>${t.ayuda ? `<small>${esc(t.ayuda)}</small>` : ''}<span class="tx-alc ${alcanceTx(t)[1]}">${esc(alcanceTx(t)[0])}</span></div><span class="tx-estado">${txEstadoHTML(t)}</span></div>
       ${campo}
       <div class="tx-pie">${vars ? `<span class="tx-vars">Insertar dato: ${vars}</span>` : ''}<span class="sp"></span>
         <button class="btn btn-sm btn-ghost" data-act="txOriginal" data-k="${esc(t.clave)}" ${v === t.def ? 'hidden' : ''}>Restaurar original</button></div>
-      <div class="tx-prev">${txPreviaHTML(t)}</div>
+      <div class="tx-prevs">${txPreviaHTML(t)}</div>
     </div>`;
   };
   const grupos = [...new Set(cat.map((t) => t.grupo))];
@@ -1490,7 +1522,8 @@ function tabTextos() {
     <button class="btn btn-sm" data-act="txTodosOriginal">Restaurar todos</button></div>
   <div class="card pad tx-ayuda">
     <span><b>Negrita:</b> escribe la palabra entre dos asteriscos: <code>**definitiva**</code> se ve como <b>definitiva</b>.</span>
-    <span><b>Datos automáticos:</b> los botones como <code>{nombre}</code> o <code>{nivel}</code> insertan un dato que el sistema completa para cada estudiante. Si un dato está vacío, la línea que lo usa no se muestra.</span>
+    <span><b>Un texto, todos los niveles:</b> cada texto es uno solo y lo ven los estudiantes de ${esc(niveles().join(' y '))}. No escribas un nivel a mano: usa los datos automáticos y el sistema pone el que corresponde a cada estudiante. La vista previa muestra cómo lo ve cada nivel.</span>
+    <span><b>Datos automáticos:</b> <code>{nombre}</code> es su primer nombre · <code>{nivel}</code> es su curso actual (2° Medio) · <code>{nivelSiguiente}</code> es el nivel en que cursará los electivos (2° Medio → 3° Medio, 3° Medio → 4° Medio). Si un dato está vacío, la línea que lo usa no se muestra.</span>
     <span><b>Saltos de línea:</b> presiona Enter. Los cambios se ven al instante en la vista previa y llegan a los estudiantes al guardar.</span>
   </div>
   ${grupos.map((g) => `<section class="card tx-grupo"><h3>${esc(g)}</h3>${cat.filter((t) => t.grupo === g).map(item).join('')}</section>`).join('')}
@@ -1502,7 +1535,7 @@ function actualizarTexto(clave) {
   const t = catalogoTx().find((x) => x.clave === clave), el = $(`[data-item="${clave}"]`);
   if (!t || !el) return;
   el.querySelector('.tx-estado').innerHTML = txEstadoHTML(t);
-  el.querySelector('.tx-prev').innerHTML = txPreviaHTML(t);
+  el.querySelector('.tx-prevs').innerHTML = txPreviaHTML(t);
   el.querySelector('[data-act=txOriginal]').hidden = S.txEd[clave] === t.def;
   const b = $('#txBarra');
   if (b) { b.innerHTML = txBarraHTML(); b.classList.toggle('limpia', !txPendientes().length); }
@@ -1647,7 +1680,7 @@ const ACT = {
     const c = colorDe(f.id, S.est.familias);
     modal(`<h2>¿Confirmas ${esc(f.nombre)}?</h2>
       <ul class="elist" style="--c:${c};margin:16px 0">${f.electivos.map((e, i) => `<li><i>${i + 1}</i><span>${esc(e)}</span></li>`).join('')}</ul>
-      <p class="muted">${T('est.confirmar', { familia: f.nombre })}</p>
+      <p class="muted">${T('est.confirmar', Object.assign(varsEst(S.est.estudiante), { familia: f.nombre }))}</p>
       <div class="acts"><button class="btn" data-act="cerrarModal">Volver</button>
       <button class="btn btn-pri" data-act="inscribir" data-id="${esc(f.id)}" style="background:${c};border-color:${c}">Confirmar inscripción</button></div>`);
   },

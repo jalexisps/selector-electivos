@@ -1,4 +1,4 @@
-# Selector de Electivos · v1.4 — Liceo Polivalente Nahuelbuta, Contulmo
+# Selector de Electivos · v1.5 — Liceo Polivalente Nahuelbuta, Contulmo
 
 Sistema para que los estudiantes elijan su **familia de electivos** y la **Unidad Técnico Pedagógica** administre el proceso.
 
@@ -26,7 +26,7 @@ apps-script/
   appsscript.json       Manifiesto (zona horaria Santiago, aplicación web)
   INSTALACION.md        Paso a paso para instalar y publicar
 test/
-  backend.test.js       143 pruebas del backend con Google simulado (node test/backend.test.js)
+  backend.test.js       146 pruebas del backend con Google simulado (node test/backend.test.js)
   build-harness.js      Arma una versión local de la interfaz con datos de ejemplo
 ```
 
